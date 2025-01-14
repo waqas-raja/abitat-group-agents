@@ -1,0 +1,6 @@
+.idea
+.vscode
+app/vendor/
+app/composer.lock
+app/prodigio-ai.lic
+app/.env

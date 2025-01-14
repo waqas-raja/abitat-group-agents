@@ -1,0 +1,24 @@
+# Disallow access to .env file and *.lic files
+<FilesMatch "^(\.env|.*\.lic)$">
+    Require all denied
+</FilesMatch>
+
+RewriteEngine On
+
+# Forza HTTPS se non sei in locale
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} !^localhost [NC]
+RewriteCond %{HTTP_HOST} !^127\.0\.0\.1 [NC]
+RewriteCond %{HTTP_HOST} !^192\.168\.[0-9]+\.[0-9]+ [NC]
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Servi i file statici dalla cartella static
+RewriteCond %{DOCUMENT_ROOT}/static%{REQUEST_URI} -f
+RewriteRule ^static/(.*)$ static/$1 [L]
+
+# Se il file o la directory esiste, usa direttamente quello
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Reindirizza tutte le altre richieste a index.php
+RewriteRule ^ index.php [QSA,L]
