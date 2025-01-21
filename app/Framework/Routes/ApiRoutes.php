@@ -3,9 +3,8 @@
 namespace App\Framework\Routes;
 
 use App\Framework\Middlewares\AuthMiddleware;
-use App\Framework\Models\Company;
-use App\Framework\Models\Contact;
-use App\Framework\Models\ContactActivity;
+use App\Framework\Models\Property;
+use App\Framework\Models\Agent;
 use App\Framework\Models\User;
 use Slim\App;
 use Slim\Exception\HttpNotImplementedException;
@@ -41,34 +40,18 @@ class ApiRoutes {
                 return User::ResetPassword($request, $response);
             })->add($this->authMiddleware);
 
-            $group->get('/contact-activity-status', function ($request, $response) {
-                return ContactActivity::GetAllStatus($request, $response);
-            })->add($this->authMiddleware);
-
             // Entity's list routes
 
             $group->get('/users', function ($request, $response) {
                 return User::GetAll($request, $response);
             })->add($this->authMiddleware);
 
-            $group->get('/contacts', function ($request, $response) {
-                return Contact::GetAll($request, $response);
+            $group->get('/agents', function ($request, $response) {
+                return Agent::GetAll($request, $response);
             })->add($this->authMiddleware);
 
-            $group->get('/companies', function ($request, $response) {
-                return Company::GetAll($request, $response);
-            })->add($this->authMiddleware);
-
-            $group->get('/calendars', function ($request, $response) {
-                throw new HttpNotImplementedException($request, "calendars entry point is not implemented");
-            })->add($this->authMiddleware);
-
-            $group->get('/requests', function ($request, $response) {
-                throw new HttpNotImplementedException($request, "requests entry point is not implemented");
-            })->add($this->authMiddleware);
-
-            $group->get('/contact-activities', function ($request, $response) {
-                throw new HttpNotImplementedException($request, "contact-activities entry point is not implemented");
+            $group->get('/properties', function ($request, $response) {
+                return Property::GetAll($request, $response);
             })->add($this->authMiddleware);
 
             // Entity's routes
@@ -78,29 +61,14 @@ class ApiRoutes {
                 $userRoutes->register($userGroup);
             });
 
-            $requestRoutes = new RequestRoutes($this->authMiddleware);
-            $group->group('/request', function (RouteCollectorProxy $requestGroup) use ($requestRoutes) {
-                $requestRoutes->register($requestGroup);
+            $agentRoutes = new AgentRoutes($this->authMiddleware);
+            $group->group('/agent', function (RouteCollectorProxy $agentGroup) use ($agentRoutes) {
+                $agentRoutes->register($agentGroup);
             });
 
-            $contactRoutes = new ContactRoutes($this->authMiddleware);
-            $group->group('/contact', function (RouteCollectorProxy $contactGroup) use ($contactRoutes) {
-                $contactRoutes->register($contactGroup);
-            });
-
-            $companyRoutes = new CompanyRoutes($this->authMiddleware);
-            $group->group('/company', function (RouteCollectorProxy $companyGroup) use ($companyRoutes) {
-                $companyRoutes->register($companyGroup);
-            });
-
-            $calendarRoutes = new CalendarRoutes($this->authMiddleware);
-            $group->group('/calendar', function (RouteCollectorProxy $calendarGroup) use ($calendarRoutes) {
-                $calendarRoutes->register($calendarGroup);
-            });
-
-            $contactActivityRoutes = new ContactActivityRoutes($this->authMiddleware);
-            $group->group('/contact-activity', function (RouteCollectorProxy $contactActivityGroup) use ($contactActivityRoutes) {
-                $contactActivityRoutes->register($contactActivityGroup);
+            $propertyRoutes = new PropertyRoutes($this->authMiddleware);
+            $group->group('/property', function (RouteCollectorProxy $propertyGroup) use ($propertyRoutes) {
+                $propertyRoutes->register($propertyGroup);
             });
         });
     }

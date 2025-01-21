@@ -6,8 +6,8 @@
 ?>
 
     <div id="users">
-        <div class="glp-card">
-            <span class="glp-title">Elenco utenti</span>
+        <div class="pai-card">
+            <span class="pai-title">Elenco utenti</span>
             <div id="listOfUsers" class="mt-3"></div>
         </div>
     </div>

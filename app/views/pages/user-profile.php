@@ -7,8 +7,8 @@
         <div class="row">
             <!-- Prima Card: Dati Personali -->
             <div class="col-md-6">
-                <div class="glp-card shadow-sm">
-                    <span class="glp-title">Modifica Dati Personali</span>
+                <div class="pai-card shadow-sm">
+                    <span class="pai-title">Modifica Dati Personali</span>
                     <form class="mt-3" autocomplete="off">
                         <div class="mb-3">
                             <label for="txtName" class="form-label text-small">Nome</label>
@@ -36,8 +36,8 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="glp-card shadow-sm">
-                    <span class="glp-title">Modifica Password</span>
+                <div class="pai-card shadow-sm">
+                    <span class="pai-title">Modifica Password</span>
                     <form class="mt-3" autocomplete="off">
                         <div class="mb-3">
                             <label for="txtOldPassword" class="form-label text-small">Vecchia Password</label>

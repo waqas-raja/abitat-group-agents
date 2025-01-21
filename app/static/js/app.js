@@ -38,9 +38,8 @@ function setMenuActive() {
     switch (currentPage) {
         //sidebar
         case 'dashboard': activeMenuId = 'Dashboard'; break;
-        case 'calendar': activeMenuId = 'Calendar'; break;
-        case 'companies': activeMenuId = 'Companies'; break;
-        case 'contacts': activeMenuId = 'Contacts'; break;
+        case 'properties': activeMenuId = 'Properties'; break;
+        case 'agents': activeMenuId = 'Agents'; break;
         //header
         case 'settings': activeMenuId = 'Settings'; break;
         case 'users': activeMenuId = 'Users'; break;
@@ -55,7 +54,7 @@ function setMenuActive() {
 
 function setCopyright(){
     const span = document.getElementById("copyright");
-    const startY = 2024;
+    const startY = 2025;
     const currentY = new Date().getFullYear();
     span.textContent = startY === currentY ? `©${startY}` : `©${startY}-${currentY}`;
 }
@@ -92,8 +91,8 @@ function isValidEmail(email) {
 }
 
 function initInternalTabs() {
-    const tabs = document.querySelectorAll(".glp-tab");
-    const contents = document.querySelectorAll(".glp-tab-content");
+    const tabs = document.querySelectorAll(".pai-tab");
+    const contents = document.querySelectorAll(".pai-tab-content");
     tabs.forEach(tab => {
         tab.addEventListener("click", () => {
             tabs.forEach(t => t.classList.remove("active"));

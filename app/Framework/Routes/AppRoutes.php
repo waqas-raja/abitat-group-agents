@@ -41,16 +41,16 @@ class AppRoutes {
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
 
-        $app->get('/contacts', function ($request, $response) {
+        $app->get('/agents', function ($request, $response) {
             ob_start();
-            require_once __DIR__ . '/../../views/pages/contacts.php';
+            require_once __DIR__ . '/../../views/pages/agents.php';
             $response->getBody()->write(ob_get_clean());
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
 
-        $app->get('/companies', function ($request, $response) {
+        $app->get('/properties', function ($request, $response) {
             ob_start();
-            require_once __DIR__ . '/../../views/pages/companies.php';
+            require_once __DIR__ . '/../../views/pages/properties.php';
             $response->getBody()->write(ob_get_clean());
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
@@ -64,30 +64,20 @@ class AppRoutes {
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
 
-        $app->get('/contact/{id}', function ($request, $response) {
+        $app->get('/agent/{id}', function ($request, $response) {
             $cid = $request->getAttribute('id');
-            extract(['cid' => $cid]);
+            extract(['aid' => $cid]);
             ob_start();
-            require_once __DIR__ . '/../../views/pages/contact-detail.php';
+            require_once __DIR__ . '/../../views/pages/agent-detail.php';
             $response->getBody()->write(ob_get_clean());
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
 
-        $app->get('/contact/pie/{list_id}/{status_id}', function ($request, $response) {
-            $lid = $request->getAttribute('list_id');
-            $sid = $request->getAttribute('status_id');
-            extract(['list_id' => $lid, 'status_id' => $sid]);
-            ob_start();
-            require_once __DIR__ . '/../../views/pages/contact-pie.php';
-            $response->getBody()->write(ob_get_clean());
-            return $response->withHeader('Content-Type', 'text/html');
-        })->add($this->authMiddleware);
-
-        $app->get('/company/{id}', function ($request, $response) {
+        $app->get('/property/{id}', function ($request, $response) {
             $cid = $request->getAttribute('id');
-            extract(['cid' => $cid]);
+            extract(['pid' => $cid]);
             ob_start();
-            require_once __DIR__ . '/../../views/pages/company-detail.php';
+            require_once __DIR__ . '/../../views/pages/property-detail.php';
             $response->getBody()->write(ob_get_clean());
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
@@ -95,13 +85,6 @@ class AppRoutes {
         $app->get('/dashboard', function ($request, $response) {
             ob_start();
             require_once __DIR__ . '/../../views/pages/dashboard.php';
-            $response->getBody()->write(ob_get_clean());
-            return $response->withHeader('Content-Type', 'text/html');
-        })->add($this->authMiddleware);
-
-        $app->get('/calendar', function ($request, $response) {
-            ob_start();
-            require_once __DIR__ . '/../../views/pages/calendar.php';
             $response->getBody()->write(ob_get_clean());
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);

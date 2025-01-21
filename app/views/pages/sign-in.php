@@ -6,7 +6,7 @@
         <div class="row h-100">
             <div id="login-emotional" class="col-12 col-md-6 align-items-center justify-content-center p-5">
                 <div class="overlay"></div>
-                <img src="/static/imgs/logo.png" alt="Logo">
+                <img src="/static/imgs/logo.svg" alt="Logo">
                 <div class="text-center position-relative z-index-1 text-white">
                     <h1 class="display-4 fw-bold">Bentornato!</h1>
                     Entra nel tuo portale e ottimizza la gestione del tuo lavoro.<br>
@@ -14,7 +14,7 @@
                 </div>
             </div>
             <div id="login-forms" class="col-6 align-items-center justify-content-center">
-                <img src="/static/imgs/logo.png" alt="Logo">
+                <img src="/static/imgs/logo.svg" alt="Logo">
                 <div id="login-card" class="card shadow-lg p-4" style="width: 100%; max-width: 400px; border-radius: 15px;">
                     <h3 class="text-center mb-4">Accedi al portale</h3>
                     <form>

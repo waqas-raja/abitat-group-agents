@@ -4,32 +4,10 @@
 ?>
 
     <div id="dashboard">
-        <div class="row mb-4">
-            <div class="col-4">
-                <div class="glp-card">
-                    <p class="glp-title">GL Sviluppo</p>
-                    <div id="pieGlSviluppo" class="pieChart"></div>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="glp-card">
-                    <p class="glp-title">Sviluppo Personale</p>
-                    <div id="pieSviluppoPersonale" class="pieChart"></div>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="glp-card">
-                    <p class="glp-title">Creditis</p>
-                    <div id="pieCreditis" class="pieChart"></div>
-                </div>
-            </div>
+        <div class="pai-card">
+            <span class="pai-title">Dashboard</span>
+            <div class="bg-light p-3 mt-3"><i>Pagina in allestimento</i></div>
         </div>
-        <div class="glp-card">
-            <span class="glp-title">Elenco chiamate da effettuare</span>
-            <div id="listOfCalls" class="mt-3"></div>
-        </div>
-
-        <?php require_once __DIR__ . '/../modals/call-detail.php'; ?>
     </div>
     <script src="/static/js/views/dashboard.js"></script>
 
