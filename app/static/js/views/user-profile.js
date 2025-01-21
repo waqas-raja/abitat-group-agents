@@ -12,6 +12,8 @@ function showResult(spanId, message, isSuccess) {
 }
 
 async function updatePersonalData() {
+    showResult('resultPersonalData', 'Funzione non ancora attiva.', false);
+    return;
     const name = document.getElementById('txtName').value.trim();
     const surname = document.getElementById('txtSurname').value.trim();
     const email = document.getElementById('txtEmail').value.trim();
@@ -28,18 +30,19 @@ async function updatePersonalData() {
     spinner.classList.remove('d-none');
     btn.disabled = true;
     try {
-        const response = await fetch(
-            "api/user",
-            {
-                method: "PATCH",
-                body: { name: name, surname: surname, email: email }
-            }
-        );
-        const data = await response.json();
-        if(data.payload.done) showResult('resultPersonalData', 'Dati personali salvati con successo', true);
-        else showResult('resultPersonalData', 'Si sono verificati degli errori durante il salvataggio', false);
-        spinner.classList.add('d-none');
-        btn.disabled = false;
+
+        // const response = await fetch(
+        //     "api/user",
+        //     {
+        //         method: "PATCH",
+        //         body: { name: name, surname: surname, email: email }
+        //     }
+        // );
+        // const data = await response.json();
+        // if(data.payload.done) showResult('resultPersonalData', 'Dati personali salvati con successo', true);
+        // else showResult('resultPersonalData', 'Si sono verificati degli errori durante il salvataggio', false);
+        // spinner.classList.add('d-none');
+        // btn.disabled = false;
     } catch (error) {
         spinner.classList.add('d-none');
         btn.disabled = false;
@@ -49,6 +52,8 @@ async function updatePersonalData() {
 }
 
 async function updatePassword() {
+    showResult('resultPersonalData', 'Funzione non ancora attiva.', false);
+    return;
     const oldPsw = document.getElementById('txtOldPassword').value.trim();
     const newPsw = document.getElementById('txtNewPassword').value.trim();
     const confirmPsw = document.getElementById('txtConfirmPassword').value.trim();
