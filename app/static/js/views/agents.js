@@ -4,26 +4,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function init() {
-    const data = [
-        {
-            "id": 1,
-            "first_name": "Alfa SRL",
-            "last_name": "Residential",
-            "commission": "Tecnologia",
-            "fixed_cost": "Lombardia",
-            "number_of_properties_managed": "50",
-        },
-        {
-            "id": 2,
-            "first_name": "Alfa SRL",
-            "last_name": "Residential",
-            "commission": "Tecnologia",
-            "fixed_cost": "Lombardia",
-            "number_of_properties_managed": "50",
-        },
-    ];
-    ids = ["listOfMilanAgents", "listOfRomeAgents", "listOfTurinAgents"];
-    for (let i = 0; i < ids.length; i++) { loadList(ids[i], data); }
+    const ids = ["listOfMoncalieriAgents", "listOfRomeAgents", "listOfTurinAgents"];
+    const datas = [getDateMoncalieri(), getDateRoma(), getDateTorino()];
+    for (let i = 0; i < ids.length; i++) { loadList(ids[i], datas[i]); }
 }
 
 function loadList(id, data) {
@@ -109,4 +92,116 @@ function preSelectLocation() {
         case 'tabContentRome': document.getElementById('ddlLocation').value = 2; break;
         case 'tabContentTurin': document.getElementById('ddlLocation').value = 3; break;
     }
+}
+
+
+function getDateMoncalieri() {
+    return [
+        {
+            "id": 1,
+            "first_name": "Giovanni",
+            "last_name": "Conte",
+            "commission": "5.5%",
+            "fixed_cost": 1350,
+            "number_of_properties_managed": 22
+        },
+        {
+            "id": 2,
+            "first_name": "Simone",
+            "last_name": "De Luca",
+            "commission": "6%",
+            "fixed_cost": 1500,
+            "number_of_properties_managed": 28
+        },
+        {
+            "id": 3,
+            "first_name": "Giulia",
+            "last_name": "Neri",
+            "commission": "4.8%",
+            "fixed_cost": 1450,
+            "number_of_properties_managed": 19
+        }
+    ];
+}
+
+function getDateRoma() {
+    return [
+        {
+            "id": 1,
+            "first_name": "Alessandro",
+            "last_name": "Verdi",
+            "commission": "5%",
+            "fixed_cost": 1700,
+            "number_of_properties_managed": 35
+        },
+        {
+            "id": 2,
+            "first_name": "Luca",
+            "last_name": "Ferrari",
+            "commission": "5.5%",
+            "fixed_cost": 1600,
+            "number_of_properties_managed": 29
+        },
+        {
+            "id": 3,
+            "first_name": "Alberto",
+            "last_name": "Russo",
+            "commission": "6%",
+            "fixed_cost": 1750,
+            "number_of_properties_managed": 40
+        },
+        {
+            "id": 4,
+            "first_name": "Francesca",
+            "last_name": "Romano",
+            "commission": "4.5%",
+            "fixed_cost": 1550,
+            "number_of_properties_managed": 24
+        },
+        {
+            "id": 5,
+            "first_name": "Sofia",
+            "last_name": "Bruni",
+            "commission": "5%",
+            "fixed_cost": 1650,
+            "number_of_properties_managed": 31
+        }
+    ];
+}
+
+function getDateTorino() {
+    return [
+        {
+            "id": 1,
+            "first_name": "Marco",
+            "last_name": "Rossi",
+            "commission": "5%",
+            "fixed_cost": 1500,
+            "number_of_properties_managed": 25
+        },
+        {
+            "id": 2,
+            "first_name": "Laura",
+            "last_name": "Bianchi",
+            "commission": "6%",
+            "fixed_cost": 1300,
+            "number_of_properties_managed": 18
+        },
+        {
+            "id": 3,
+            "first_name": "Elena",
+            "last_name": "Galli",
+            "commission": "4.5%",
+            "fixed_cost": 1600,
+            "number_of_properties_managed": 30
+        },
+        {
+            "id": 4,
+            "first_name": "Martina",
+            "last_name": "Ferrari",
+            "commission": "5.5%",
+            "fixed_cost": 1400,
+            "number_of_properties_managed": 20
+        }
+    ];
 }

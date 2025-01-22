@@ -35,10 +35,10 @@
                         <label for="ddlLocation" class="col-sm-4 col-form-label">Location</label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlLocation">
-                                <option selected>Choose...</option>
-                                <option value="1">Milan</option>
-                                <option value="2">Rome</option>
-                                <option value="3">Turin</option>
+                                <option selected>Scegli...</option>
+                                <option value="3">Torino</option>
+                                <option value="1">Moncalieri</option>
+                                <option value="2">Roma</option>
                             </select>
                         </div>
                     </div>
