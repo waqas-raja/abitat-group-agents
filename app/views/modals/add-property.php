@@ -7,28 +7,41 @@
             </div>
             <div class="modal-body">
                 <form id="">
-                    <div class="mb-3">
-                        <label for="txtPropertyName" class="form-label text-small">Nome</label>
-                        <input id="txtPropertyName" type="text" class="form-control" required>
+                    <div class="row mb-3">
+                        <label for="txtPropertyName" class="col-sm-4 col-form-label">Nome</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="txtPropertyName" required>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="txtPropertyType" class="form-label text-small">Tipo</label>
-                        <input id="txtPropertyType" type="text" class="form-control" required>
+                    <div class="row mb-3">
+                        <label for="ddlPropertyType" class="col-sm-4 col-form-label">Tipo</label>
+                        <div class="col-sm-8">
+                            <select class="form-select" id="ddlPropertyType">
+                                <option value="" selected>Choose...</option>
+                                <option value="1">Apartment</option>
+                                <option value="2">Villa</option>
+                                <option value="3">Farmhouse</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="txtPropertyAddress" class="form-label text-small">Indirizzo</label>
-                        <input id="txtPropertyAddress" type="text" class="form-control" required>
+                    <div class="row mb-3">
+                        <label for="txtPropertyAddress" class="col-sm-4 col-form-label">Indirizzo</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="txtPropertyAddress" required>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="txtPropertyPurchasePrice" class="form-label text-small">Prezzo d'acquisto</label>
-                        <input id="txtPropertyPurchasePrice" type="number" class="form-control" required>
+                    <div class="row mb-3">
+                        <label for="txtPropertyPurchasePrice" class="col-sm-4 col-form-label">Prezzo d'acquisto</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="txtPropertyPurchasePrice" required>
+                        </div>
                     </div>
                     <span id="spNewPorpertyResult" class="text-danger d-none"></span>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x"></i> Annulla</button>
-                <button  id="btnSaveProperty" type="button" class="btn btn-orange" onclick="saveProperty()">
+                <button id="btnSaveProperty" type="button" class="btn btn-orange" onclick="saveProperty()">
                     <i class="bi bi-check-lg"></i> Salva
                     <div id="spinnerNewProperty" class="spinner-border spinner-border-sm d-none" role="status"><span class="visually-hidden">Loading...</span></div>
                 </button>
