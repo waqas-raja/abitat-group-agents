@@ -77,7 +77,8 @@ function loadList(data) {
                         .css("cursor", "pointer")
                         .on("click", function (event) {
                             event.stopImmediatePropagation();
-                            alert("Edit: " + options.data.id);
+                            const res = data.filter(function (el) { return el.id === parseInt(options.data.id); });
+                            showEditPropertyModal(res);
                         })
                         .appendTo(container);
                     container.append("&nbsp;&nbsp;")
@@ -114,13 +115,7 @@ function loadList(data) {
         onRowClick: function (e) {
             if (e.rowType === "data") {
                 const res = data.filter(function (el) { return el.id === parseInt(e.data.id); });
-                document.getElementById('txtPropertyName').value = res[0].title;
-                document.getElementById('ddlPropertyType').value = res[0].type;
-                document.getElementById('txtPropertyAddress').value = res[0].address;
-                document.getElementById('txtPropertyPurchasePrice').value = res[0].price;
-                const modalElement = document.getElementById("modalAddProperty");
-                const modal = new bootstrap.Modal(modalElement);
-                modal.show();
+                showEditPropertyModal(res);
                 // window.location = `/property/${e.data.id}`; 
             }
         },
@@ -154,4 +149,14 @@ async function saveProperty() {
     spinner.classList.remove("d-none");
     result.classList.add("d-none");
     result.innerText = "";
+}
+
+function showEditPropertyModal(res) {
+    document.getElementById('txtPropertyName').value = res[0].title;
+    document.getElementById('ddlPropertyType').value = res[0].type;
+    document.getElementById('txtPropertyAddress').value = res[0].address;
+    document.getElementById('txtPropertyPurchasePrice').value = res[0].price;
+    const modalElement = document.getElementById("modalAddProperty");
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
 }
