@@ -1,12 +1,14 @@
 <?php
     $title = 'Elenco Immobili';
     ob_start();
+    require_once __DIR__ . '/../modals/add-property.php';
 ?>
 
 <div id="properties">
     <div class="pai-card">
         <span class="pai-title">Elenco immobili</span>
-        <div class="bg-light p-3 mt-3"><i>Pagina in allestimento</i></div>
+        <!-- <div class="bg-light p-3 mt-3"><i>Pagina in allestimento</i></div> -->
+        <div id="listOfProperties" class="mt-3"></div>
     </div>
 </div>
 <script src="/static/js/views/properties.js"></script>
