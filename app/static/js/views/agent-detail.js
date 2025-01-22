@@ -107,7 +107,9 @@ function loadPropertiesList(data) {
                 // }
             ]
         },
-        onRowClick: function (e) { if (e.rowType === "data") { window.location = `/property/${e.data.id}`; } },
+        onRowClick: function (e) { if (e.rowType === "data") { 
+            // window.location = `/property/${e.data.id}`; 
+        } },
         onExporting: function (e) {
             if (e.format === 'xlsx') {
                 const workbook = new ExcelJS.Workbook();

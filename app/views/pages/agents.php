@@ -5,9 +5,8 @@ require_once __DIR__ . "/../modals/add-agent.php";
 ?>
 
 <div id="agents">
-    <div class="pai-card mb-3">
+    <div class="pai-card mb-3 d-flex justify-content-start align-items-center gap-4">
         <span class="pai-title">Elenco agenti</span>
-        <!-- <div class="bg-light p-3 mt-3"><i>Pagina in allestimento</i></div> -->
         <div class="pai-tabs">
             <div class="pai-tab active" data-tab="tabContentTurin">Turin</div>
             <div class="pai-tab" data-tab="tabContentRome">Rome</div>

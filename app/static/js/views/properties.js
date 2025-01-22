@@ -7,10 +7,10 @@ async function init() {
         {
             "id": 1,
             "title": "Alfa SRL",
-            "type": "Residential",
+            "type": 1,
             "address": "Tecnologia",
             "surface_area": "Lombardia",
-            "price": "50",
+            "price": 50,
             "status": "Milano",
             "assigned_agent": "Milano",
             "publication_date": "22/1/2025",
@@ -20,10 +20,10 @@ async function init() {
         {
             "id": 2,
             "title": "Alfa SRL",
-            "type": "Rental",
+            "type": 2,
             "address": "Tecnologia",
             "surface_area": "Lombardia",
-            "price": "60",
+            "price": 60,
             "status": "Milano",
             "assigned_agent": "Milano",
             "publication_date": "22/1/2025",
@@ -48,7 +48,18 @@ function loadList(data) {
         columns: [
             { dataField: "id", caption: "Property ID", allowFiltering: true },
             { dataField: "title", caption: "Property Title/Name", allowFiltering: true },
-            { dataField: "type", caption: "Type", allowFiltering: true },
+            {
+                dataField: "type",
+                caption: "Type",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    switch (data.type) {
+                        case 1: return "Apartment";
+                        case 2: return "Villa";
+                        case 3: return "Farmhouse";
+                    }
+                }
+            },
             { dataField: "address", caption: "Address", allowFiltering: true },
             { dataField: "surface_area", caption: "Surface Area", allowFiltering: true },
             { dataField: "price", caption: "Price", allowFiltering: true },
@@ -70,16 +81,6 @@ function loadList(data) {
                         })
                         .appendTo(container);
                     container.append("&nbsp;&nbsp;")
-                    $("<i>")
-                        .addClass("dx-icon dx-icon-trash")
-                        .css("cursor", "pointer")
-                        .on("click", function (event) {
-                            event.stopImmediatePropagation();
-                            if (confirm("Are you sure you want to delete this record?")) {
-                                alert("Delete: " + options.data.id);
-                            }
-                        })
-                        .appendTo(container);
                 },
             },
         ],
@@ -97,6 +98,10 @@ function loadList(data) {
                         icon: "add",
                         text: "Aggiungi Proprietà",
                         onClick: function () {
+                            document.getElementById('txtPropertyName').value = '';
+                            document.getElementById('ddlPropertyType').value = '';
+                            document.getElementById('txtPropertyAddress').value = '';
+                            document.getElementById('txtPropertyPurchasePrice').value = '';
                             const modalElement = document.getElementById("modalAddProperty");
                             const modal = new bootstrap.Modal(modalElement);
                             modal.show();
@@ -106,7 +111,19 @@ function loadList(data) {
                 }
             ]
         },
-        onRowClick: function (e) { if (e.rowType === "data") { window.location = `/property/${e.data.id}`; } },
+        onRowClick: function (e) {
+            if (e.rowType === "data") {
+                const res = data.filter(function (el) { return el.id === parseInt(e.data.id); });
+                document.getElementById('txtPropertyName').value = res[0].title;
+                document.getElementById('ddlPropertyType').value = res[0].type;
+                document.getElementById('txtPropertyAddress').value = res[0].address;
+                document.getElementById('txtPropertyPurchasePrice').value = res[0].price;
+                const modalElement = document.getElementById("modalAddProperty");
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+                // window.location = `/property/${e.data.id}`; 
+            }
+        },
         onExporting: function (e) {
             if (e.format === 'xlsx') {
                 const workbook = new ExcelJS.Workbook();

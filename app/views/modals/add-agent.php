@@ -7,28 +7,47 @@
             </div>
             <div class="modal-body">
                 <form id="">
-                    <div class="mb-3">
-                        <label for="txtFirstName" class="form-label text-small">First Name</label>
-                        <input id="txtFirstName" type="text" class="form-control" required>
+                    <div class="row mb-3">
+                        <label for="txtFirstName" class="col-sm-4 col-form-label">First Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="txtFirstName" required>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="txtLastName" class="form-label text-small">Last Name</label>
-                        <input id="txtLastName" type="text" class="form-control" required>
+                    <div class="row mb-3">
+                        <label for="txtLastName" class="col-sm-4 col-form-label">Last Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="txtLastName" required>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="txtFixedCost" class="form-label text-small">Fixed Costs</label>
-                        <input id="txtFixedCost" type="text" class="form-control" required>
+                    <div class="row mb-3">
+                        <label for="txtFixedCost" class="col-sm-4 col-form-label">Fixed Costs</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="txtFixedCost" required>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="txtCommission" class="form-label text-small">Commission</label>
-                        <input id="txtCommission" type="text" class="form-control" required>
+                    <div class="row mb-3">
+                        <label for="txtCommission" class="col-sm-4 col-form-label">Commission</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="txtCommission" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="ddlLocation" class="col-sm-4 col-form-label">Location</label>
+                        <div class="col-sm-8">
+                            <select class="form-select" id="ddlLocation">
+                                <option selected>Choose...</option>
+                                <option value="1">Milan</option>
+                                <option value="2">Rome</option>
+                                <option value="3">Turin</option>
+                            </select>
+                        </div>
                     </div>
                     <span id="spNewAgentResult" class="text-danger d-none"></span>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x"></i> Annulla</button>
-                <button  id="btnSaveAgent" type="button" class="btn btn-orange" onclick="saveAgent()">
+                <button id="btnSaveAgent" type="button" class="btn btn-orange" onclick="saveAgent()">
                     <i class="bi bi-check-lg"></i> Salva
                     <div id="spinnerNewAgent" class="spinner-border spinner-border-sm d-none" role="status"><span class="visually-hidden">Loading...</span></div>
                 </button>

@@ -61,6 +61,7 @@ function loadList(id, data) {
                             const modalElement = document.getElementById("modalAddAgent");
                             const modal = new bootstrap.Modal(modalElement);
                             modal.show();
+                            preSelectLocation();
                         },
                         elementAttr: { class: "btn-orange" }
                     }
@@ -98,4 +99,14 @@ async function saveAgent() {
     spinner.classList.remove("d-none");
     result.classList.add("d-none");
     result.innerText = "";
+}
+
+function preSelectLocation() {
+    const parent = document.querySelector(".pai-tabs");
+    const child = parent.querySelector(".active");
+    switch (child.dataset.tab) {
+        case 'tabContentMilan': document.getElementById('ddlLocation').value = 1; break;
+        case 'tabContentRome': document.getElementById('ddlLocation').value = 2; break;
+        case 'tabContentTurin': document.getElementById('ddlLocation').value = 3; break;
+    }
 }
