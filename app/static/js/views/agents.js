@@ -21,11 +21,44 @@ function loadList(id, data) {
         headerFilter: { visible: true },
         // export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
         columns: [
-            { dataField: "first_name", caption: "First Name", allowFiltering: true },
-            { dataField: "last_name", caption: "Last Name", allowFiltering: true },
-            { dataField: "commission", caption: "Commission", allowFiltering: true },
-            { dataField: "fixed_cost", caption: "Fixed Cost", allowFiltering: true },
-            { dataField: "number_of_properties_managed", caption: "Number of Properties Managed", allowFiltering: true },
+            {
+                caption: "Nome Cognome",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    return data.first_name +' '+ data.last_name;
+                }
+            },
+            { dataField: "commission", caption: "Commissioni", allowFiltering: true },
+            { 
+                dataField: "fixed_cost",
+                caption: "Costi fissi",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    return formatNumber(data.fixed_cost);
+                }
+            },
+            { dataField: "number_of_properties_managed", caption: "Proprietà in gestione", allowFiltering: true },
+            { 
+                caption: "Proprietà vendute",
+                allowFiltering: true,
+                calculateCellValue: function () {
+                    return 'in progress';
+                }
+            },
+            { 
+                caption: "Totale vendite",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    return formatNumber((data.number_of_properties_managed * data.fixed_cost) - data.fixed_cost);
+                }
+            },
+            { 
+                caption: "Totale commissioni",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    return formatNumber(((data.fixed_cost * (parseFloat(data.commission) / 100)) * data.number_of_properties_managed) - data.fixed_cost);
+                }
+            },
         ],
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
