@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function init() {
-    const ids = ["listOfMoncalieriAgents", "listOfRomeAgents", "listOfTurinAgents"];
+    const ids = ["listOfMoncalieriAgents", "listOfRomaAgents", "listOfTorinoAgents"];
     const datas = [getDateMoncalieri(), getDateRoma(), getDateTorino()];
     for (let i = 0; i < ids.length; i++) { loadList(ids[i], datas[i]); }
 }
@@ -121,9 +121,9 @@ function preSelectLocation() {
     const parent = document.querySelector(".pai-tabs");
     const child = parent.querySelector(".active");
     switch (child.dataset.tab) {
-        case 'tabContentMilan': document.getElementById('ddlLocation').value = 1; break;
-        case 'tabContentRome': document.getElementById('ddlLocation').value = 2; break;
-        case 'tabContentTurin': document.getElementById('ddlLocation').value = 3; break;
+        case 'tabContentMoncalieri': document.getElementById('ddlLocation').value = 1; break;
+        case 'tabContentRoma': document.getElementById('ddlLocation').value = 2; break;
+        case 'tabContentTorino': document.getElementById('ddlLocation').value = 3; break;
     }
 }
 

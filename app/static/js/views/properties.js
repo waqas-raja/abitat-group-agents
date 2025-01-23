@@ -1,9 +1,16 @@
+const cities = [
+    {id: 1, name: 'Torino'},
+    {id: 2, name: 'Moncalieri'},
+    {id: 3, name: 'Roma'},
+];
 document.addEventListener("DOMContentLoaded", () => {
-    loadList();
+    initInternalTabs();
+    loadList(1);
 });
 
-function loadList() {
-    const data = getData();
+function loadList(city_id) {
+    const d = getData();
+    const data = d.filter(function (el) { return el.city_id === parseInt(city_id); });
     new DevExpress.ui.dxDataGrid(document.getElementById("listOfProperties"), {
         dataSource: data,
         columnAutoWidth: true,
@@ -135,6 +142,7 @@ function getData() {
             "title": "Attico in Centro",
             "type": 2,
             "address": "Via Roma, 45, Torino",
+            "city_id": 1,
             "surface_area": 120,
             "price": 350000,
             "status": "In vendita",
@@ -148,6 +156,7 @@ function getData() {
             "title": "Bilocale Economico",
             "type": 1,
             "address": "Corso Francia, 120, Torino",
+            "city_id": 1,
             "surface_area": 65,
             "price": 120000,
             "status": "Venduto",
@@ -161,6 +170,7 @@ function getData() {
             "title": "Villa con Giardino",
             "type": 3,
             "address": "Via delle Mimose, 10, Roma",
+            "city_id": 3,
             "surface_area": 240,
             "price": 650000,
             "status": "In vendita",
@@ -174,6 +184,7 @@ function getData() {
             "title": "Monolocale Moderno",
             "type": 1,
             "address": "Via Garibaldi, 22, Torino",
+            "city_id": 1,
             "surface_area": 40,
             "price": 95000,
             "status": "Venduto",
@@ -187,6 +198,7 @@ function getData() {
             "title": "Trilocale Panoramico",
             "type": 2,
             "address": "Via Tiburtina, 78, Roma",
+            "city_id": 3,
             "surface_area": 95,
             "price": 210000,
             "status": "In vendita",
@@ -200,6 +212,7 @@ function getData() {
             "title": "Rustico con Terreno",
             "type": 4,
             "address": "Strada Provinciale 32, Torino",
+            "city_id": 1,
             "surface_area": 180,
             "price": 180000,
             "status": "In vendita",
@@ -213,6 +226,7 @@ function getData() {
             "title": "Appartamento di Lusso",
             "type": 2,
             "address": "Via Veneto, 15, Roma",
+            "city_id": 3,
             "surface_area": 150,
             "price": 950000,
             "status": "Venduto",
@@ -226,6 +240,7 @@ function getData() {
             "title": "Open Space in Centro",
             "type": 1,
             "address": "Piazza Castello, 8, Torino",
+            "city_id": 1,
             "surface_area": 80,
             "price": 220000,
             "status": "In vendita",
@@ -239,6 +254,7 @@ function getData() {
             "title": "Casa Storica",
             "type": 3,
             "address": "Via Appia Antica, 45, Roma",
+            "city_id": 3,
             "surface_area": 300,
             "price": 1250000,
             "status": "In vendita",
@@ -252,6 +268,7 @@ function getData() {
             "title": "Quadrilocale Ristrutturato",
             "type": 2,
             "address": "Via Po, 16, Torino",
+            "city_id": 1,
             "surface_area": 110,
             "price": 320000,
             "status": "Venduto",
