@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
     loadList();
 });
 
@@ -16,11 +15,10 @@ function loadList() {
         headerFilter: { visible: true },
         // export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
         columns: [
-            { dataField: "id", caption: "Property ID", allowFiltering: true },
-            { dataField: "title", caption: "Property Title/Name", allowFiltering: true },
+            { dataField: "title", caption: "Titolo", allowFiltering: true },
             {
                 dataField: "type",
-                caption: "Type",
+                caption: "Tipologia",
                 allowFiltering: true,
                 calculateCellValue: function (data) {
                     switch (data.type) {
@@ -30,14 +28,34 @@ function loadList() {
                     }
                 }
             },
-            { dataField: "address", caption: "Address", allowFiltering: true },
-            { dataField: "surface_area", caption: "Surface Area", allowFiltering: true },
-            { dataField: "price", caption: "Price", allowFiltering: true },
-            { dataField: "status", caption: "Status", allowFiltering: true },
-            { dataField: "assigned_agent", caption: "Assigned Agent", allowFiltering: true },
-            { dataField: "publication_date", caption: "Publication Date", allowFiltering: true },
-            { dataField: "sale_date", caption: "Sale Date", allowFiltering: true },
-            { dataField: "sale_price", caption: "Sale Price", allowFiltering: true },
+            { dataField: "address", caption: "Indirizzo", allowFiltering: true },
+            { dataField: "surface_area", caption: "Superficie", allowFiltering: true },
+            { 
+                dataField: "price",
+                caption: "Prezzo acquisto",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    return formatNumber(data.price);
+                }
+            },
+            { dataField: "status", caption: "Stato", allowFiltering: true },
+            { dataField: "assigned_agent", caption: "Agente", allowFiltering: true },
+            { dataField: "sale_date", caption: "Data vendita", allowFiltering: true },
+            {
+                dataField: "sale_price",
+                caption: "Prezzo vendita",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    if (data.sale_price !== null) return formatNumber(data.sale_price);
+                }
+            },
+            {
+                caption: "Delta",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    if (data.sale_price !== null) return formatNumber(data.price - data.sale_price);
+                }
+            }
         ],
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
@@ -53,13 +71,7 @@ function loadList() {
                         icon: "add",
                         text: "Aggiungi Proprietà",
                         onClick: function () {
-                            document.getElementById('txtPropertyName').value = '';
-                            document.getElementById('ddlPropertyType').value = '';
-                            document.getElementById('txtPropertyAddress').value = '';
-                            document.getElementById('txtPropertyPurchasePrice').value = '';
-                            const modalElement = document.getElementById("modalAddProperty");
-                            const modal = new bootstrap.Modal(modalElement);
-                            modal.show();
+                            showEditPropertyModal(null, 'Aggiungi proprietà');
                         },
                         elementAttr: { class: "btn-orange" }
                     }
@@ -69,7 +81,7 @@ function loadList() {
         onRowClick: function (e) {
             if (e.rowType === "data") {
                 const res = data.filter(function (el) { return el.id === parseInt(e.data.id); });
-                showEditPropertyModal(res);
+                showEditPropertyModal(res, 'Modifica proprietà');
                 // window.location = `/property/${e.data.id}`; 
             }
         },
@@ -105,16 +117,25 @@ async function saveProperty() {
     result.innerText = "";
 }
 
-function showEditPropertyModal(res) {
-    document.getElementById('txtPropertyName').value = res[0].title;
-    document.getElementById('ddlPropertyType').value = res[0].type;
-    document.getElementById('txtPropertyAddress').value = res[0].address;
-    document.getElementById('txtPropertyPurchasePrice').value = res[0].price;
+function showEditPropertyModal(res, modalTitle) {
+    document.getElementById('txtPropertyName').value = res !== null ? res[0].title : '';
+    document.getElementById('ddlPropertyType').value = res !== null ? res[0].type : '';
+    document.getElementById('txtPropertyAddress').value = res !== null ? res[0].address : '';
+    document.getElementById('txtPropertyPurchasePrice').value = res !== null ? res[0].price : '';
+    document.getElementById('modalAddPropertyLabel').innerText = modalTitle;
     const modalElement = document.getElementById("modalAddProperty");
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
 }
 
+function formatNumber(num) {
+    if (num === null) num = 0;
+    return ((num).toLocaleString('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 0
+    }));
+}
 
 function getData() {
     return [
