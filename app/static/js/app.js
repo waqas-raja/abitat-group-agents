@@ -140,3 +140,12 @@ function handleSidebarExpension() {
         mainContent.style.width = 'calc(100vw - var(--sidebar-width))';
     }
 }
+
+function formatNumber(num) {
+    if (num === null) num = 0;
+    return ((num).toLocaleString('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 0
+    }));
+}

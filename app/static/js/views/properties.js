@@ -128,15 +128,6 @@ function showEditPropertyModal(res, modalTitle) {
     modal.show();
 }
 
-function formatNumber(num) {
-    if (num === null) num = 0;
-    return ((num).toLocaleString('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        maximumFractionDigits: 0
-    }));
-}
-
 function getData() {
     return [
         {
