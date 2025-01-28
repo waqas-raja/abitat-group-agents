@@ -1,5 +1,5 @@
 <div id="modalAddProperty" class="modal fade" tabindex="-1" aria-labelledby="modalAddPropertyLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalAddPropertyLabel"><i class="bi bi-buildings me-3"></i>Aggiungi Proprietà</h5>
@@ -8,9 +8,10 @@
             <div class="modal-body">
                 <form id="">
                     <div class="row mb-3">
-                        <label for="txtPropertyName" class="col-sm-4 col-form-label">Nome</label>
+                        <label for="ddlPropertyAcquiredBy" class="col-sm-4 col-form-label">Agente che ha acquisito</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="txtPropertyName" required>
+                            <select class="form-select" id="ddlPropertyAcquiredBy">
+                            </select>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -34,6 +35,17 @@
                         <label for="txtPropertyPurchasePrice" class="col-sm-4 col-form-label">Prezzo d'acquisto</label>
                         <div class="col-sm-8">
                             <input type="number" class="form-control" id="txtPropertyPurchasePrice" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="ddlPropertyLocation" class="col-sm-4 col-form-label">Posizione</label>
+                        <div class="col-sm-8">
+                            <select class="form-select" id="ddlPropertyLocation">
+                                <option value="" selected>Choose...</option>
+                                <option value="1">Torino</option>
+                                <option value="2">Moncalieri</option>
+                                <option value="3">Roma</option>
+                            </select>
                         </div>
                     </div>
                     <span id="spNewPorpertyResult" class="text-danger d-none"></span>

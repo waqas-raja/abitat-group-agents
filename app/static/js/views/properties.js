@@ -1,16 +1,31 @@
 const cities = [
-    {id: 1, name: 'Torino'},
-    {id: 2, name: 'Moncalieri'},
-    {id: 3, name: 'Roma'},
+    { id: 1, name: 'Torino' },
+    { id: 2, name: 'Moncalieri' },
+    { id: 3, name: 'Roma' },
 ];
+let city_id = 1;
 document.addEventListener("DOMContentLoaded", () => {
     initInternalTabs();
-    loadList(1);
+    loadList(city_id);
 });
 
-function loadList(city_id) {
+function populateDropdown(d, ctrl_id) {
+    document.getElementById(ctrl_id).innerHTML = '';
+    for (let i = 0; i < d.length; i++) {
+        const opt = document.createElement('option');
+        opt.value = d[i].id;
+        opt.textContent = d[i].assigned_agent;
+        document.getElementById(ctrl_id).appendChild(opt);
+    }
+}
+
+function loadList(cid) {
+    city_id = cid;
     const d = getData();
+    populateDropdown(d, 'ddlPropertyAcquiredBy');
     const data = d.filter(function (el) { return el.city_id === parseInt(city_id); });
+    const ddlLocation = document.getElementById('ddlPropertyLocation');
+    if (ddlLocation !== null) ddlLocation.value = city_id;
     new DevExpress.ui.dxDataGrid(document.getElementById("listOfProperties"), {
         dataSource: data,
         columnAutoWidth: true,
@@ -22,7 +37,6 @@ function loadList(city_id) {
         headerFilter: { visible: true },
         // export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
         columns: [
-            { dataField: "title", caption: "Titolo", allowFiltering: true },
             {
                 dataField: "type",
                 caption: "Tipologia",
@@ -37,7 +51,7 @@ function loadList(city_id) {
             },
             { dataField: "address", caption: "Indirizzo", allowFiltering: true },
             { dataField: "surface_area", caption: "Superficie", allowFiltering: true },
-            { 
+            {
                 dataField: "price",
                 caption: "Prezzo acquisto",
                 allowFiltering: true,
@@ -45,8 +59,9 @@ function loadList(city_id) {
                     return formatNumber(data.price);
                 }
             },
-            { dataField: "status", caption: "Stato", allowFiltering: true },
-            { dataField: "assigned_agent", caption: "Agente", allowFiltering: true },
+            { dataField: "purchase_date", caption: "Data acquisto", allowFiltering: true },
+            { dataField: "assigned_agent", caption: "Acquistare da", allowFiltering: true },
+            { dataField: "assigned_agent", caption: "Venduto da", allowFiltering: true },
             { dataField: "sale_date", caption: "Data vendita", allowFiltering: true },
             {
                 dataField: "sale_price",
@@ -60,7 +75,7 @@ function loadList(city_id) {
                 caption: "Delta",
                 allowFiltering: true,
                 calculateCellValue: function (data) {
-                    if (data.sale_price !== null) return formatNumber(data.price - data.sale_price);
+                    if (data.sale_price !== null) return formatNumber(data.sale_price - data.price);
                 }
             }
         ],
@@ -71,18 +86,18 @@ function loadList(city_id) {
                 "groupPanel",
                 "searchPanel",
                 "exportButton",
-                {
-                    location: "after",
-                    widget: "dxButton",
-                    options: {
-                        icon: "add",
-                        text: "Aggiungi Proprietà",
-                        onClick: function () {
-                            showEditPropertyModal(null, 'Aggiungi proprietà');
-                        },
-                        elementAttr: { class: "btn-orange" }
-                    }
-                }
+                // {
+                //     location: "after",
+                //     widget: "dxButton",
+                //     options: {
+                //         icon: "add",
+                //         text: "Aggiungi Proprietà",
+                //         onClick: function () {
+                //             showEditPropertyModal(null, 'Aggiungi proprietà');
+                //         },
+                //         elementAttr: { class: "btn-orange" }
+                //     }
+                // }
             ]
         },
         onRowClick: function (e) {
@@ -112,24 +127,31 @@ function loadList(city_id) {
 async function saveProperty() {
     const btn = document.getElementById("btnSaveProperty");
     const spinner = document.getElementById("spinnerNewProperty");
-    const name = document.getElementById("txtPropertyName").value.trim();
-    const type = document.getElementById("txtPropertyType").value.trim();
+    const acquiredBy = document.getElementById("ddlPropertyAcquiredBy").value.trim();
+    const type = document.getElementById("ddlPropertyType").value.trim();
     const address = document.getElementById("txtPropertyAddress");
     const price = document.getElementById("txtPropertyPurchasePrice");
+    const location = document.getElementById("ddlPropertyLocation").value.trim();
+    const ele = document.getElementsByClassName('pai-tabs');
+    if (parseInt(location) === 1) ele[0].children[0].click();
+    else if (parseInt(location) === 2) ele[0].children[1].click();
+    else if (parseInt(location) === 3) ele[0].children[2].click();
     const result = document.getElementById("spNewPorpertyResult");
 
     btn.disabled = true;
     spinner.classList.remove("d-none");
     result.classList.add("d-none");
     result.innerText = "";
+    // TODO SAVE NEW PROPERTY API...
 }
 
 function showEditPropertyModal(res, modalTitle) {
-    document.getElementById('txtPropertyName').value = res !== null ? res[0].title : '';
+    // document.getElementById('txtPropertyName').value = res !== null ? res[0].title : '';
     document.getElementById('ddlPropertyType').value = res !== null ? res[0].type : '';
     document.getElementById('txtPropertyAddress').value = res !== null ? res[0].address : '';
     document.getElementById('txtPropertyPurchasePrice').value = res !== null ? res[0].price : '';
     document.getElementById('modalAddPropertyLabel').innerText = modalTitle;
+    document.getElementById('ddlPropertyLocation').value = city_id;
     const modalElement = document.getElementById("modalAddProperty");
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
@@ -148,6 +170,7 @@ function getData() {
             "status": "In vendita",
             "assigned_agent": "Marco Rossi",
             "publication_date": "01/12/2024",
+            "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null
         },
@@ -162,6 +185,7 @@ function getData() {
             "status": "Venduto",
             "assigned_agent": "Laura Bianchi",
             "publication_date": "15/10/2024",
+            "purchase_date": "01/12/2024",
             "sale_date": "10/01/2025",
             "sale_price": 115000
         },
@@ -176,6 +200,7 @@ function getData() {
             "status": "In vendita",
             "assigned_agent": "Alessandro Verdi",
             "publication_date": "01/11/2024",
+            "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null
         },
@@ -190,8 +215,9 @@ function getData() {
             "status": "Venduto",
             "assigned_agent": "Giulia Neri",
             "publication_date": "10/09/2024",
+            "purchase_date": "01/12/2024",
             "sale_date": "05/01/2025",
-            "sale_price": 92000
+            "sale_price": 97000
         },
         {
             "id": 5,
@@ -204,6 +230,7 @@ function getData() {
             "status": "In vendita",
             "assigned_agent": "Luca Ferrari",
             "publication_date": "20/12/2024",
+            "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null
         },
@@ -218,6 +245,7 @@ function getData() {
             "status": "In vendita",
             "assigned_agent": "Elena Galli",
             "publication_date": "05/11/2024",
+            "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null
         },
@@ -232,6 +260,7 @@ function getData() {
             "status": "Venduto",
             "assigned_agent": "Simone De Luca",
             "publication_date": "01/08/2024",
+            "purchase_date": "01/12/2024",
             "sale_date": "20/12/2024",
             "sale_price": 930000
         },
@@ -246,6 +275,7 @@ function getData() {
             "status": "In vendita",
             "assigned_agent": "Martina Bianchi",
             "publication_date": "15/12/2024",
+            "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null
         },
@@ -260,6 +290,7 @@ function getData() {
             "status": "In vendita",
             "assigned_agent": "Alberto Russo",
             "publication_date": "01/01/2025",
+            "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null
         },
@@ -274,6 +305,7 @@ function getData() {
             "status": "Venduto",
             "assigned_agent": "Giovanni Conte",
             "publication_date": "25/09/2024",
+            "purchase_date": "01/12/2024",
             "sale_date": "18/01/2025",
             "sale_price": 315000
         }
