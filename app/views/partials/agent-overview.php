@@ -3,15 +3,14 @@
         <div class="pai-card position-relative">
             <div class="position-relative">
                 <p class="lato-black text-blue"><i class="bi bi-person-vcard"></i>&nbsp;&nbsp;Informazioni agente</p>
-
                 <span id="iconAllowEditGenericInfo" class="position-absolute editIcon" role="button" style="right:20px;top:0;" title="Edit" onclick="allowEditGeneralInfo()">
                     <i class="bi bi-pencil"></i>
                 </span>
-                <button id="iconSaveEditGenericInfo" class="btn btn-orange position-absolute saveIcon d-none py-0" role="button" style="right:0px;top:0;" title="Save" onclick="saveGenericInfo()">
-                    Salva
+                <button id="iconSaveEditGenericInfo" class="btn btn-orange-inverted position-absolute saveIcon d-none py-0 px-2" role="button" style="right:0px;top:0;" title="Save" onclick="saveGenericInfo()">
+                    <i class="bi bi-floppy"></i> Salva
                 </button>
-                <button id="iconCancelEditGenericInfo" class="btn btn-light position-absolute cancelIcon d-none py-0" role="button" style="right:65px;top:0;" title="Cancel" onclick="cancelEditGeneralInfo()">
-                    Cancellare
+                <button id="iconCancelEditGenericInfo" class="btn btn-outline-secondary position-absolute cancelIcon d-none py-0 px-2" role="button" style="right:80px;top:0;" title="Cancel" onclick="cancelEditGeneralInfo()">
+                    <i class="bi bi-x-circle"></i> Annulla
                 </button>
             </div>
             <div id="divInfo">
