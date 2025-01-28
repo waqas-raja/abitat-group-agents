@@ -4,6 +4,13 @@ async function init() {
 
 }
 
+function togglePassword(e) {
+    e.classList.toggle("bi-eye");
+    e.classList.toggle("bi-eye-slash");
+    const type = e.previousElementSibling.type === "password" ? "text" : "password";
+    e.previousElementSibling.type = type;
+}
+
 
 function showResult(spanId, message, isSuccess) {
     const resultSpan = document.getElementById(spanId);
@@ -12,8 +19,6 @@ function showResult(spanId, message, isSuccess) {
 }
 
 async function updatePersonalData() {
-    showResult('resultPersonalData', 'Funzione non ancora attiva.', false);
-    return;
     const name = document.getElementById('txtName').value.trim();
     const surname = document.getElementById('txtSurname').value.trim();
     const email = document.getElementById('txtEmail').value.trim();
@@ -29,6 +34,8 @@ async function updatePersonalData() {
     const spinner = document.getElementById('spinnerPersonalData');
     spinner.classList.remove('d-none');
     btn.disabled = true;
+    showResult('resultPersonalData', 'Funzione non ancora attiva.', false);
+    return;
     try {
 
         // const response = await fetch(
@@ -52,8 +59,6 @@ async function updatePersonalData() {
 }
 
 async function updatePassword() {
-    showResult('resultPersonalData', 'Funzione non ancora attiva.', false);
-    return;
     const oldPsw = document.getElementById('txtOldPassword').value.trim();
     const newPsw = document.getElementById('txtNewPassword').value.trim();
     const confirmPsw = document.getElementById('txtConfirmPassword').value.trim();
@@ -74,7 +79,8 @@ async function updatePassword() {
     const btn = document.getElementById('btnUpdatePassword');
     spinner.classList.remove('d-none');
     btn.disabled = true;
-
+    showResult('resultPersonalData', 'Funzione non ancora attiva.', false);
+    return;
 
     try {
         const response = await fetch(
@@ -85,9 +91,9 @@ async function updatePassword() {
             }
         );
         const data = await response.json();
-        if(data.payload.done) showResult('resultPersonalData', 'Nuova password salvata con successo', true);
+        if (data.payload.done) showResult('resultPersonalData', 'Nuova password salvata con successo', true);
         else {
-            if(data.payload.err_old) showResult('resultPersonalData', 'La vecchia password non risulta corretta', false);
+            if (data.payload.err_old) showResult('resultPersonalData', 'La vecchia password non risulta corretta', false);
             else showResult('resultPersonalData', 'Si sono verificati degli errori durante il salvataggio', false);
         }
         spinner.classList.add('d-none');
