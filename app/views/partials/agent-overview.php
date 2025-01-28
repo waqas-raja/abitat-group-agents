@@ -7,12 +7,12 @@
                 <span id="iconAllowEditGenericInfo" class="position-absolute editIcon" role="button" style="right:20px;top:0;" title="Edit" onclick="allowEditGeneralInfo()">
                     <i class="bi bi-pencil"></i>
                 </span>
-                <span id="iconSaveEditGenericInfo" class="position-absolute saveIcon d-none" role="button" style="right:20px;top:0;" title="Save" onclick="saveGenericInfo()">
-                    <i class="bi bi-floppy"></i>
-                </span>
-                <span id="iconCancelEditGenericInfo" class="position-absolute cancelIcon d-none" role="button" style="right:45px;top:0;" title="Cancel" onclick="cancelEditGeneralInfo()">
-                    <i class="bi bi-x-circle"></i>
-                </span>
+                <button id="iconSaveEditGenericInfo" class="btn btn-orange position-absolute saveIcon d-none py-0" role="button" style="right:0px;top:0;" title="Save" onclick="saveGenericInfo()">
+                    Salva
+                </button>
+                <button id="iconCancelEditGenericInfo" class="btn btn-light position-absolute cancelIcon d-none py-0" role="button" style="right:65px;top:0;" title="Cancel" onclick="cancelEditGeneralInfo()">
+                    Cancellare
+                </button>
             </div>
             <div id="divInfo">
                 <div class="row mb-0 align-items-center">
@@ -33,14 +33,18 @@
                     <label for="txtFixedCost" class="col-sm-5 col-form-label">Fixed Costs:</label>
                     <div class="col-sm-7">
                         <span id="spFixedCost" class="valueControl"></span>
-                        <input type="text" id="txtFixedCost" class="form-control editControl d-none mb-1" value="">
+                        <input type="number" id="txtFixedCost" class="form-control editControl d-none mb-1" value="">
                     </div>
                 </div>
                 <div class="row mb-0 align-items-center">
                     <label for="txtCommission" class="col-sm-5 col-form-label">Commission:</label>
                     <div class="col-sm-7">
                         <span id="spCommission" class="valueControl"></span>
-                        <input type="text" id="txtCommission" class="form-control editControl d-none mb-1" value="">
+                        <div class="input-group editControl d-none mb-1">
+                            <input type="number" id="txtCommission" class="form-control">
+                            <span class="input-group-text">%</span>
+                        </div>
+                        <!-- <input type="text" id="txtCommission" class="form-control editControl d-none mb-1" value=""> -->
                     </div>
                 </div>
                 <div class="row mb-0 align-items-center">
