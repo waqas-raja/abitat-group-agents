@@ -18,10 +18,10 @@
                         <label for="ddlPropertyType" class="col-sm-4 col-form-label">Tipo</label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlPropertyType">
-                                <option value="" selected>Choose...</option>
-                                <option value="1">Apartment</option>
+                                <option value="" selected>Seleziona la tipologia...</option>
+                                <option value="1">Appartamento</option>
                                 <option value="2">Villa</option>
-                                <option value="3">Farmhouse</option>
+                                <option value="3">Rudere</option>
                             </select>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                         <label for="ddlPropertyLocation" class="col-sm-4 col-form-label">Posizione</label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlPropertyLocation">
-                                <option value="" selected>Choose...</option>
+                                <option value="" selected>Seleziona la sede...</option>
                                 <option value="1">Torino</option>
                                 <option value="2">Moncalieri</option>
                                 <option value="3">Roma</option>

@@ -51,18 +51,18 @@ function loadList(cid) {
             },
             { dataField: "address", caption: "Indirizzo", allowFiltering: true },
             { dataField: "surface_area", caption: "Superficie", allowFiltering: true },
+            { dataField: "purchase_date", caption: "Acquisito il", allowFiltering: true },
+            { dataField: "assigned_agent", caption: "Acquisito da", allowFiltering: true },
             {
                 dataField: "price",
-                caption: "Prezzo acquisto",
+                caption: "Prezzo di acquisto",
                 allowFiltering: true,
                 calculateCellValue: function (data) {
                     return formatNumber(data.price);
                 }
             },
-            { dataField: "purchase_date", caption: "Data acquisto", allowFiltering: true },
-            { dataField: "assigned_agent", caption: "Acquistare da", allowFiltering: true },
+            { dataField: "sale_date", caption: "Venduto il", allowFiltering: true },
             { dataField: "assigned_agent", caption: "Venduto da", allowFiltering: true },
-            { dataField: "sale_date", caption: "Data vendita", allowFiltering: true },
             {
                 dataField: "sale_price",
                 caption: "Prezzo vendita",
