@@ -79,6 +79,35 @@ function loadList(cid) {
                 }
             }
         ],
+        masterDetail: {
+            enabled: true,
+            template: function (container, options) {
+                const details = options.data.details;
+                $("<div>")
+                    .addClass("dx-datagrid-group-panel")
+                    .html('<div class="dx-group-panel-message">Elenco delle riduzioni di prezzo</div>')
+                    .appendTo(container)
+                $("<div>")
+                    .addClass("internal-grid")
+                    .appendTo(container)
+                    .dxDataGrid({
+                        dataSource: details,
+                        columnAutoWidth: true,
+                        showBorders: true,
+                        width: "100%",
+                        columns: [
+                            { dataField: "date", caption: "Data" },
+                            {
+                                caption: "Nuovo prezzo",
+                                calculateCellValue: function (data) {
+                                    if (data.new_price !== null) return formatNumber(data.new_price);
+                                }
+                             },
+                            { dataField: "note", caption: "Notes" },
+                        ]
+                    });
+            }
+        },
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
         toolbar: {
@@ -101,6 +130,10 @@ function loadList(cid) {
             ]
         },
         onRowClick: function (e) {
+            if ($(e.event.target).closest(".dx-datagrid-expand").length) {
+                e.event.stopPropagation();
+                return;
+            }
             if (e.rowType === "data") {
                 const res = data.filter(function (el) { return el.id === parseInt(e.data.id); });
                 showEditPropertyModal(res, 'Modifica proprietà');
@@ -172,7 +205,19 @@ function getData() {
             "publication_date": "01/12/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
-            "sale_price": null
+            "sale_price": null,
+            "details": [
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+            ]
         },
         {
             "id": 2,
@@ -187,7 +232,19 @@ function getData() {
             "publication_date": "15/10/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "10/01/2025",
-            "sale_price": 115000
+            "sale_price": 115000,
+            "details": [
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+            ]
         },
         {
             "id": 3,
@@ -202,7 +259,19 @@ function getData() {
             "publication_date": "01/11/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
-            "sale_price": null
+            "sale_price": null,
+            "details": [
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+            ]
         },
         {
             "id": 4,
@@ -217,7 +286,19 @@ function getData() {
             "publication_date": "10/09/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "05/01/2025",
-            "sale_price": 97000
+            "sale_price": 97000,
+            "details": [
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+            ]
         },
         {
             "id": 5,
@@ -232,7 +313,19 @@ function getData() {
             "publication_date": "20/12/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
-            "sale_price": null
+            "sale_price": null,
+            "details": [
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+            ]
         },
         {
             "id": 6,
@@ -247,7 +340,19 @@ function getData() {
             "publication_date": "05/11/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
-            "sale_price": null
+            "sale_price": null,
+            "details": [
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+            ]
         },
         {
             "id": 7,
@@ -262,7 +367,19 @@ function getData() {
             "publication_date": "01/08/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "20/12/2024",
-            "sale_price": 930000
+            "sale_price": 930000,
+            "details": [
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+            ]
         },
         {
             "id": 8,
@@ -277,7 +394,19 @@ function getData() {
             "publication_date": "15/12/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
-            "sale_price": null
+            "sale_price": null,
+            "details": [
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+            ]
         },
         {
             "id": 9,
@@ -292,7 +421,19 @@ function getData() {
             "publication_date": "01/01/2025",
             "purchase_date": "01/12/2024",
             "sale_date": null,
-            "sale_price": null
+            "sale_price": null,
+            "details": [
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+            ]
         },
         {
             "id": 10,
@@ -307,7 +448,19 @@ function getData() {
             "publication_date": "25/09/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "18/01/2025",
-            "sale_price": 315000
+            "sale_price": 315000,
+            "details": [
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Chiamata di follow-up per documenti mancanti",
+                },
+            ]
         }
     ];
 }
