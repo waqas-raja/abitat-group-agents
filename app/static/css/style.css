@@ -34,6 +34,7 @@ body { font-family:"Lato", serif; font-size: 16px; line-height: 1.5em; }
 .pointer:hover { cursor: pointer !important; }
 .text-blue { color: var(--primary-blue); }
 .text-orange { color: var(--primary-orange); }
+.bg-orange { background-color: var(--primary-orange); }
 .hover-orange:hover { color: var(--primary-orange) !important; }
 .text-small { font-size: 0.8em; }
 .pai-card { background: white; box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1); padding: 16px; border-radius: 5px; }
