@@ -1,64 +1,209 @@
-let barChart, pieChart1, pieChart2, pieChart3, pieChartTotal;
-const dataTorino = [40, 20, 15];
-const dataMoncalieri = [30, 50, 20];
-const dataRoma = [10, 10, 40];
-let total = [];
-const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const dataValues = [5000, 7000, 6000, 8000, 4000, 9000, 3000, 7000, 6000, 2000, 4000, 1000];
+const dataSource = [
+    { city: 'Torino', month: 'Jan', apartments: 40, houses: 30, villas: 15, apartmentsValue: 100, housesValue: 150, villasValue: 70 },
+    { city: 'Moncalieri', month: 'Jan', apartments: 40, houses: 30, villas: 15, apartmentsValue: 40, housesValue: 60, villasValue: 55 },
+    { city: 'Roma', month: 'Jan', apartments: 10, houses: 20, villas: 30, apartmentsValue: 60, housesValue: 40, villasValue: 45 },
+    { city: 'Torino', month: 'Feb', apartments: 40, houses: 30, villas: 15, apartmentsValue: 100, housesValue: 200, villasValue: 300 },
+    { city: 'Moncalieri', month: 'Feb', apartments: 40, houses: 30, villas: 15, apartmentsValue: 40, housesValue: 60, villasValue: 55 },
+    { city: 'Roma', month: 'Feb', apartments: 10, houses: 20, villas: 30, apartmentsValue: 60, housesValue: 40, villasValue: 45 },
+    { city: 'Torino', month: 'Mar', apartments: 40, houses: 30, villas: 15, apartmentsValue: 100, housesValue: 200, villasValue: 300 },
+    { city: 'Moncalieri', month: 'Mar', apartments: 40, houses: 30, villas: 15, apartmentsValue: 40, housesValue: 60, villasValue: 55 },
+    { city: 'Roma', month: 'Mar', apartments: 10, houses: 20, villas: 30, apartmentsValue: 60, housesValue: 40, villasValue: 45 },
+    { city: 'Torino', month: 'Apr', apartments: 40, houses: 30, villas: 15, apartmentsValue: 100, housesValue: 200, villasValue: 300 },
+    { city: 'Moncalieri', month: 'Apr', apartments: 40, houses: 30, villas: 15, apartmentsValue: 40, housesValue: 60, villasValue: 55 },
+    { city: 'Roma', month: 'Apr', apartments: 10, houses: 20, villas: 30, apartmentsValue: 60, housesValue: 40, villasValue: 45 },
+    { city: 'Torino', month: 'May', apartments: 40, houses: 30, villas: 15, apartmentsValue: 100, housesValue: 200, villasValue: 300 },
+    { city: 'Moncalieri', month: 'May', apartments: 40, houses: 30, villas: 15, apartmentsValue: 40, housesValue: 60, villasValue: 55 },
+    { city: 'Roma', month: 'May', apartments: 10, houses: 20, villas: 30, apartmentsValue: 60, housesValue: 40, villasValue: 45 },
+    { city: 'Torino', month: 'Jun', apartments: 40, houses: 30, villas: 15, apartmentsValue: 100, housesValue: 200, villasValue: 300 },
+    { city: 'Moncalieri', month: 'Jun', apartments: 40, houses: 30, villas: 15, apartmentsValue: 40, housesValue: 60, villasValue: 55 },
+    { city: 'Roma', month: 'Jun', apartments: 10, houses: 20, villas: 30, apartmentsValue: 90, housesValue: 240, villasValue: 145 },
+];
+let filteredDataSource = [];
+const chartPalette = 'Dark Violet';
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("ddlTimeInterval").addEventListener("change", function () {
-        loadBarChart(parseInt(this.value));
+        filterDataSourceAsPerSelection(parseInt(this.value));
     });
-    loadBarChart(3);
-    loadSummaries();
-
-    const ctxPie1 = document.getElementById("pieChart1").getContext("2d");
-    const ctxPie2 = document.getElementById("pieChart2").getContext("2d");
-    const ctxPie3 = document.getElementById("pieChart3").getContext("2d");
-    const ctxPieTotal = document.getElementById("pieChartTotal").getContext("2d");
-
-    loadPieChart(pieChart1, ctxPie1, dataTorino);
-    loadPieChart(pieChart2, ctxPie2, dataMoncalieri);
-    loadPieChart(pieChart3, ctxPie3, dataRoma);
-
-    total = sumArrays(dataTorino, dataMoncalieri, dataRoma);
-    loadPieChart(pieChartTotal, ctxPieTotal, total);
+    initInternalTabs();
+    filterDataSourceAsPerSelection(1);
 });
 
-function loadPieChart(pieChart, ctx, data) {
-    if (pieChart) pieChart.destroy();
-    pieChart = new Chart(ctx, {
-        type: "pie",
-        data: {
-            labels: ["Apartments", "Houses", "Villas"],
-            datasets: [{ data: data, backgroundColor: ["#ed7d31", "#4472c4", "#009A6B"] }]
-        }
+function filterDataSourceAsPerSelection(months) {
+    const uniqueMonths = [...new Set(dataSource.map(d => d.month))];
+    const selectedMonths = uniqueMonths.slice(-months);
+    filteredDataSource = dataSource.filter(d => selectedMonths.includes(d.month));
+
+    loadBarChart('locationBasedSummaryChart');
+    loadPieChart('torinoPie');
+    loadPieChart('moncalieriPie');
+    loadPieChart('romaPie');
+    loadPieChart('totalPie');
+    loadSummaries();
+}
+
+function loadPieChart(chartId) {
+    let city = '';
+    switch (chartId) {
+        case 'torinoPie': city = 'Torino'; break;
+        case 'moncalieriPie': city = 'Moncalieri'; break;
+        case 'romaPie': city = 'Roma'; break;
+    }
+
+    let totalApartments, totalHouses, totalVillas = 0;
+    if (city === '') {
+        totalApartments = filteredDataSource.reduce((sum, entry) => sum + entry.apartments, 0);
+        totalHouses = filteredDataSource.reduce((sum, entry) => sum + entry.houses, 0);
+        totalVillas = filteredDataSource.reduce((sum, entry) => sum + entry.villas, 0);
+    } else {
+        const locationData = filteredDataSource.filter(entry => entry.city === city);
+        totalApartments = locationData.reduce((sum, item) => sum + item.apartments, 0);
+        totalHouses = locationData.reduce((sum, item) => sum + item.houses, 0);
+        totalVillas = locationData.reduce((sum, item) => sum + item.villas, 0);
+    }
+    const formatedData = [
+        { category: "Apartments", value: totalApartments },
+        { category: "Houses", value: totalHouses },
+        { category: "Villas", value: totalVillas }
+    ];
+    $(`#${chartId}`).dxPieChart({
+        size: {
+            // width: auto,
+            // height: 300,
+        },
+        dataSource: formatedData,
+        palette: chartPalette,
+        series: [
+            {
+                argumentField: 'category',
+                valueField: 'value',
+                label: {
+                    visible: true,
+                    connector: { visible: true, width: 0.5},
+                    font: {
+                        size: 14,
+                        color: '#fff',
+                        weight: 600
+                    },
+                },
+            },
+        ],
+        title: {
+            text: city !== '' ? city + ' Property' : 'Overall Property',
+            font: {
+                size: 16,
+                color: '#aaa',
+                weight: 600,
+            },
+            alignment: 'center',
+        },
+        export: {
+            enabled: true,
+        },
+        onPointClick(e) {
+            const point = e.target;
+            toggleVisibility(point);
+        },
+        onLegendClick(e) {
+            const arg = e.target;
+            toggleVisibility(this.getAllSeries()[0].getPointsByArg(arg)[0]);
+        },
     });
 }
 
-function loadBarChart(months) {
-    const ctxBar = document.getElementById("barChart").getContext("2d");
-    const selectedLabels = labels.slice(-months);
-    const selectedData = dataValues.slice(-months);
-    if (barChart) barChart.destroy();
-    barChart = new Chart(ctxBar, {
-        type: "bar",
-        data: {
-            labels: selectedLabels,
-            datasets: [{
-                label: "Price Delta (€)",
-                data: selectedData,
-                backgroundColor: "#f07f3c"
-            }]
-        }
+function toggleVisibility(item) {
+    if (item.isVisible()) {
+        item.hide();
+    } else {
+        item.show();
+    }
+}
+
+function loadBarChart(chartId) {
+    $(`#${chartId}`).dxChart({
+        dataSource: filteredDataSource,
+        palette: chartPalette,
+        title: {
+            text: 'Location Distribution',
+            font: {
+                size: 18,
+                color: '#aaa',
+                weight: 600,
+            },
+            subtitle: {
+                text: '(Property Types & Delta Values)',
+                font: {
+                    size: 12,
+                    color: '#aaa',
+                    weight: 600,
+                }, 
+            },
+        },
+        commonSeriesSettings: {
+            aggregation: {
+                enabled: true,
+                method: 'sum',
+            },
+            argumentField: 'city',
+            type: 'bar',
+        },
+        series: [
+            { valueField: 'apartmentsValue', name: 'Apartments' },
+            { valueField: 'housesValue', name: 'Houses' },
+            { valueField: 'villasValue', name: 'Villas' }
+        ],
+        legend: {
+            visible: true,
+        },
+        label: {
+            enabled: true,
+        },
+        tooltip: {
+            enabled: true,
+            customizeTooltip: function (arg) {
+                return { text: `${arg.seriesName}: ${formatNumber(arg.value)}` };
+            }
+        },
     });
 }
 
 function loadSummaries() {
-    document.getElementById('torinoSummary').textContent = "Torino: " + formatNumber(5000);
-    document.getElementById('moncalieriSummary').textContent = "Moncalieri: " + formatNumber(7000);
-    document.getElementById('romaSummary').textContent = "Roma: " + formatNumber(6000);
-    document.getElementById('overallSummary').textContent = "Summary: " + formatNumber(18000);
+    const aggregatedData = filteredDataSource.reduce((acc, entry) => {
+        if (!acc[entry.city]) {
+            acc[entry.city] = { total_apartments: 0, total_houses: 0, total_villas: 0, value_villas: 0, value_houses: 0, value_apartments: 0 };
+        }
+        acc[entry.city].total_apartments += entry.apartments;
+        acc[entry.city].total_houses += entry.houses;
+        acc[entry.city].total_villas += entry.villas;
+        acc[entry.city].value_villas += entry.villasValue;
+        acc[entry.city].value_houses += entry.housesValue;
+        acc[entry.city].value_apartments += entry.apartmentsValue;
+        return acc;
+    }, {});
+    const result = Object.entries(aggregatedData).map(([city, values]) => ({
+        [city]: values
+    }));
+    console.log(result);
+    const totApart = (result[0].Torino.total_apartments + result[1].Moncalieri.total_apartments + result[2].Roma.total_apartments);
+    const totHouse = (result[0].Torino.total_houses + result[1].Moncalieri.total_houses + result[2].Roma.total_houses);
+    const totVilla = (result[0].Torino.total_villas + result[1].Moncalieri.total_villas + result[2].Roma.total_villas);
+    document.getElementById('totApartment').textContent = totApart;
+    document.getElementById('totHouse').textContent = totHouse;
+    document.getElementById('totVilla').textContent = totVilla;
+    document.getElementById('overallProp').textContent = totApart + totHouse + totVilla;
+    
+    const totTorValue = result[0].Torino.value_apartments + result[0].Torino.value_houses + result[0].Torino.value_villas;
+    const totMonValue = result[1].Moncalieri.value_apartments + result[1].Moncalieri.value_houses + result[1].Moncalieri.value_villas;
+    const totRomValue = result[2].Roma.value_apartments + result[2].Roma.value_houses + result[2].Roma.value_villas;
+    document.getElementById('torinoSummary').textContent = "Torino: " + formatNumber(totTorValue);
+    document.getElementById('moncalieriSummary').textContent = "Moncalieri: " + formatNumber(totMonValue);
+    document.getElementById('romaSummary').textContent = "Roma: " + formatNumber(totRomValue);
+    document.getElementById('overallSummary').textContent = "Summary: " + formatNumber(totTorValue + totMonValue + totRomValue);
+}
+
+function getFilteredData(months) {
+    const uniqueMonths = [...new Set(dataSource.map(d => d.month))];
+    const selectedMonths = uniqueMonths.slice(-months);
+    return dataSource.filter(d => selectedMonths.includes(d.month));
 }
 
 function sumArrays(...arrays) {
