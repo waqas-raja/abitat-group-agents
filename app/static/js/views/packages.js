@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadList(id, data) {
-    debugger;
     new DevExpress.ui.dxDataGrid(document.getElementById(id), {
         dataSource: data,
         columnAutoWidth: true,
@@ -17,7 +16,7 @@ function loadList(id, data) {
         columns: [
             { dataField: "id", caption: "Id", allowFiltering: true },
             { dataField: "name", caption: "Nome", allowFiltering: true },
-            { 
+            {
                 dataField: "fixed_fee",
                 caption: "Canone fisso",
                 allowFiltering: true,
@@ -25,7 +24,7 @@ function loadList(id, data) {
                     return formatNumber(data.fixed_fee);
                 }
             },
-            { 
+            {
                 dataField: "percentage",
                 caption: "Percentuale",
                 allowFiltering: true,
@@ -47,7 +46,7 @@ function loadList(id, data) {
                     widget: "dxButton",
                     options: {
                         icon: "add",
-                        text: "Aggiungi Agente",
+                        text: "Aggiungi Pacchetto",
                         onClick: function () {
                             const modalElement = document.getElementById("modalAddPackage");
                             const modal = new bootstrap.Modal(modalElement);
@@ -59,7 +58,11 @@ function loadList(id, data) {
                 }
             ]
         },
-        onRowClick: function (e) { if (e.rowType === "data") { window.location = `/agent/${e.data.id}`; } },
+        onRowClick: function (e) {
+            if (e.rowType === "data") {
+                // window.location = `/agent/${e.data.id}`;
+            }
+        },
         // onExporting: function (e) {
         //     if (e.format === 'xlsx') {
         //         const workbook = new ExcelJS.Workbook();
