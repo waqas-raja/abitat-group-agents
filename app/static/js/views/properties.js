@@ -14,7 +14,7 @@ function populateDropdown(d, ctrl_id) {
     for (let i = 0; i < d.length; i++) {
         const opt = document.createElement('option');
         opt.value = d[i].id;
-        opt.textContent = d[i].assigned_agent;
+        opt.textContent = d[i].purchaseAgent;
         document.getElementById(ctrl_id).appendChild(opt);
     }
 }
@@ -38,6 +38,34 @@ function loadList(cid) {
         // export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
         columns: [
             {
+                dataField: "status",
+                caption: "",
+                allowFiltering: true,
+                width: 50,
+                alignment: "center",
+                cellTemplate: function(container, options) {
+                    let iconClass, tooltipText;
+                    switch (options.value) {
+                        case "sold":
+                            iconClass = "bi bi-check-circle-fill text-success"; // Icona di "venduto"
+                            tooltipText = "Venduto";
+                            break;
+                        case "in_management":
+                            iconClass = "bi bi-hourglass-split text-warning"; // Icona di "in gestione"
+                            tooltipText = "In gestione";
+                            break;
+                        default:
+                            iconClass = "bi bi-question-circle text-secondary"; // Icona generica per stato sconosciuto
+                            tooltipText = "Stato sconosciuto";
+                    }
+
+                    $("<i>")
+                        .addClass(iconClass)
+                        .attr("title", tooltipText) // Tooltip al passaggio del mouse
+                        .appendTo(container);
+                }
+            },
+            {
                 dataField: "type",
                 caption: "Tipologia",
                 allowFiltering: true,
@@ -50,9 +78,9 @@ function loadList(cid) {
                 }
             },
             { dataField: "address", caption: "Indirizzo", allowFiltering: true },
-            { dataField: "surface_area", caption: "Superficie", allowFiltering: true },
             { dataField: "purchase_date", caption: "Acquisito il", allowFiltering: true },
-            { dataField: "assigned_agent", caption: "Acquisito da", allowFiltering: true },
+            { dataField: "purchaseAgent", caption: "Acquisito da", allowFiltering: true },
+            { dataField: "purchaseSubAgent", caption: "Subagente acquisto", allowFiltering: true },
             {
                 dataField: "price",
                 caption: "Prezzo di acquisto",
@@ -62,7 +90,8 @@ function loadList(cid) {
                 }
             },
             { dataField: "sale_date", caption: "Venduto il", allowFiltering: true },
-            { dataField: "assigned_agent", caption: "Venduto da", allowFiltering: true },
+            { dataField: "saleAgent", caption: "Venduto da", allowFiltering: true },
+            { dataField: "saleSubAgent", caption: "Subagente vendita", allowFiltering: true },
             {
                 dataField: "sale_price",
                 caption: "Prezzo vendita",
@@ -200,22 +229,25 @@ function getData() {
             "city_id": 1,
             "surface_area": 120,
             "price": 350000,
-            "status": "In vendita",
-            "assigned_agent": "Marco Rossi",
+            "status": "in_management",
+            "purchaseAgent": "Marco Rossi (100%)",
+            "purchaseSubAgent": "",
             "publication_date": "01/12/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
+            "saleAgent": "Elena Galli (100%)",
+            "saleSubAgent": "",
             "details": [
                 {
                     "date": "28/12/2024",
                     "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
+                    "note": "Adeguamento al mercato",
                 },
                 {
                     "date": "28/12/2024",
                     "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
+                    "note": "Riallineamento con immobili simili",
                 },
             ]
         },
@@ -227,22 +259,25 @@ function getData() {
             "city_id": 1,
             "surface_area": 65,
             "price": 120000,
-            "status": "Venduto",
-            "assigned_agent": "Laura Bianchi",
+            "status": "sold",
+            "purchaseAgent": "Laura Bianchi (80%)",
+            "purchaseSubAgent": "Mario Rossi (20%)",
             "publication_date": "15/10/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "10/01/2025",
             "sale_price": 115000,
+            "saleAgent": "Elena Galli (80%)",
+            "saleSubAgent": "Mario Rossi (20%)",
             "details": [
                 {
                     "date": "28/12/2024",
                     "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
+                    "note": "Maggiore richiesta nella zona",
                 },
                 {
                     "date": "28/12/2024",
                     "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
+                    "note": "Riduzione per incentivare l’acquisto",
                 },
             ]
         },
@@ -254,23 +289,21 @@ function getData() {
             "city_id": 3,
             "surface_area": 240,
             "price": 650000,
-            "status": "In vendita",
-            "assigned_agent": "Alessandro Verdi",
+            "status": "in_management",
+            "purchaseAgent": "Alessandro Verdi (50%)",
+            "purchaseSubAgent": "Mario Rossi (50%)",
             "publication_date": "01/11/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
+            "saleAgent": "Alessandro Verdi (100%)",
+            "saleSubAgent": "",
             "details": [
                 {
                     "date": "28/12/2024",
                     "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
-                },
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
-                },
+                    "note": "Adeguamento ai prezzi della concorrenza",
+                }
             ]
         },
         {
@@ -281,23 +314,17 @@ function getData() {
             "city_id": 1,
             "surface_area": 40,
             "price": 95000,
-            "status": "Venduto",
-            "assigned_agent": "Giulia Neri",
+            "status": "sold",
+            "purchaseAgent": "Giulia Neri (100%)",
+            "purchaseSubAgent": "",
             "publication_date": "10/09/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "05/01/2025",
             "sale_price": 97000,
+            "saleAgent": "Luca Ferrari (30%)",
+            "saleSubAgent": "Laura Bianchi (70%)",
             "details": [
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
-                },
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
-                },
+
             ]
         },
         {
@@ -308,22 +335,25 @@ function getData() {
             "city_id": 3,
             "surface_area": 95,
             "price": 210000,
-            "status": "In vendita",
-            "assigned_agent": "Luca Ferrari",
+            "status": "in_management",
+            "purchaseAgent": "Luca Ferrari (100%)",
+            "purchaseSubAgent": "",
             "publication_date": "20/12/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
+            "saleAgent": "Alessandro Verdi (80%)",
+            "saleSubAgent": "Laura Bianchi (20%)",
             "details": [
                 {
                     "date": "28/12/2024",
                     "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
+                    "note": "Aggiornamento post perizia",
                 },
                 {
                     "date": "28/12/2024",
                     "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
+                    "note": "Richiesta del venditore",
                 },
             ]
         },
@@ -335,23 +365,17 @@ function getData() {
             "city_id": 1,
             "surface_area": 180,
             "price": 180000,
-            "status": "In vendita",
-            "assigned_agent": "Elena Galli",
+            "status": "in_management",
+            "purchaseAgent": "Elena Galli (100%)",
+            "purchaseSubAgent": "",
             "publication_date": "05/11/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
+            "saleAgent": "Alessandro Verdi (100%)",
+            "saleSubAgent": "",
             "details": [
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
-                },
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
-                },
+
             ]
         },
         {
@@ -362,22 +386,30 @@ function getData() {
             "city_id": 3,
             "surface_area": 150,
             "price": 950000,
-            "status": "Venduto",
-            "assigned_agent": "Simone De Luca",
+            "status": "sold",
+            "purchaseAgent": "Simone De Luca (60%)",
+            "purchaseSubAgent": "Elena Galli (40%)",
             "publication_date": "01/08/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "20/12/2024",
             "sale_price": 930000,
+            "saleAgent": "Elena Galli (100%)",
+            "saleSubAgent": "",
             "details": [
                 {
                     "date": "28/12/2024",
                     "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
+                    "note": "Adeguamento post valutazione bancaria",
                 },
                 {
                     "date": "28/12/2024",
                     "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
+                    "note": "Miglioramento condizioni di vendita",
+                },
+                {
+                    "date": "28/12/2024",
+                    "new_price": 60000,
+                    "note": "Cambio di strategia di vendita",
                 },
             ]
         },
@@ -389,23 +421,17 @@ function getData() {
             "city_id": 1,
             "surface_area": 80,
             "price": 220000,
-            "status": "In vendita",
-            "assigned_agent": "Martina Bianchi",
+            "status": "in_management",
+            "purchaseAgent": "Martina Bianchi (100%)",
+            "purchaseSubAgent": "",
             "publication_date": "15/12/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
+            "saleAgent": "Elena Galli (100%)",
+            "saleSubAgent": "",
             "details": [
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
-                },
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
-                },
+
             ]
         },
         {
@@ -416,23 +442,17 @@ function getData() {
             "city_id": 3,
             "surface_area": 300,
             "price": 1250000,
-            "status": "In vendita",
-            "assigned_agent": "Alberto Russo",
+            "status": "in_management",
+            "purchaseAgent": "Alberto Russo (100%)",
+            "purchaseSubAgent": "",
             "publication_date": "01/01/2025",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
+            "saleAgent": "Elena Galli (100%)",
+            "saleSubAgent": "",
             "details": [
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
-                },
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
-                },
+
             ]
         },
         {
@@ -443,22 +463,25 @@ function getData() {
             "city_id": 1,
             "surface_area": 110,
             "price": 320000,
-            "status": "Venduto",
-            "assigned_agent": "Giovanni Conte",
+            "status": "sold",
+            "purchaseAgent": "Giovanni Conte (60%)",
+            "purchaseSubAgent": "Simone De Luca (40%)",
             "publication_date": "25/09/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "18/01/2025",
             "sale_price": 315000,
+            "saleAgent": "Elena Galli (100%)",
+            "saleSubAgent": "",
             "details": [
                 {
                     "date": "28/12/2024",
                     "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
+                    "note": "Prezzo rivisto dopo trattativa",
                 },
                 {
                     "date": "28/12/2024",
                     "new_price": 60000,
-                    "note": "Chiamata di follow-up per documenti mancanti",
+                    "note": "Rialzo dovuto a rivalutazione della zona",
                 },
             ]
         }
