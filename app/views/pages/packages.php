@@ -4,7 +4,7 @@ ob_start();
 require_once __DIR__ . "/../modals/add-package.php";
 ?>
 
-<div id="settings">
+<div id="package">
     <div class="pai-card">
         <span class="pai-title">Pacchetti</span>
         <!-- <div class="bg-light p-3 mt-3"><i>Pagina in allestimento</i></div> -->

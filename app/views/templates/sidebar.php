@@ -13,7 +13,7 @@
         <li class="nav-item"><a id="menuProperties" href="/properties" class="nav-link"><i class="bi bi-buildings fs-4 me-3"></i>Immobili</a></li>
         <li class="nav-item"><a id="menuAgents" href="/agents" class="nav-link"><i class="bi bi-person-lines-fill fs-4 me-3"></i>Agenti</a></li>
         <li class="nav-item"><a id="menuPackages" href="/packages" class="nav-link"><i class="bi bi-percent fs-4 me-3"></i>Pacchetti</a></li>
-        <li class="nav-item"><a id="menuPackages" href="/expense-reports" class="nav-link"><i class="bi bi-piggy-bank fs-4 me-3"></i>Note spese</a></li>
+        <li class="nav-item"><a id="menuExpenseReports" href="/expense-reports" class="nav-link"><i class="bi bi-piggy-bank fs-4 me-3"></i>Note spese</a></li>
     </ul>
     <p>Made with ♥ by Prodigio AI<br><span id="copyright"></span></p>
 </div>

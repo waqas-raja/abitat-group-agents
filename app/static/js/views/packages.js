@@ -88,31 +88,31 @@ function getData() {
     return [
         {
             "id": 1,
-            "name": "Marco",
-            "fixed_fee": 1500,
-            "percentage": 15,
-            "description": "description description"
+            "name": "Basic",
+            "fixed_fee": 500,
+            "percentage": 30,
+            "description": "Basso rischio con guadagni stabili, adatto a chi ha meno esperienza"
         },
         {
             "id": 2,
-            "name": "Elisa",
-            "fixed_fee": 1100,
-            "percentage": 11,
-            "description": "description description"
+            "name": "Premium",
+            "fixed_fee": 1500,
+            "percentage": 60,
+            "description": "Alto guadagno per agenti esperti con elevato volume di vendite"
         },
         {
             "id": 3,
-            "name": "Waqas",
-            "fixed_fee": 1200,
-            "percentage": 12,
-            "description": "description description"
+            "name": "Flex",
+            "fixed_fee": 800,
+            "percentage": 45,
+            "description": "Equilibrio tra sicurezza e rendimento"
         },
         {
             "id": 4,
-            "name": "Rahat",
-            "fixed_fee": 1300,
-            "percentage": 13,
-            "description": "description description"
+            "name": "Elite",
+            "fixed_fee": 0,
+            "percentage": 50,
+            "description": "Nessun costo fisso, percentuale più alte"
         },
     ];
 }
