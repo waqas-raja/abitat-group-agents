@@ -8,27 +8,27 @@
             <div class="modal-body">
                 <form id="">
                     <div class="row mb-3">
-                        <label for="txtName" class="col-sm-4 col-form-label">Nome</label>
+                        <label for="txtName" class="col-sm-4 col-form-label">Nome<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="txtName" required>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtFixedFee" class="col-sm-4 col-form-label">Canone fisso</label>
+                        <label for="txtFixedFee" class="col-sm-4 col-form-label">Canone fisso<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <input type="number" class="form-control" id="txtFixedFee" required>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtPercentage" class="col-sm-4 col-form-label">Percentuale</label>
+                        <label for="txtPercentage" class="col-sm-4 col-form-label">Percentuale<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <input type="number" class="form-control" id="txtPercentage" required>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtDescription" class="col-sm-4 col-form-label">Descrizione</label>
+                        <label for="txtDescription" class="col-sm-4 col-form-label">Descrizione<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="txtDescription" required>
+                            <textarea class="form-control" id="txtDescription" rows="3" required>
                         </div>
                     </div>
                     
