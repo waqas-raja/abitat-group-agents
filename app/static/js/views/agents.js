@@ -39,11 +39,9 @@ function loadList(id, data) {
             },
             { dataField: "number_of_properties_managed", caption: "Proprietà in gestione", allowFiltering: true },
             { 
+                dataField: "properties_sold",
                 caption: "Proprietà vendute",
-                allowFiltering: true,
-                calculateCellValue: function () {
-                    return 'in progress';
-                }
+                allowFiltering: true
             },
             { 
                 caption: "Totale vendite",
@@ -210,7 +208,8 @@ function getDateTorino() {
             "last_name": "Rossi",
             "commission": "5%",
             "fixed_cost": 1500,
-            "number_of_properties_managed": 25
+            "number_of_properties_managed": 25,
+            "properties_sold":7
         },
         {
             "id": 2,
@@ -218,7 +217,8 @@ function getDateTorino() {
             "last_name": "Bianchi",
             "commission": "6%",
             "fixed_cost": 1300,
-            "number_of_properties_managed": 18
+            "number_of_properties_managed": 18,
+            "properties_sold":36
         },
         {
             "id": 3,
@@ -226,7 +226,8 @@ function getDateTorino() {
             "last_name": "Galli",
             "commission": "4.5%",
             "fixed_cost": 1600,
-            "number_of_properties_managed": 30
+            "number_of_properties_managed": 30,
+            "properties_sold":13
         },
         {
             "id": 4,
@@ -234,7 +235,8 @@ function getDateTorino() {
             "last_name": "Ferrari",
             "commission": "5.5%",
             "fixed_cost": 1400,
-            "number_of_properties_managed": 20
+            "number_of_properties_managed": 20,
+            "properties_sold":23
         }
     ];
 }

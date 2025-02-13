@@ -39,29 +39,28 @@ function loadList(cid) {
         columns: [
             {
                 dataField: "status",
-                caption: "",
-                allowFiltering: true,
+                caption: "Stato",
+                allowFiltering: false,
                 width: 50,
                 alignment: "center",
                 cellTemplate: function(container, options) {
                     let iconClass, tooltipText;
                     switch (options.value) {
                         case "sold":
-                            iconClass = "bi bi-check-circle-fill text-success"; // Icona di "venduto"
+                            iconClass = "bi bi-check-circle-fill text-success"; // Icona "venduto"
                             tooltipText = "Venduto";
                             break;
                         case "in_management":
-                            iconClass = "bi bi-hourglass-split text-warning"; // Icona di "in gestione"
+                            iconClass = "bi bi-hourglass-split text-warning"; // Icona "in gestione"
                             tooltipText = "In gestione";
                             break;
                         default:
-                            iconClass = "bi bi-question-circle text-secondary"; // Icona generica per stato sconosciuto
+                            iconClass = "bi bi-question-circle text-secondary"; // Icona generica
                             tooltipText = "Stato sconosciuto";
                     }
-
                     $("<i>")
                         .addClass(iconClass)
-                        .attr("title", tooltipText) // Tooltip al passaggio del mouse
+                        .attr("title", tooltipText)
                         .appendTo(container);
                 }
             },
@@ -78,27 +77,42 @@ function loadList(cid) {
                 }
             },
             { dataField: "address", caption: "Indirizzo", allowFiltering: true },
-            { dataField: "purchase_date", caption: "Acquisito il", allowFiltering: true },
-            { dataField: "purchaseAgent", caption: "Acquisito da", allowFiltering: true },
-            { dataField: "purchaseSubAgent", caption: "Subagente acquisto", allowFiltering: true },
             {
-                dataField: "price",
-                caption: "Prezzo di acquisto",
-                allowFiltering: true,
-                calculateCellValue: function (data) {
-                    return formatNumber(data.price);
-                }
+                caption: "Dati di Acquisto",
+                alignment: "center",
+                cssClass: "alert alert-warning",
+                columns: [
+                    { dataField: "purchase_date", caption: "Data", allowFiltering: true },
+                    { dataField: "purchaseAgent", caption: "Agente", allowFiltering: true },
+                    { dataField: "purchaseSubAgent", caption: "Subagente", allowFiltering: true },
+                    {
+                        dataField: "price",
+                        caption: "Prezzo",
+                        allowFiltering: true,
+                        calculateCellValue: function (data) {
+                            return formatNumber(data.price);
+                        }
+                    }
+                ]
             },
-            { dataField: "sale_date", caption: "Venduto il", allowFiltering: true },
-            { dataField: "saleAgent", caption: "Venduto da", allowFiltering: true },
-            { dataField: "saleSubAgent", caption: "Subagente vendita", allowFiltering: true },
             {
-                dataField: "sale_price",
-                caption: "Prezzo vendita",
-                allowFiltering: true,
-                calculateCellValue: function (data) {
-                    if (data.sale_price !== null) return formatNumber(data.sale_price);
-                }
+                caption: "Dati di Vendita",
+                alignment: "center",
+                cssClass: "alert alert-success",
+                columns: [
+                    { dataField: "sale_date", caption: "Data", allowFiltering: true },
+                    { dataField: "saleAgent", caption: "Agente", allowFiltering: true },
+                    { dataField: "saleSubAgent", caption: "Subagente", allowFiltering: true },
+                    {
+                        dataField: "sale_price",
+                        caption: "Prezzo",
+                        allowFiltering: true,
+                        calculateCellValue: function (data) {
+                            if (data.sale_price !== null) return formatNumber(data.sale_price);
+                        }
+                    },
+
+                ]
             },
             {
                 caption: "Delta",
@@ -108,6 +122,7 @@ function loadList(cid) {
                 }
             }
         ],
+
         masterDetail: {
             enabled: true,
             template: function (container, options) {
@@ -144,18 +159,6 @@ function loadList(cid) {
                 "groupPanel",
                 "searchPanel",
                 "exportButton",
-                // {
-                //     location: "after",
-                //     widget: "dxButton",
-                //     options: {
-                //         icon: "add",
-                //         text: "Aggiungi Proprietà",
-                //         onClick: function () {
-                //             showEditPropertyModal(null, 'Aggiungi proprietà');
-                //         },
-                //         elementAttr: { class: "btn-orange" }
-                //     }
-                // }
             ]
         },
         onRowClick: function (e) {
