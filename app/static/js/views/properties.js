@@ -86,11 +86,11 @@ function loadList(cid) {
                     { dataField: "purchaseAgent", caption: "Agente", allowFiltering: true },
                     { dataField: "purchaseSubAgent", caption: "Subagente", allowFiltering: true },
                     {
-                        dataField: "price",
+                        dataField: "purchase_price",
                         caption: "Prezzo",
                         allowFiltering: true,
                         calculateCellValue: function (data) {
-                            return formatNumber(data.price);
+                            return formatNumber(data.purchase_price);
                         }
                     }
                 ]
@@ -118,7 +118,7 @@ function loadList(cid) {
                 caption: "Delta",
                 allowFiltering: true,
                 calculateCellValue: function (data) {
-                    if (data.sale_price !== null) return formatNumber(data.sale_price - data.price);
+                    if (data.sale_price !== null) return formatNumber(data.sale_price - data.purchase_price);
                 }
             }
         ],
@@ -195,7 +195,7 @@ async function saveProperty() {
     const acquiredBy = document.getElementById("ddlPropertyAcquiredBy").value.trim();
     const type = document.getElementById("ddlPropertyType").value.trim();
     const address = document.getElementById("txtPropertyAddress");
-    const price = document.getElementById("txtPropertyPurchasePrice");
+    const purchase_price = document.getElementById("txtPropertyPurchasePrice");
     const location = document.getElementById("ddlPropertyLocation").value.trim();
     const ele = document.getElementsByClassName('pai-tabs');
     if (parseInt(location) === 1) ele[0].children[0].click();
@@ -214,7 +214,7 @@ function showEditPropertyModal(res, modalTitle) {
     // document.getElementById('txtPropertyName').value = res !== null ? res[0].title : '';
     document.getElementById('ddlPropertyType').value = res !== null ? res[0].type : '';
     document.getElementById('txtPropertyAddress').value = res !== null ? res[0].address : '';
-    document.getElementById('txtPropertyPurchasePrice').value = res !== null ? res[0].price : '';
+    document.getElementById('txtPropertyPurchasePrice').value = res !== null ? res[0].purchase_price : '';
     document.getElementById('modalAddPropertyLabel').innerText = modalTitle;
     document.getElementById('ddlPropertyLocation').value = city_id;
     const modalElement = document.getElementById("modalAddProperty");
@@ -230,12 +230,10 @@ function getData() {
             "type": 2,
             "address": "Via Roma, 45, Torino",
             "city_id": 1,
-            "surface_area": 120,
-            "price": 350000,
+            "purchase_price": 350000,
             "status": "in_management",
             "purchaseAgent": "Marco Rossi (100%)",
             "purchaseSubAgent": "",
-            "publication_date": "01/12/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
@@ -260,12 +258,10 @@ function getData() {
             "type": 1,
             "address": "Corso Francia, 120, Torino",
             "city_id": 1,
-            "surface_area": 65,
-            "price": 120000,
+            "purchase_price": 120000,
             "status": "sold",
             "purchaseAgent": "Laura Bianchi (80%)",
             "purchaseSubAgent": "Mario Rossi (20%)",
-            "publication_date": "15/10/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "10/01/2025",
             "sale_price": 115000,
@@ -290,12 +286,10 @@ function getData() {
             "type": 3,
             "address": "Via delle Mimose, 10, Roma",
             "city_id": 3,
-            "surface_area": 240,
-            "price": 650000,
+            "purchase_price": 650000,
             "status": "in_management",
             "purchaseAgent": "Alessandro Verdi (50%)",
             "purchaseSubAgent": "Mario Rossi (50%)",
-            "publication_date": "01/11/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
@@ -315,12 +309,10 @@ function getData() {
             "type": 1,
             "address": "Via Garibaldi, 22, Torino",
             "city_id": 1,
-            "surface_area": 40,
-            "price": 95000,
+            "purchase_price": 95000,
             "status": "sold",
             "purchaseAgent": "Giulia Neri (100%)",
             "purchaseSubAgent": "",
-            "publication_date": "10/09/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "05/01/2025",
             "sale_price": 97000,
@@ -336,12 +328,10 @@ function getData() {
             "type": 2,
             "address": "Via Tiburtina, 78, Roma",
             "city_id": 3,
-            "surface_area": 95,
-            "price": 210000,
+            "purchase_price": 210000,
             "status": "in_management",
             "purchaseAgent": "Luca Ferrari (100%)",
             "purchaseSubAgent": "",
-            "publication_date": "20/12/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
@@ -366,12 +356,10 @@ function getData() {
             "type": 4,
             "address": "Strada Provinciale 32, Torino",
             "city_id": 1,
-            "surface_area": 180,
-            "price": 180000,
+            "purchase_price": 180000,
             "status": "in_management",
             "purchaseAgent": "Elena Galli (100%)",
             "purchaseSubAgent": "",
-            "publication_date": "05/11/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
@@ -387,12 +375,10 @@ function getData() {
             "type": 2,
             "address": "Via Veneto, 15, Roma",
             "city_id": 3,
-            "surface_area": 150,
-            "price": 950000,
+            "purchase_price": 950000,
             "status": "sold",
             "purchaseAgent": "Simone De Luca (60%)",
             "purchaseSubAgent": "Elena Galli (40%)",
-            "publication_date": "01/08/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "20/12/2024",
             "sale_price": 930000,
@@ -422,12 +408,10 @@ function getData() {
             "type": 1,
             "address": "Piazza Castello, 8, Torino",
             "city_id": 1,
-            "surface_area": 80,
-            "price": 220000,
+            "purchase_price": 220000,
             "status": "in_management",
             "purchaseAgent": "Martina Bianchi (100%)",
             "purchaseSubAgent": "",
-            "publication_date": "15/12/2024",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
@@ -443,12 +427,10 @@ function getData() {
             "type": 3,
             "address": "Via Appia Antica, 45, Roma",
             "city_id": 3,
-            "surface_area": 300,
-            "price": 1250000,
+            "purchase_price": 1250000,
             "status": "in_management",
             "purchaseAgent": "Alberto Russo (100%)",
             "purchaseSubAgent": "",
-            "publication_date": "01/01/2025",
             "purchase_date": "01/12/2024",
             "sale_date": null,
             "sale_price": null,
@@ -464,12 +446,10 @@ function getData() {
             "type": 2,
             "address": "Via Po, 16, Torino",
             "city_id": 1,
-            "surface_area": 110,
-            "price": 320000,
+            "purchase_price": 320000,
             "status": "sold",
             "purchaseAgent": "Giovanni Conte (60%)",
             "purchaseSubAgent": "Simone De Luca (40%)",
-            "publication_date": "25/09/2024",
             "purchase_date": "01/12/2024",
             "sale_date": "18/01/2025",
             "sale_price": 315000,
