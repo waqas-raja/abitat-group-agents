@@ -19,7 +19,7 @@ const dataSource = [
     { city: 'Roma', month: 'Jun', apartments: 10, houses: 20, villas: 30, apartmentsValue: 90, housesValue: 240, villasValue: 145 },
 ];
 let filteredDataSource = [];
-const chartPalette = 'Dark Violet';
+const chartPalette = 'Soft Pastel';
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("ddlTimeInterval").addEventListener("change", function () {
         filterDataSourceAsPerSelection(parseInt(this.value));
@@ -61,15 +61,11 @@ function loadPieChart(chartId) {
         totalVillas = locationData.reduce((sum, item) => sum + item.villas, 0);
     }
     const formatedData = [
-        { category: "Apartments", value: totalApartments },
-        { category: "Houses", value: totalHouses },
-        { category: "Villas", value: totalVillas }
+        { category: "Appartamenti", value: totalApartments },
+        { category: "Case", value: totalHouses },
+        { category: "Ville", value: totalVillas }
     ];
     $(`#${chartId}`).dxPieChart({
-        size: {
-            // width: auto,
-            // height: 300,
-        },
         dataSource: formatedData,
         palette: chartPalette,
         series: [
@@ -88,7 +84,7 @@ function loadPieChart(chartId) {
             },
         ],
         title: {
-            text: city !== '' ? city + ' Property' : 'Overall Property',
+            text: city !== '' ? city : 'Totale',
             font: {
                 size: 16,
                 color: '#aaa',
@@ -97,7 +93,7 @@ function loadPieChart(chartId) {
             alignment: 'center',
         },
         export: {
-            enabled: true,
+            enabled: false,
         },
         onPointClick(e) {
             const point = e.target;
@@ -122,22 +118,7 @@ function loadBarChart(chartId) {
     $(`#${chartId}`).dxChart({
         dataSource: filteredDataSource,
         palette: chartPalette,
-        title: {
-            text: 'Location Distribution',
-            font: {
-                size: 18,
-                color: '#aaa',
-                weight: 600,
-            },
-            subtitle: {
-                text: '(Property Types & Delta Values)',
-                font: {
-                    size: 12,
-                    color: '#aaa',
-                    weight: 600,
-                }, 
-            },
-        },
+        title: {},
         commonSeriesSettings: {
             aggregation: {
                 enabled: true,
@@ -147,16 +128,12 @@ function loadBarChart(chartId) {
             type: 'bar',
         },
         series: [
-            { valueField: 'apartmentsValue', name: 'Apartments' },
-            { valueField: 'housesValue', name: 'Houses' },
-            { valueField: 'villasValue', name: 'Villas' }
+            { valueField: 'apartmentsValue', name: 'Appartamenti' },
+            { valueField: 'housesValue', name: 'Case' },
+            { valueField: 'villasValue', name: 'Ville' }
         ],
-        legend: {
-            visible: true,
-        },
-        label: {
-            enabled: true,
-        },
+        legend: { visible: true },
+        label: { enabled: true },
         tooltip: {
             enabled: true,
             customizeTooltip: function (arg) {
@@ -197,7 +174,7 @@ function loadSummaries() {
     document.getElementById('torinoSummary').textContent = "Torino: " + formatNumber(totTorValue);
     document.getElementById('moncalieriSummary').textContent = "Moncalieri: " + formatNumber(totMonValue);
     document.getElementById('romaSummary').textContent = "Roma: " + formatNumber(totRomValue);
-    document.getElementById('overallSummary').textContent = "Summary: " + formatNumber(totTorValue + totMonValue + totRomValue);
+    document.getElementById('overallSummary').textContent = "Totale: " + formatNumber(totTorValue + totMonValue + totRomValue);
 }
 
 function getFilteredData(months) {

@@ -5,19 +5,16 @@ ob_start();
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div id="dashboard">
     <div class="pai-card mb-3">
-        <div class="d-flex align-items-center justify-content-between">
-            <span class="pai-title">Dashboard</span>
-            <div>
-                <select id="ddlTimeInterval" class="form-select">
-                    <option value="1" selected>Last 1 Month</option>
-                    <option value="3">Last 3 Months</option>
-                    <option value="6">Last 6 Months</option>
-                </select>
-            </div>
+        <div class="float-end">
+            <select id="ddlTimeInterval" class="form-select">
+                <option value="1" selected>Ultimo mese</option>
+                <option value="3">Ultimi 3 mesi</option>
+                <option value="6">Ultimi 6 mesi</option>
+            </select>
         </div>
         <div class="pai-tabs">
-            <div class="pai-tab active" data-tab="tabContentPropertiesSummary">Properties</div>
-            <div class="pai-tab" data-tab="tabContentLeadsSummary">Leads</div>
+            <div class="pai-tab active" data-tab="tabContentPropertiesSummary">Andamento immobili</div>
+            <div class="pai-tab" data-tab="tabContentLeadsSummary">Andamento agenti</div>
         </div>
     </div>
     <div id="tabContentPropertiesSummary" class="pai-tab-content active">
@@ -26,7 +23,7 @@ ob_start();
                 <div class="pai-card p-0">
                     <div class="alert alert-success px-3 py-2">
                         <div id="totApartment" class="fs-5 fw-bold">80</div>
-                        <small class="">Total Apartments</small>
+                        <small class="">Numero di Appartamenti</small>
                     </div>
                 </div>
             </div>
@@ -34,7 +31,7 @@ ob_start();
                 <div class="pai-card p-0">
                     <div class="alert alert-secondary px-3 py-2">
                         <div id="totHouse" class="fs-5 fw-bold">80</div>
-                        <small class="">Total Houses</small>
+                        <small class="">Numero di Case indipendenti</small>
                     </div>
                 </div>
             </div>
@@ -42,7 +39,7 @@ ob_start();
                 <div class="pai-card p-0">
                     <div class="alert alert-info px-3 py-2">
                         <div id="totVilla" class="fs-5 fw-bold">80</div>
-                        <small class="">Total Villas</small>
+                        <small class="">Numero di Ville</small>
                     </div>
                 </div>
             </div>
@@ -50,18 +47,18 @@ ob_start();
                 <div class="pai-card p-0">
                     <div class="alert alert-primary px-3 py-2">
                         <div id="overallProp" class="fs-5 fw-bold">240</div>
-                        <small class="">Overall Properties</small>
+                        <small class="">Totale Immobili</small>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row mb-3">
-            <div class="col-lg-8">
+            <div class="col-lg-7">
                 <div class="pai-card">
-                    <div id="locationBasedSummaryChart"></div>
+                    <div id="locationBasedSummaryChart" style="height:200px"></div>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <div class="row row-cols-2">
                     <div class="col">
                         <div class="pai-card mb-3">
