@@ -117,8 +117,22 @@ function loadList(cid) {
             {
                 caption: "Delta",
                 allowFiltering: true,
-                calculateCellValue: function (data) {
-                    if (data.sale_price !== null) return formatNumber(data.sale_price - data.purchase_price);
+                // calculateCellValue: function (data) {
+                //     if (data.sale_price !== null) return formatNumber(data.sale_price - data.purchase_price);
+                // }
+                cellTemplate: function(container, options) {
+                    if (!options.data.sale_date && !options.data.sale_price) {
+                        $("<button>")
+                            .text("Venduto")
+                            .addClass("btn btn-success")
+                            .on("click", function (event) {
+                                event.stopPropagation();
+                                showMarkPropertySoldModal(options.data);
+                            })
+                            .appendTo(container);
+                    } else {
+                        container.text(formatNumber(options.data.sale_price - options.data.purchase_price));
+                    }
                 }
             }
         ],
@@ -220,6 +234,38 @@ function showEditPropertyModal(res, modalTitle) {
     const modalElement = document.getElementById("modalAddProperty");
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
+}
+
+function showMarkPropertySoldModal(data) {
+    const label = document.getElementById("cbMarkPropertySoldLabel");
+    label.innerText = 'Contrassegna la proprietà a '+ data.address +' come venduta';
+    document.getElementById("spMarkPropertySoldResult").innerText = '';
+    const modalElement = document.getElementById("modalMarkPropertySold");
+    const modal = new bootstrap.Modal(modalElement);
+    if (data !== null) modal.show();
+    else {
+        modalElement.classList.remove("show");
+        modalElement.style.display = "none";
+        document.body.classList.remove("modal-open");
+        document.querySelector(".modal-backdrop")?.remove();
+    }
+}
+
+function savePropertyMarkedAsSold() {
+    const btn = document.getElementById("btnSaveMarkPropertySold");
+    const spinner = document.getElementById("spinnerMarkPropertySold");
+    const mark = document.getElementById("cbMarkPropertySold");
+    const result = document.getElementById("spMarkPropertySoldResult");
+    if (!mark.checked) {
+        result.innerText = "Si prega di compilare tutti i campi richiesti";
+        result.classList.remove("d-none");
+        return;
+    }
+    showMarkPropertySoldModal(null);
+    btn.disabled = true;
+    spinner.classList.remove("d-none");
+    result.classList.add("d-none");
+    result.innerText = "";
 }
 
 function getData() {
