@@ -6,6 +6,7 @@ const cities = [
 let city_id = 1;
 document.addEventListener("DOMContentLoaded", () => {
     initInternalTabs();
+    initDateControl("txtPropertySoldDate");
     loadList(city_id);
 });
 
@@ -238,7 +239,7 @@ function showEditPropertyModal(res, modalTitle) {
 
 function showMarkPropertySoldModal(data) {
     const label = document.getElementById("cbMarkPropertySoldLabel");
-    label.innerText = 'Contrassegna la proprietà a '+ data.address +' come venduta';
+    label.innerHTML = 'Contrassegna la proprietà a '+ data.address +' come venduta <span class="text-danger ms-2">*</span>';
     document.getElementById("spMarkPropertySoldResult").innerText = '';
     const modalElement = document.getElementById("modalMarkPropertySold");
     const modal = new bootstrap.Modal(modalElement);
@@ -254,9 +255,12 @@ function showMarkPropertySoldModal(data) {
 function savePropertyMarkedAsSold() {
     const btn = document.getElementById("btnSaveMarkPropertySold");
     const spinner = document.getElementById("spinnerMarkPropertySold");
+    const date = $("#txtPropertySoldDate").dxDateBox("instance").option("value");
+    const price = document.getElementById("txtPropertySoldPrice").value;
+    const agent = document.getElementById("ddlPropertySoldAgent").value;
     const mark = document.getElementById("cbMarkPropertySold");
     const result = document.getElementById("spMarkPropertySoldResult");
-    if (!mark.checked) {
+    if (date.toLocaleDateString("en-GB") === "" || price === "" || agent === "" || !mark.checked) {
         result.innerText = "Si prega di compilare tutti i campi richiesti";
         result.classList.remove("d-none");
         return;
