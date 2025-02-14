@@ -81,7 +81,22 @@ function loadList(id, data) {
 }
 
 function savePackage() {
-
+    const btn = document.getElementById("btnSavePackage");
+    const spinner = document.getElementById("spinnerNewPackage");
+    const name = document.getElementById("txtName").value.trim();
+    const fixedFee = document.getElementById("txtFixedFee").value.trim();
+    const percentage = document.getElementById("txtPercentage").value.trim();
+    const description = document.getElementById("txtDescription").value.trim();
+    const result = document.getElementById("spNewPackageResult");
+    if (name === '' || fixedFee === "" || percentage === "") {
+        result.innerText = "Si prega di compilare tutti i campi richiesti";
+        result.classList.remove("d-none");
+        return;
+    }
+    btn.disabled = true;
+    spinner.classList.remove("d-none");
+    result.classList.add("d-none");
+    result.innerText = "";
 }
 
 function getData() {

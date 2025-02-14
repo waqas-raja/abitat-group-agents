@@ -26,9 +26,9 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtDescription" class="col-sm-4 col-form-label">Descrizione<span class="text-danger ms-2">*</span></label>
+                        <label for="txtDescription" class="col-sm-4 col-form-label">Descrizione</label>
                         <div class="col-sm-8">
-                            <textarea class="form-control" id="txtDescription" rows="3" required></textarea>
+                            <textarea class="form-control" id="txtDescription" rows="3"></textarea>
                         </div>
                     </div>
                     
