@@ -3,9 +3,10 @@
 namespace App\Framework\Routes;
 
 use App\Framework\Middlewares\AuthMiddleware;
+use App\Framework\Models\User;
 use App\Framework\Models\Property;
 use App\Framework\Models\Agent;
-use App\Framework\Models\User;
+use App\Framework\Models\Package;
 use Slim\App;
 use Slim\Exception\HttpNotImplementedException;
 use Slim\Routing\RouteCollectorProxy;
@@ -54,6 +55,10 @@ class ApiRoutes {
                 return Property::GetAll($request, $response);
             })->add($this->authMiddleware);
 
+            $group->get('/packages', function ($request, $response) {
+                return Package::GetAll($request, $response);
+            })->add($this->authMiddleware);
+
             // Entity's routes
 
             $userRoutes = new UserRoutes($this->authMiddleware);
@@ -69,6 +74,11 @@ class ApiRoutes {
             $propertyRoutes = new PropertyRoutes($this->authMiddleware);
             $group->group('/property', function (RouteCollectorProxy $propertyGroup) use ($propertyRoutes) {
                 $propertyRoutes->register($propertyGroup);
+            });
+
+            $packageRoutes = new PackageRoutes($this->authMiddleware);
+            $group->group('/package', function (RouteCollectorProxy $packageGroup) use ($packageRoutes) {
+                $packageRoutes->register($packageGroup);
             });
         });
     }
