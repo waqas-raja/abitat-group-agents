@@ -1,10 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
-    loadList("listOfPackages", getData());
+    loadList("listOfPackages");
 });
 
-function loadList(id, data) {
+async function loadList(id) {
+    const response = await fetch("/api/packages");
+    const data = await response.json();
     new DevExpress.ui.dxDataGrid(document.getElementById(id), {
-        dataSource: data,
+        dataSource: data.payload,
         columnAutoWidth: true,
         showBorders: true,
         rowAlternationEnabled: false,
@@ -17,11 +19,11 @@ function loadList(id, data) {
             { dataField: "id", caption: "Id", allowFiltering: true },
             { dataField: "name", caption: "Nome", allowFiltering: true },
             {
-                dataField: "fixed_fee",
+                dataField: "fixed_cost",
                 caption: "Canone fisso",
                 allowFiltering: true,
                 calculateCellValue: function (data) {
-                    return formatNumber(data.fixed_fee);
+                    return formatNumber(data.fixed_cost);
                 }
             },
             {
@@ -32,7 +34,7 @@ function loadList(id, data) {
                     return data.percentage + '%';
                 }
             },
-            { dataField: "description", caption: "Descrizione", allowFiltering: true },
+            { dataField: "note", caption: "Descrizione", allowFiltering: true },
         ],
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
@@ -97,37 +99,4 @@ function savePackage() {
     spinner.classList.remove("d-none");
     result.classList.add("d-none");
     result.innerText = "";
-}
-
-function getData() {
-    return [
-        {
-            "id": 1,
-            "name": "Basic",
-            "fixed_fee": 500,
-            "percentage": 30,
-            "description": "Basso rischio con guadagni stabili, adatto a chi ha meno esperienza"
-        },
-        {
-            "id": 2,
-            "name": "Premium",
-            "fixed_fee": 1500,
-            "percentage": 60,
-            "description": "Alto guadagno per agenti esperti con elevato volume di vendite"
-        },
-        {
-            "id": 3,
-            "name": "Flex",
-            "fixed_fee": 800,
-            "percentage": 45,
-            "description": "Equilibrio tra sicurezza e rendimento"
-        },
-        {
-            "id": 4,
-            "name": "Elite",
-            "fixed_fee": 0,
-            "percentage": 50,
-            "description": "Nessun costo fisso, percentuale più alte"
-        },
-    ];
 }
