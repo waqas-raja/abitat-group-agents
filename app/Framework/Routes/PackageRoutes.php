@@ -3,6 +3,7 @@
 namespace App\Framework\Routes;
 
 use App\Framework\Middlewares\AuthMiddleware;
+use App\Framework\Models\Package;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpNotImplementedException;
@@ -17,7 +18,7 @@ class PackageRoutes {
 
     public function register(RouteCollectorProxy $group): void {
         $group->post('', function (Request $request, Response $response) {
-            throw new HttpNotImplementedException($request, "add package entry point is not implemented");
+            return Package::Add($request, $response);
         })->add($this->authMiddleware);
 
         $group->get('/{id}', function (Request $request, Response $response) {
