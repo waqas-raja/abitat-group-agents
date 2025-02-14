@@ -151,3 +151,15 @@ function formatNumber(num) {
         maximumFractionDigits: 0
     }));
 }
+
+function initDateControl(idControl, defaultToday = false, onlyMonth = false) {
+    const element = $('#' + idControl);
+    if (!!element) {
+        element.dxDateBox({
+            type: "date",
+            displayFormat: onlyMonth ? "MM-yyyy" : "dd-MM-yyyy",
+            value: defaultToday ? new Date() : "",
+            calendarOptions: onlyMonth ? { maxZoomLevel: "year", minZoomLevel: "year" } : {}
+        });
+    }
+}

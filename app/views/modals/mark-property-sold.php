@@ -7,6 +7,29 @@
             </div>
             <div class="modal-body">
                 <form id="">
+                    <div class="row mb-3">
+                        <label for="txtPropertySoldDate" class="col-sm-4 col-form-label">Data<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <div id="txtPropertySoldDate"></div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="txtPropertySoldPrice" class="col-sm-4 col-form-label">Prezzo<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="txtPropertySoldPrice" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="ddlPropertySoldAgent" class="col-sm-4 col-form-label">Agente<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <select class="form-select" id="ddlPropertySoldAgent">
+                                <option value="" selected>Scegli...</option>
+                                <option value="1">Marco</option>
+                                <option value="2">Elisa</option>
+                                <option value="3">Derossi</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="mb-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="cbMarkPropertySold" required>
