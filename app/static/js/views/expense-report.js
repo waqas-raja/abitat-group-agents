@@ -73,7 +73,22 @@ function loadList(id, data) {
 }
 
 function saveExpenseReport() {
-
+    const btn = document.getElementById("btnSaveExpense");
+    const spinner = document.getElementById("spinnerNewExpense");
+    const date = document.getElementById("txtDate").value.trim();
+    const agent = document.getElementById("ddlAgent").value.trim();
+    const cost = document.getElementById("txtCost").value.trim();
+    const description = document.getElementById("txtDescription").value.trim();
+    const result = document.getElementById("spNewExpenseResult");
+    if (date === '' || agent === "" || cost === "") {
+        result.innerText = "Si prega di compilare tutti i campi richiesti";
+        result.classList.remove("d-none");
+        return;
+    }
+    btn.disabled = true;
+    spinner.classList.remove("d-none");
+    result.classList.add("d-none");
+    result.innerText = "";
 }
 
 function getData() {

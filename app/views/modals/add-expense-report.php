@@ -17,7 +17,7 @@
                         <label for="ddlAgent" class="col-sm-4 col-form-label">Agente<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlAgent">
-                                <option selected>Scegli...</option>
+                                <option value="" selected>Scegli...</option>
                                 <option value="1">Marco</option>
                                 <option value="2">Elisa</option>
                                 <option value="3">Derossi</option>
@@ -31,9 +31,9 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtDescription" class="col-sm-4 col-form-label">Descrizione<span class="text-danger ms-2">*</span></label>
+                        <label for="txtDescription" class="col-sm-4 col-form-label">Descrizione</label>
                         <div class="col-sm-8">
-                            <textarea class="form-control" id="txtDescription" rows="3" required></textarea>
+                            <textarea class="form-control" id="txtDescription" rows="3"></textarea>
                         </div>
                     </div>
                     
