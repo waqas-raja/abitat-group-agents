@@ -31,7 +31,7 @@ final class Package {
             if(empty($name))
                 throw new Exception('Name field required', 400);
             $q = "INSERT INTO package(name, fixed_cost, percentage, note, ucr) VALUES(?,?,?,?,?)";
-            $params = [$name, $fixed_cost, $percentage, $note, $user_id, $user_id];
+            $params = [$name, $fixed_cost, $percentage, $note, $user_id];
             $row_affected = DB::Execute($q, $params);
             if($row_affected == 0) throw new Exception("Error inserting package", 500);
             $response->getBody()->write(json_encode(["result" => true]));
