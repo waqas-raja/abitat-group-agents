@@ -20,6 +20,18 @@ class UserRoutes {
             return User::Add($request, $response);
         })->add($this->authMiddleware);
 
+        $group->get('/', function (Request $request, Response $response) {
+            return User::GetProfile($request, $response);
+        })->add($this->authMiddleware);
+
+        $group->patch('/', function (Request $request, Response $response) {
+            return User::UpdateCurrentUser($request, $response);
+        })->add($this->authMiddleware);
+
+        $group->patch('/psw', function (Request $request, Response $response) {
+            return User::ChangePassword($request, $response);
+        })->add($this->authMiddleware);
+
         $group->get('/{id}', function (Request $request, Response $response) {
             return User::GetItem($request, $response);
         })->add($this->authMiddleware);
