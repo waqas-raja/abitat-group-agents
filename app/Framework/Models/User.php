@@ -222,4 +222,72 @@ final class User {
         $response->getBody()->write(json_encode(["result" => true]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
+
+    /**
+     * @throws Exception
+     */
+    public static function GetProfile($request, $response) {
+        $token_info = self::GetTokenInfo($request);
+        $user_id = $token_info['id'];
+        $q = "select name, surname, email from user where id = ?";
+        $params = [$user_id];
+        $rows = DB::Query($q, $params);
+        if(count($rows) == 0) throw new Exception("Error retrieving user profile", 400);
+        if(count($rows) > 1) throw new Exception("Invalid number of users with the same id", 400);
+        $response->getBody()->write(json_encode(["payload" => $rows[0]]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     * @throws Exception
+     */
+    public static function UpdateCurrentUser($request, $response) {
+        $token_info = self::GetTokenInfo($request);
+        $user_id = $token_info['id'];
+        $data = json_decode($request->getBody()->getContents(), true);
+        $dtle = date('Y-m-d H:i:s');
+        $fields = [];
+        $params = [];
+        if (isset($data['name'])) { $fields[] = "name = ?"; $params[] = $data['name']; }
+        if (isset($data['surname'])) { $fields[] = "surname = ?"; $params[] = $data['surname']; }
+        if (isset($data['email'])) { $fields[] = "email = ?"; $params[] = $data['email']; }
+        if (isset($data['role_id'])) { $fields[] = "role_id = ?"; $params[] = $data['role_id']; }
+        if (isset($data['blocked'])) { $fields[] = "blocked = ?"; $params[] = $data['blocked']; }
+        $fields[] = "ule = ?";
+        $params[] = $user_id;
+        $fields[] = "dtle = ?";
+        $params[] = $dtle;
+        $params[] = $user_id;
+        $q = "UPDATE user SET " . implode(", ", $fields) . " WHERE id = ?";
+        $row_affected = DB::Execute($q, $params);
+        if($row_affected == 0) throw new Exception("Error updating user", 500);
+        $response->getBody()->write(json_encode(["result" => true]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function ChangePassword($request, $response) {
+        $token_info = self::GetTokenInfo($request);
+        $user_id = $token_info['id'];
+        $data = json_decode($request->getBody()->getContents(), true);
+        $old_psw = $data['old_psw'] ?? "";
+        $new_psw = $data['new_psw'] ?? "";
+        if($old_psw == $new_psw) throw new Exception('Old and new password are the same', 400);
+        if(empty($old_psw) || empty($new_psw)) throw new Exception('Old and new password are required', 400);
+        $q = "select id from user where id = ? and psw = sha1(?)";
+        $params = [$user_id, $old_psw];
+        $rows = DB::Query($q, $params);
+        // $response->getBody()->write(json_encode(['result' => $rows]));
+        // return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        if(count($rows) == 0) throw new Exception('Invalid old password', 401);
+        $q = "update user set psw = sha1(?) where id = ?";
+        $params = [$new_psw, $user_id];
+        $row_affected = DB::Execute($q, $params);
+        if($row_affected == 0) throw new Exception("Error updating user password", 400);
+        $response->getBody()->write(json_encode(['result' => true]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
 }

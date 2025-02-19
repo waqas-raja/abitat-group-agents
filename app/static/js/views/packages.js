@@ -108,7 +108,7 @@ async function savePackage() {
             body: JSON.stringify({ "name": name, "fixed_cost": fixedCost, "percentage": percentage, "note": description })
         });
         const res = await response.json();
-        // debugger;
+        debugger;
 
     } catch (error) {
         console.log(error);
