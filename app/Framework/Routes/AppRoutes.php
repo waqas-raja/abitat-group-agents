@@ -41,9 +41,9 @@ class AppRoutes {
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
 
-        $app->get('/agents', function ($request, $response) {
+        $app->get('/dashboard', function ($request, $response) {
             ob_start();
-            require_once __DIR__ . '/../../views/pages/agents.php';
+            require_once __DIR__ . '/../../views/pages/dashboard.php';
             $response->getBody()->write(ob_get_clean());
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
@@ -51,6 +51,27 @@ class AppRoutes {
         $app->get('/properties', function ($request, $response) {
             ob_start();
             require_once __DIR__ . '/../../views/pages/properties.php';
+            $response->getBody()->write(ob_get_clean());
+            return $response->withHeader('Content-Type', 'text/html');
+        })->add($this->authMiddleware);
+
+        $app->get('/agents', function ($request, $response) {
+            ob_start();
+            require_once __DIR__ . '/../../views/pages/agents.php';
+            $response->getBody()->write(ob_get_clean());
+            return $response->withHeader('Content-Type', 'text/html');
+        })->add($this->authMiddleware);
+
+        $app->get('/packages', function ($request, $response) {
+            ob_start();
+            require_once __DIR__ . '/../../views/pages/packages.php';
+            $response->getBody()->write(ob_get_clean());
+            return $response->withHeader('Content-Type', 'text/html');
+        })->add($this->authMiddleware);
+
+        $app->get('/expense-reports', function ($request, $response) {
+            ob_start();
+            require_once __DIR__ . '/../../views/pages/expense-reports.php';
             $response->getBody()->write(ob_get_clean());
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
@@ -82,11 +103,5 @@ class AppRoutes {
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
 
-        $app->get('/dashboard', function ($request, $response) {
-            ob_start();
-            require_once __DIR__ . '/../../views/pages/dashboard.php';
-            $response->getBody()->write(ob_get_clean());
-            return $response->withHeader('Content-Type', 'text/html');
-        })->add($this->authMiddleware);
     }
 }

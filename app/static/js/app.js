@@ -40,6 +40,8 @@ function setMenuActive() {
         case 'dashboard': activeMenuId = 'Dashboard'; break;
         case 'properties': activeMenuId = 'Properties'; break;
         case 'agents': activeMenuId = 'Agents'; break;
+        case 'packages': activeMenuId = 'Packages'; break;
+        case 'expense-reports': activeMenuId = 'ExpenseReports'; break;
         //header
         case 'settings': activeMenuId = 'Settings'; break;
         case 'users': activeMenuId = 'Users'; break;
@@ -148,4 +150,16 @@ function formatNumber(num) {
         currency: 'EUR',
         maximumFractionDigits: 0
     }));
+}
+
+function initDateControl(idControl, defaultToday = false, onlyMonth = false) {
+    const element = $('#' + idControl);
+    if (!!element) {
+        element.dxDateBox({
+            type: "date",
+            displayFormat: onlyMonth ? "MM-yyyy" : "dd-MM-yyyy",
+            value: defaultToday ? new Date() : "",
+            calendarOptions: onlyMonth ? { maxZoomLevel: "year", minZoomLevel: "year" } : {}
+        });
+    }
 }

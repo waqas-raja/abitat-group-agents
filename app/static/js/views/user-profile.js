@@ -1,7 +1,11 @@
-document.addEventListener("DOMContentLoaded", init);
+document.addEventListener("DOMContentLoaded", loadData);
 
-async function init() {
-
+async function loadData() {
+    const response = await fetch("/api/user/");
+    const data = await response.json();
+    document.getElementById("txtName").value = data.payload.name;
+    document.getElementById("txtSurname").value = data.payload.surname;
+    document.getElementById("txtEmail").value = data.payload.email;
 }
 
 function togglePassword(e) {
@@ -34,22 +38,20 @@ async function updatePersonalData() {
     const spinner = document.getElementById('spinnerPersonalData');
     spinner.classList.remove('d-none');
     btn.disabled = true;
-    showResult('resultPersonalData', 'Funzione non ancora attiva.', false);
-    return;
     try {
-
-        // const response = await fetch(
-        //     "api/user",
-        //     {
-        //         method: "PATCH",
-        //         body: { name: name, surname: surname, email: email }
-        //     }
-        // );
-        // const data = await response.json();
-        // if(data.payload.done) showResult('resultPersonalData', 'Dati personali salvati con successo', true);
-        // else showResult('resultPersonalData', 'Si sono verificati degli errori durante il salvataggio', false);
-        // spinner.classList.add('d-none');
-        // btn.disabled = false;
+        const response = await fetch(
+            "/api/user/",
+            {
+                method: "PATCH",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ name: name, surname: surname, email: email })
+            }
+        );
+        const data = await response.json();
+        if(data.result) showResult('resultPersonalData', 'Dati personali salvati con successo', true);
+        else showResult('resultPersonalData', 'Si sono verificati degli errori durante il salvataggio', false);
+        spinner.classList.add('d-none');
+        btn.disabled = false;
     } catch (error) {
         spinner.classList.add('d-none');
         btn.disabled = false;
@@ -70,6 +72,10 @@ async function updatePassword() {
         showResult('resultChangePsw', 'La nuova password e la conferma password non coincidono.', false);
         return;
     }
+    if (oldPsw === newPsw) {
+        showResult('resultChangePsw', 'La nuova password e la vecchia coincidono.', false);
+        return;
+    }
     if (newPsw.length < 8) {
         showResult('resultChangePsw', 'La nuova password deve essere di almeno 8 caratteri.', false);
         return;
@@ -79,29 +85,50 @@ async function updatePassword() {
     const btn = document.getElementById('btnUpdatePassword');
     spinner.classList.remove('d-none');
     btn.disabled = true;
-    showResult('resultPersonalData', 'Funzione non ancora attiva.', false);
-    return;
 
     try {
         const response = await fetch(
-            "api/user/psw",
+            "/api/user/psw",
             {
                 method: "PATCH",
-                body: { old_psw: oldPsw, new_psw: newPsw }
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ old_psw: oldPsw, new_psw: newPsw })
             }
         );
         const data = await response.json();
-        if (data.payload.done) showResult('resultPersonalData', 'Nuova password salvata con successo', true);
-        else {
-            if (data.payload.err_old) showResult('resultPersonalData', 'La vecchia password non risulta corretta', false);
-            else showResult('resultPersonalData', 'Si sono verificati degli errori durante il salvataggio', false);
+        if(data.result) {
+            showResult('resultChangePsw', 'Nuova password salvata con successo', true);
+            const txtOld = document.getElementById("txtOldPassword");
+            const txtNew = document.getElementById("txtNewPassword");
+            const txtCon = document.getElementById("txtConfirmPassword");
+            txtOld.value = "";
+            txtNew.value = "";
+            txtCon.value = "";
+            txtOld.type = "password";
+            txtNew.type = "password";
+            txtCon.type = "password";
+            if (txtOld.nextElementSibling.classList.contains('bi-eye')) {
+                txtOld.nextElementSibling.classList.remove('bi-eye');
+                txtOld.nextElementSibling.classList.add('bi-eye-slash');
+            }
+            if (txtNew.nextElementSibling.classList.contains('bi-eye')) {
+                txtNew.nextElementSibling.classList.remove('bi-eye');
+                txtNew.nextElementSibling.classList.add('bi-eye-slash');
+            }
+            if (txtCon.nextElementSibling.classList.contains('bi-eye')) {
+                txtCon.nextElementSibling.classList.remove('bi-eye');
+                txtCon.nextElementSibling.classList.add('bi-eye-slash');
+            }
+        } else {
+            if(data.error) showResult('resultChangePsw', 'La vecchia password non risulta corretta', false);
+            else showResult('resultChangePsw', 'Si sono verificati degli errori durante il salvataggio', false);
         }
         spinner.classList.add('d-none');
         btn.disabled = false;
     } catch (error) {
         spinner.classList.add('d-none');
         btn.disabled = false;
-        showResult('resultPersonalData', 'Si sono verificati degli errori durante la chiamata.', false);
+        showResult('resultChangePsw', 'Si sono verificati degli errori durante la chiamata.', false);
         console.error("Errore durante la chiamata:", error);
     }
 }

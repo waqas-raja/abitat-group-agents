@@ -1,31 +1,62 @@
+const ids = ["listOfTorinoAgents", "listOfMoncalieriAgents", "listOfRomaAgents"];
 document.addEventListener("DOMContentLoaded", () => {
     initInternalTabs();
     init();
 });
 
 async function init() {
-    const ids = ["listOfMoncalieriAgents", "listOfRomaAgents", "listOfTorinoAgents"];
     const datas = [getDateMoncalieri(), getDateRoma(), getDateTorino()];
-    for (let i = 0; i < ids.length; i++) { loadList(ids[i], datas[i]); }
+    // for (let i = 0; i < ids.length; i++) { loadList(ids[i], datas[i]); }
+    for (let i = 0; i < ids.length; i++) { loadList(ids[i], i+1); }
 }
 
-function loadList(id, data) {
-    new DevExpress.ui.dxDataGrid(document.getElementById(id), {
-        dataSource: data,
+async function loadList(ctrl_id, branch_id) {
+    new DevExpress.ui.dxDataGrid(document.getElementById(ctrl_id), {
+        dataSource: new DevExpress.data.CustomStore({
+            key: "id",
+            load: async function (loadOptions) {
+                let params = new URLSearchParams();
+                params.append("branch_id", branch_id);
+                params.append("limit", loadOptions.take || 10);
+                params.append("page", loadOptions.skip / loadOptions.take + 1 || 1);
+                if (loadOptions.filter !== undefined) {
+                    params.append("search", loadOptions.filter.filterValue);
+                }
+                try {
+                    const response = await fetch(`/api/agents?${params.toString()}`);
+                    const json = await response.json();
+                    return {
+                        data: json.payload,
+                        totalCount: json.totalCount
+                    };
+                } catch (error) {
+                    console.error("Data fetch error:", error);
+                    return { data: [], totalCount: 0 };
+                }
+            }
+        }),
+        // dataSource: data,
         columnAutoWidth: true,
+        allowColumnResizing: true,
+        allowColumnReordering: true,
         showBorders: true,
+        noDataText: "Nessun dato disponibile",
         rowAlternationEnabled: false,
         grouping: { autoExpandAll: false },
         groupPanel: { visible: true, emptyPanelText: "Trascina qui le colonne per raggruppare" },
         filterRow: { visible: true, applyFilter: "auto" },
         headerFilter: { visible: true },
-        // export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
+        stateStoring: { // Permette di salvare la configurazione delle colonne
+            enabled: true,
+            type: "localStorage",
+            storageKey: "gridState"
+        },
         columns: [
             {
                 caption: "Nome Cognome",
                 allowFiltering: true,
                 calculateCellValue: function (data) {
-                    return data.first_name +' '+ data.last_name;
+                    return data.name +' '+ data.surname;
                 }
             },
             { dataField: "commission", caption: "Commissioni", allowFiltering: true },
@@ -39,11 +70,9 @@ function loadList(id, data) {
             },
             { dataField: "number_of_properties_managed", caption: "Proprietà in gestione", allowFiltering: true },
             { 
+                dataField: "properties_sold",
                 caption: "Proprietà vendute",
-                allowFiltering: true,
-                calculateCellValue: function () {
-                    return 'in progress';
-                }
+                allowFiltering: true
             },
             { 
                 caption: "Totale vendite",
@@ -60,13 +89,13 @@ function loadList(id, data) {
                 }
             },
         ],
+        remoteOperations: { paging: true, filtering: true, sorting: true },
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
         toolbar: {
             items: [
                 "groupPanel",
                 "searchPanel",
-                "exportButton",
                 {
                     location: "after",
                     widget: "dxButton",
@@ -74,6 +103,7 @@ function loadList(id, data) {
                         icon: "add",
                         text: "Aggiungi Agente",
                         onClick: function () {
+                            document.getElementById("spNewAgentResult").innerText = '';
                             const modalElement = document.getElementById("modalAddAgent");
                             const modal = new bootstrap.Modal(modalElement);
                             modal.show();
@@ -85,20 +115,6 @@ function loadList(id, data) {
             ]
         },
         onRowClick: function (e) { if (e.rowType === "data") { window.location = `/agent/${e.data.id}`; } },
-        // onExporting: function (e) {
-        //     if (e.format === 'xlsx') {
-        //         const workbook = new ExcelJS.Workbook();
-        //         const worksheet = workbook.addWorksheet("Agents");
-        //         DevExpress.excelExporter.exportDataGrid({
-        //             worksheet: worksheet,
-        //             component: e.component,
-        //         }).then(function () {
-        //             workbook.xlsx.writeBuffer().then(function (buffer) {
-        //                 saveAs(new Blob([buffer], { type: "application/octet-stream" }), "abitat-agents.xlsx");
-        //             });
-        //         });
-        //     }
-        // }
     });
 }
 
@@ -107,23 +123,55 @@ async function saveAgent() {
     const spinner = document.getElementById("spinnerNewAgent");
     const firstName = document.getElementById("txtFirstName").value.trim();
     const lastName = document.getElementById("txtLastName").value.trim();
-    const fixedCost = document.getElementById("txtFixedCost");
-    const commission = document.getElementById("txtCommission");
+    const fixedCost = document.getElementById("txtFixedCost").value.trim();
+    // const commission = document.getElementById("txtCommission");
+    const packageID = parseInt(document.getElementById("ddlPackage").value);
+    const branchID = parseInt(document.getElementById("ddlLocation").value);
     const result = document.getElementById("spNewAgentResult");
+    if (firstName === '' || lastName === "" || packageID === "" || fixedCost === "") {
+        result.innerText = "Si prega di compilare tutti i campi richiesti";
+        result.classList.remove("d-none");
+        return;
+    }
 
     btn.disabled = true;
     spinner.classList.remove("d-none");
     result.classList.add("d-none");
     result.innerText = "";
+    try {
+        const response = await fetch("/api/agent", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ "name": firstName, "surname": lastName, "fixed_cost": parseFloat(fixedCost), "package_id": packageID, "branch_id": branchID })
+        });
+        const res = await response.json();
+        if (res.result) {
+            loadList(ids[branchID - 1], branchID);
+            btn.disabled = true;
+            spinner.classList.add("d-none");
+            const modalElement = document.getElementById("modalAddAgent");
+            modalElement.classList.remove("show");
+            modalElement.style.display = "none";
+            document.body.classList.remove("modal-open");
+            document.querySelector(".modal-backdrop")?.remove();
+        } else throw new Error("Something went wrong while inserting new agent!");
+    } catch (error) {
+        btn.disabled = true;
+        spinner.classList.remove("d-none");
+        result.classList.remove("d-none");
+        result.innerText = error.message !== undefined ? error.message : error;
+    }
 }
 
 function preSelectLocation() {
     const parent = document.querySelector(".pai-tabs");
     const child = parent.querySelector(".active");
     switch (child.dataset.tab) {
-        case 'tabContentMoncalieri': document.getElementById('ddlLocation').value = 1; break;
-        case 'tabContentRoma': document.getElementById('ddlLocation').value = 2; break;
-        case 'tabContentTorino': document.getElementById('ddlLocation').value = 3; break;
+        case 'tabContentTorino': document.getElementById('ddlLocation').value = 1; break;
+        case 'tabContentMoncalieri': document.getElementById('ddlLocation').value = 2; break;
+        case 'tabContentRoma': document.getElementById('ddlLocation').value = 3; break;
     }
 }
 
@@ -210,7 +258,8 @@ function getDateTorino() {
             "last_name": "Rossi",
             "commission": "5%",
             "fixed_cost": 1500,
-            "number_of_properties_managed": 25
+            "number_of_properties_managed": 25,
+            "properties_sold":7
         },
         {
             "id": 2,
@@ -218,7 +267,8 @@ function getDateTorino() {
             "last_name": "Bianchi",
             "commission": "6%",
             "fixed_cost": 1300,
-            "number_of_properties_managed": 18
+            "number_of_properties_managed": 18,
+            "properties_sold":36
         },
         {
             "id": 3,
@@ -226,7 +276,8 @@ function getDateTorino() {
             "last_name": "Galli",
             "commission": "4.5%",
             "fixed_cost": 1600,
-            "number_of_properties_managed": 30
+            "number_of_properties_managed": 30,
+            "properties_sold":13
         },
         {
             "id": 4,
@@ -234,7 +285,8 @@ function getDateTorino() {
             "last_name": "Ferrari",
             "commission": "5.5%",
             "fixed_cost": 1400,
-            "number_of_properties_managed": 20
+            "number_of_properties_managed": 20,
+            "properties_sold":23
         }
     ];
 }

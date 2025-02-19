@@ -32,13 +32,13 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtPropertyPurchasePrice" class="col-sm-4 col-form-label">Prezzo d'acquisto</label>
+                        <label for="txtPropertyPurchasePrice" class="col-sm-4 col-form-label">Prezzo di acquisto</label>
                         <div class="col-sm-8">
                             <input type="number" class="form-control" id="txtPropertyPurchasePrice" required>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="ddlPropertyLocation" class="col-sm-4 col-form-label">Posizione</label>
+                        <label for="ddlPropertyLocation" class="col-sm-4 col-form-label">Sede</label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlPropertyLocation">
                                 <option value="" selected>Seleziona la sede...</option>

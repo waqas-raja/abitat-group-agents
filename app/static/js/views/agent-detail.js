@@ -122,7 +122,6 @@ function loadPropertiesList(data) {
         groupPanel: { visible: true, emptyPanelText: "Trascina qui le colonne per raggruppare" },
         filterRow: { visible: true, applyFilter: "auto" },
         headerFilter: { visible: true },
-        // export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
         columns: [
             {
                 caption: "Data vendita",
@@ -154,21 +153,6 @@ function loadPropertiesList(data) {
             items: [
                 "groupPanel",
                 "searchPanel",
-                "exportButton",
-                // {
-                //     location: "after",
-                //     widget: "dxButton",
-                //     options: {
-                //         icon: "add",
-                //         text: "Aggiungi Proprietà",
-                //         onClick: function () {
-                //             const modalElement = document.getElementById("modalAddProperty");
-                //             const modal = new bootstrap.Modal(modalElement);
-                //             modal.show();
-                //         },
-                //         elementAttr: { class: "btn-orange" }
-                //     }
-                // }
             ]
         },
         onRowClick: function (e) {
@@ -176,19 +160,5 @@ function loadPropertiesList(data) {
                 // window.location = `/property/${e.data.id}`; 
             }
         },
-        onExporting: function (e) {
-            if (e.format === 'xlsx') {
-                const workbook = new ExcelJS.Workbook();
-                const worksheet = workbook.addWorksheet("Properties");
-                DevExpress.excelExporter.exportDataGrid({
-                    worksheet: worksheet,
-                    component: e.component,
-                }).then(function () {
-                    workbook.xlsx.writeBuffer().then(function (buffer) {
-                        saveAs(new Blob([buffer], { type: "application/octet-stream" }), "abitat-properties.xlsx");
-                    });
-                });
-            }
-        }
     });
 }
