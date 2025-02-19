@@ -280,8 +280,6 @@ final class User {
         $q = "select id from user where id = ? and psw = sha1(?)";
         $params = [$user_id, $old_psw];
         $rows = DB::Query($q, $params);
-        // $response->getBody()->write(json_encode(['result' => $rows]));
-        // return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         if(count($rows) == 0) throw new Exception('Invalid old password', 401);
         $q = "update user set psw = sha1(?) where id = ?";
         $params = [$new_psw, $user_id];

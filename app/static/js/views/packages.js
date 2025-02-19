@@ -108,9 +108,20 @@ async function savePackage() {
             body: JSON.stringify({ "name": name, "fixed_cost": fixedCost, "percentage": percentage, "note": description })
         });
         const res = await response.json();
-        debugger;
-
+        if (res.result) {
+            loadList("listOfPackages");
+            btn.disabled = true;
+            spinner.classList.add("d-none");
+            const modalElement = document.getElementById("modalAddPackage");
+            modalElement.classList.remove("show");
+            modalElement.style.display = "none";
+            document.body.classList.remove("modal-open");
+            document.querySelector(".modal-backdrop")?.remove();
+        } else throw new Error("Something went wrong while inserting new package!");
     } catch (error) {
-        console.log(error);
+        btn.disabled = true;
+        spinner.classList.remove("d-none");
+        result.classList.remove("d-none");
+        result.innerText = error.message !== undefined ? error.message : error;
     }
 }
