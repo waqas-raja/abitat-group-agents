@@ -46,13 +46,11 @@ async function loadList(ctrl_id, branch_id) {
         groupPanel: { visible: true, emptyPanelText: "Trascina qui le colonne per raggruppare" },
         filterRow: { visible: true, applyFilter: "auto" },
         headerFilter: { visible: true },
-        export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
         stateStoring: { // Permette di salvare la configurazione delle colonne
             enabled: true,
             type: "localStorage",
             storageKey: "gridState"
         },
-        // export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
         columns: [
             {
                 caption: "Nome Cognome",
@@ -98,7 +96,6 @@ async function loadList(ctrl_id, branch_id) {
             items: [
                 "groupPanel",
                 "searchPanel",
-                "exportButton",
                 {
                     location: "after",
                     widget: "dxButton",
@@ -118,20 +115,6 @@ async function loadList(ctrl_id, branch_id) {
             ]
         },
         onRowClick: function (e) { if (e.rowType === "data") { window.location = `/agent/${e.data.id}`; } },
-        // onExporting: function (e) {
-        //     if (e.format === 'xlsx') {
-        //         const workbook = new ExcelJS.Workbook();
-        //         const worksheet = workbook.addWorksheet("Agents");
-        //         DevExpress.excelExporter.exportDataGrid({
-        //             worksheet: worksheet,
-        //             component: e.component,
-        //         }).then(function () {
-        //             workbook.xlsx.writeBuffer().then(function (buffer) {
-        //                 saveAs(new Blob([buffer], { type: "application/octet-stream" }), "abitat-agents.xlsx");
-        //             });
-        //         });
-        //     }
-        // }
     });
 }
 

@@ -109,7 +109,7 @@ ob_start();
         </div>
     </div>
     <div id="tabContentLeadsSummary" class="pai-tab-content">
-        Leads
+        <div class="bg-light p-3 mt-3"><i>Sezione in allestimento</i></div>
     </div>
 </div>
 <script src="/static/js/views/dashboard.js"></script>
