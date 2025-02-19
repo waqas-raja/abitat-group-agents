@@ -25,10 +25,21 @@
                             <input type="number" class="form-control" id="txtFixedCost" required>
                         </div>
                     </div>
-                    <div class="row mb-3">
+                    <!-- <div class="row mb-3">
                         <label for="txtCommission" class="col-sm-4 col-form-label">Commission</label>
                         <div class="col-sm-8">
                             <input type="number" class="form-control" id="txtCommission" required>
+                        </div>
+                    </div> -->
+                    <div class="row mb-3">
+                        <label for="ddlPackage" class="col-sm-4 col-form-label">Package</label>
+                        <div class="col-sm-8">
+                            <select class="form-select" id="ddlPackage">
+                                <option selected>Scegli...</option>
+                                <option value="1">Basic</option>
+                                <option value="2">Express</option>
+                                <option value="3">Golden</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -36,9 +47,9 @@
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlLocation">
                                 <option selected>Scegli...</option>
-                                <option value="3">Torino</option>
-                                <option value="1">Moncalieri</option>
-                                <option value="2">Roma</option>
+                                <option value="1">Torino</option>
+                                <option value="2">Moncalieri</option>
+                                <option value="3">Roma</option>
                             </select>
                         </div>
                     </div>
