@@ -3,21 +3,50 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function loadList(id) {
-    const response = await fetch("/api/packages");
-    const data = await response.json();
     new DevExpress.ui.dxDataGrid(document.getElementById(id), {
-        dataSource: data.payload,
+        dataSource: new DevExpress.data.CustomStore({
+            key: "id",
+            load: async function (loadOptions) {
+                let params = new URLSearchParams();
+                params.append("limit", loadOptions.take || 10);
+                params.append("page", loadOptions.skip / loadOptions.take + 1 || 1);
+                if (loadOptions.filter !== undefined) {
+                    params.append("search", loadOptions.filter.filterValue);
+                }
+                try {
+                    const response = await fetch(`/api/packages?${params.toString()}`);
+                    const json = await response.json();
+                    return {
+                        data: json.payload,
+                        totalCount: json.totalCount
+                    };
+                } catch (error) {
+                    console.error("Data fetch error:", error);
+                    return { data: [], totalCount: 0 };
+                }
+            }
+        }),
+        // dataSource: data,
         columnAutoWidth: true,
+        allowColumnResizing: true,
+        allowColumnReordering: true,
         showBorders: true,
+        noDataText: "Nessun dato disponibile",
         rowAlternationEnabled: false,
         grouping: { autoExpandAll: false },
         groupPanel: { visible: true, emptyPanelText: "Trascina qui le colonne per raggruppare" },
-        filterRow: { visible: false, applyFilter: "auto" },
-        headerFilter: { visible: false },
+        filterRow: { visible: true, applyFilter: "auto" },
+        headerFilter: { visible: true },
+        export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
+        stateStoring: { // Permette di salvare la configurazione delle colonne
+            enabled: true,
+            type: "localStorage",
+            storageKey: "gridState"
+        },
         // export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
         columns: [
-            { dataField: "id", caption: "Id", allowFiltering: false },
-            { dataField: "name", caption: "Nome", allowFiltering: false },
+            { dataField: "id", caption: "Id", allowFiltering: true },
+            { dataField: "name", caption: "Nome", allowFiltering: true },
             {
                 dataField: "fixed_cost",
                 caption: "Canone fisso",
@@ -36,6 +65,7 @@ async function loadList(id) {
             },
             { dataField: "note", caption: "Descrizione", allowFiltering: false },
         ],
+        remoteOperations: { paging: true, filtering: true, sorting: true },
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
         toolbar: {
