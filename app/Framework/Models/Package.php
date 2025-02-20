@@ -70,4 +70,45 @@ final class Package {
             throw new Exception('Failed to add package: ' . $e->getMessage());
         }
     }
+    
+    public static function Edit($request, $response) {
+        try {
+            $id = $request->getAttribute('id');
+            if (!$id)
+                throw new Exception('Package ID is required', 400);
+            // TODO CHECK IF THERE IS NEED TO BE ADD IN LOGIC
+            $data = json_decode($request->getBody()->getContents(), true);
+            $name = $data['name'] ?? "";
+            $fixed_cost = $data['fixed_cost'] ?? 0;
+            $percentage = $data['percentage'] ?? 0;
+            $note = $data['note'] ?? "";
+            if(empty($name))
+                throw new Exception('Name field required', 400);
+            $q = 'UPDATE package SET name = ?, fixed_cost = ?, percentage = ?, note = ? WHERE id = ?';
+            $params = [$name, $fixed_cost, $percentage, $note, $id];
+            $row_affected = DB::Execute($q, $params);
+            if($row_affected == 0) throw new Exception("Error while updating package", 500);
+            $response->getBody()->write(json_encode(["result" => true]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $e) {
+            throw new Exception('Failed to update the package details: ' . $e->getMessage());
+        }
+    }
+    
+    public static function Delete($request, $response) {
+        try {
+            $id = $request->getAttribute('id');
+            if (!$id)
+                throw new Exception('Package ID is required', 400);
+            // TODO CHECK IF THERE IS NEED TO ADD IN LOGIC
+            $q = "DELETE from package WHERE id = ?";
+            $params = [$id];
+            $row_affected = DB::Execute($q, $params);
+            if($row_affected == 0) throw new Exception("Error while deleting the package", 500);
+            $response->getBody()->write(json_encode(["result" => true]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $e) {
+            throw new Exception('Failed to delete the package: ' . $e->getMessage());
+        }
+    }
 }

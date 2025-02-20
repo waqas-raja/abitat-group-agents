@@ -89,7 +89,14 @@ async function loadList(id) {
         },
         onRowClick: function (e) {
             if (e.rowType === "data") {
-                // window.location = `/agent/${e.data.id}`;
+                document.getElementById('hPackageId').value = e.data.id;
+                document.getElementById('txtUpdateName').value = e.data.name;
+                document.getElementById('txtUpdateFixedFee').value = e.data.fixed_cost;
+                document.getElementById('txtUpdatePercentage').value = e.data.percentage;
+                document.getElementById('txtUpdateDescription').value = e.data.note;
+                const modalElement = document.getElementById("modalEditPackage");
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
             }
         },
     });
@@ -137,4 +144,88 @@ async function savePackage() {
         result.classList.remove("d-none");
         result.innerText = error.message !== undefined ? error.message : error;
     }
+}
+
+async function editPackage() {
+    const btn = document.getElementById("btnUpdatePackage");
+    const spinner = document.getElementById("spinnerUpdatePackage");
+    const pid = document.getElementById("hPackageId").value.trim();
+    const name = document.getElementById("txtUpdateName").value.trim();
+    const fixedCost = document.getElementById("txtUpdateFixedFee").value.trim();
+    const percentage = document.getElementById("txtUpdatePercentage").value.trim();
+    const description = document.getElementById("txtUpdateDescription").value.trim();
+    const result = document.getElementById("spUpdatePackageResult");
+    if (name === '' || fixedCost === "" || percentage === "") {
+        result.innerText = "Si prega di compilare tutti i campi richiesti";
+        result.classList.remove("d-none");
+        return;
+    }
+    btn.disabled = true;
+    spinner.classList.remove("d-none");
+    result.classList.add("d-none");
+    result.innerText = "";
+    try {
+        const response = await fetch("/api/package/" + parseInt(pid), {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ "name": name, "fixed_cost": parseFloat(fixedCost), "percentage": parseInt(percentage), "note": description })
+        });
+        const res = await response.json();
+        if (res.result) {
+            loadList("listOfPackages");
+            btn.disabled = true;
+            spinner.classList.add("d-none");
+            const modalElement = document.getElementById("modalEditPackage");
+            modalElement.classList.remove("show");
+            modalElement.style.display = "none";
+            document.body.classList.remove("modal-open");
+            document.querySelector(".modal-backdrop")?.remove();
+        } else throw new Error("Something went wrong while updating package!");
+    } catch (error) {
+        btn.disabled = true;
+        spinner.classList.remove("d-none");
+        result.classList.remove("d-none");
+        result.innerText = error.message !== undefined ? error.message : error;
+    }
+}
+
+async function deletePackage() {
+    const pid = parseInt(document.getElementById("hPackageId").value);
+    const modalElement = document.getElementById("modalEditPackage");
+    modalElement.classList.remove("show");
+    modalElement.style.display = "none";
+    document.body.classList.remove("modal-open");
+    document.querySelector(".modal-backdrop")?.remove();
+    showDeleteConfirmationModal(async function (confirmed) {
+        if (confirmed) {
+            let result = document.getElementById('deleteErrorMessage');
+            try {
+                const response = await fetch("/api/package/" + parseInt(pid), {
+                    method: "DELETE"
+                });
+                const res = await response.json();
+                if (res.result) {
+                    loadList("listOfPackages");
+                    const modalElement = document.getElementById("modalConfirmDelete");
+                    modalElement.classList.remove("show");
+                    modalElement.style.display = "none";
+                    document.body.classList.remove("modal-open");
+                    document.querySelector(".modal-backdrop")?.remove();
+                } else throw new Error("Something went wrong while deleting the package!");
+            } catch (error) {
+                result.innerText = error.message !== undefined ? error.message : error;
+            }
+        }
+    });
+}
+
+function showDeleteConfirmationModal(callback) {
+    const modalElement = document.getElementById("modalConfirmDelete");
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+    document.getElementById("btnConfirmDelete").addEventListener("click", function () {
+        callback(true);
+    });
 }
