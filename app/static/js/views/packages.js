@@ -130,8 +130,12 @@ async function savePackage() {
         const res = await response.json();
         if (res.result) {
             loadList("listOfPackages");
-            btn.disabled = true;
+            btn.disabled = false;
             spinner.classList.add("d-none");
+            document.getElementById("txtName").value = '';
+            document.getElementById("txtFixedFee").value = '';
+            document.getElementById("txtPercentage").value = '';
+            document.getElementById("txtDescription").value = '';
             const modalElement = document.getElementById("modalAddPackage");
             modalElement.classList.remove("show");
             modalElement.style.display = "none";
@@ -175,7 +179,7 @@ async function editPackage() {
         const res = await response.json();
         if (res.result) {
             loadList("listOfPackages");
-            btn.disabled = true;
+            btn.disabled = false;
             spinner.classList.add("d-none");
             const modalElement = document.getElementById("modalEditPackage");
             modalElement.classList.remove("show");
@@ -192,7 +196,6 @@ async function editPackage() {
 }
 
 async function deletePackage() {
-    const pid = parseInt(document.getElementById("hPackageId").value);
     const modalElement = document.getElementById("modalEditPackage");
     modalElement.classList.remove("show");
     modalElement.style.display = "none";
@@ -200,7 +203,9 @@ async function deletePackage() {
     document.querySelector(".modal-backdrop")?.remove();
     showDeleteConfirmationModal(async function (confirmed) {
         if (confirmed) {
+            let pid = parseInt(document.getElementById("hPackageId").value);
             let result = document.getElementById('deleteErrorMessage');
+            result.innerHTML = '';
             try {
                 const response = await fetch("/api/package/" + parseInt(pid), {
                     method: "DELETE"
@@ -225,7 +230,12 @@ function showDeleteConfirmationModal(callback) {
     const modalElement = document.getElementById("modalConfirmDelete");
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
-    document.getElementById("btnConfirmDelete").addEventListener("click", function () {
+
+    const confirmButton = document.getElementById("btnConfirmDelete");
+    confirmButton.removeEventListener("click", confirmButton.clickHandler);
+    confirmButton.clickHandler = function (e) {
+        e.stopPropagation();
         callback(true);
-    });
+    };
+    confirmButton.addEventListener("click", confirmButton.clickHandler);
 }
