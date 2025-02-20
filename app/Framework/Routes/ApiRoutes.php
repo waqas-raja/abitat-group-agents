@@ -3,6 +3,7 @@
 namespace App\Framework\Routes;
 
 use App\Framework\Middlewares\AuthMiddleware;
+use App\Framework\Models\ExpenseReport;
 use App\Framework\Models\User;
 use App\Framework\Models\Property;
 use App\Framework\Models\Agent;
@@ -59,6 +60,10 @@ class ApiRoutes {
                 return Package::GetAll($request, $response);
             })->add($this->authMiddleware);
 
+            $group->get('/expense-reports', function ($request, $response) {
+                return ExpenseReport::GetAll($request, $response);
+            })->add($this->authMiddleware);
+
             // Entity's routes
 
             $userRoutes = new UserRoutes($this->authMiddleware);
@@ -78,6 +83,11 @@ class ApiRoutes {
 
             $packageRoutes = new PackageRoutes($this->authMiddleware);
             $group->group('/package', function (RouteCollectorProxy $packageGroup) use ($packageRoutes) {
+                $packageRoutes->register($packageGroup);
+            });
+
+            $packageRoutes = new PackageRoutes($this->authMiddleware);
+            $group->group('/expense-report', function (RouteCollectorProxy $packageGroup) use ($packageRoutes) {
                 $packageRoutes->register($packageGroup);
             });
         });
