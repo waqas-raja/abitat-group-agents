@@ -1,7 +1,7 @@
 <?php
-$title = 'Elenco Leads';
-ob_start();
-require_once __DIR__ . "/../modals/add-agent.php";
+    $title = 'Elenco Agenti';
+    ob_start();
+    require_once __DIR__ . "/../modals/add-agent.php";
 ?>
 
 <div id="agents">
@@ -14,17 +14,23 @@ require_once __DIR__ . "/../modals/add-agent.php";
         </div>
     </div>
     <div id="tabContentTorino" class="pai-tab-content active">
-        <?php require_once __DIR__ . "/../partials/agent-torino.php"; ?>
+        <div class="pai-card">
+            <div id="listOfTorinoAgents" class="mt-3"></div>
+        </div>
     </div>
     <div id="tabContentRoma" class="pai-tab-content">
-        <?php require_once __DIR__ . "/../partials/agent-roma.php"; ?>
+        <div class="pai-card">
+            <div id="listOfRomaAgents" class="mt-3"></div>
+        </div>
     </div>
     <div id="tabContentMoncalieri" class="pai-tab-content">
-        <?php require_once __DIR__ . "/../partials/agent-moncalieri.php"; ?>
+        <div class="pai-card">
+            <div id="listOfMoncalieriAgents" class="mt-3"></div>
+        </div>
     </div>
 </div>
 <script src="/static/js/views/agents.js"></script>
 
 <?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../templates/authorized.php';
+    $content = ob_get_clean();
+    require_once __DIR__ . '/../templates/authorized.php';

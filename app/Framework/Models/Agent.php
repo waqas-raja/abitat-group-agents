@@ -13,31 +13,24 @@ final class Agent {
         $token_info = User::GetTokenInfo($request);
         $user_id = $token_info['id'];
         $user_role = $token_info['role'];
-        $branch = isset($_GET['branch_id']) ? intval($_GET['branch_id']) : 1;
-        $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-        $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
-        $offset = ($page - 1) * $limit;
-        $search = isset($_GET['search']) ? trim($_GET['search']) : "";
+        $branch = isset($_GET['b']) ? intval($_GET['b']) : 1;
         $q = <<<query
-            select c.*, p.name as package_name, p.percentage as package_percentage, p.note as package_note, p.fixed_cost as package_fixed_cost 
+            select 
+                c.*, 
+                p.name as package_name, 
+                p.percentage as package_percentage, 
+                p.fixed_cost as package_fixed_cost,
+                0 as managed_properties,
+                0 as properties_sold,
+                0 as total_sales,
+                0 as total_commissions
             from agent as c
             LEFT JOIN package as p on p.id = c.package_id 
             WHERE c.branch_id = ?
         query;
         $params = [$branch];
-        if(!empty($search)) $q .= " AND (c.surname LIKE '%$search%' OR c.name LIKE '%$search%'";
-        $q .= " ORDER BY c.surname LIMIT $limit OFFSET $offset";
         $agents = DB::Query($q, $params);
-        $countQuery = "SELECT COUNT(*) as tot FROM agent as c WHERE c.branch_id = ?";
-        if (!empty($search)) {
-            $countQuery .= " AND (
-                c.surname LIKE '%$search%' 
-                OR c.name LIKE '%$search%' 
-                OR c.fixed_cost LIKE '%$search%')
-            ";
-        }
-        $totalRecords = DB::Query($countQuery)[0]['tot'];
-        $response->getBody()->write(json_encode(["payload" => $agents, "totalCount" => $totalRecords]));
+        $response->getBody()->write(json_encode(["payload" => $agents]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 

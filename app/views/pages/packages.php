@@ -9,10 +9,9 @@ require_once __DIR__ . "/../modals/confirm-delete.php";
 <div id="package">
     <div class="pai-card">
         <span class="pai-title">Pacchetti</span>
-        <!-- <div class="bg-light p-3 mt-3"><i>Pagina in allestimento</i></div> -->
     </div>
-    <div class="mt-3">
-        <?php require_once __DIR__ . "/../partials/package-overview.php"; ?>
+    <div class="pai-card mt-3">
+        <div id="listOfPackages"></div>
     </div>
 </div>
 <script src="/static/js/views/packages.js"></script>

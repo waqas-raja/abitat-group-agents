@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalEditPackageLabel"><i class="bi bi-percent me-3"></i>Aggiungi Pacchetto</h5>
+                <h5 class="modal-title" id="modalEditPackageLabel"><i class="bi bi-percent me-3"></i>Modifica Pacchetto</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -38,7 +38,7 @@
             </div>
             <div class="modal-footer d-flex justify-content-between">
                 <div>
-                    <button type="button" class="btn btn-outline-secondary" onclick="deletePackage()"><i class="bi bi-trash3"></i> Eliminare</button>
+                    <button type="button" class="btn btn-link text-danger" onclick="deletePackage()"><i class="bi bi-trash3"></i> Elimina pacchetto</button>
                 </div>
                 <div>
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x"></i> Annulla</button>

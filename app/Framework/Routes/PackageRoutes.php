@@ -21,10 +21,6 @@ class PackageRoutes {
             return Package::Add($request, $response);
         })->add($this->authMiddleware);
 
-        $group->get('/{id}', function (Request $request, Response $response) {
-            throw new HttpNotImplementedException($request, "get package entry point is not implemented");
-        })->add($this->authMiddleware);
-
         $group->patch('/{id}', function (Request $request, Response $response) {
             return Package::Edit($request, $response);
         })->add($this->authMiddleware);

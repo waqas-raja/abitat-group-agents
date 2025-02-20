@@ -20,7 +20,7 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtPercentage" class="col-sm-4 col-form-label">Percentuale<span class="text-danger ms-2">*</span></label>
+                        <label for="txtPercentage" class="col-sm-4 col-form-label">Commissione<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <input type="number" class="form-control" id="txtPercentage" required>
                         </div>
