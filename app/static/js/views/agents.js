@@ -62,6 +62,9 @@ async function loadList(branch_id) {
                         text: "Aggiungi Agente",
                         onClick: function () {
                             document.getElementById("spNewAgentResult").innerText = '';
+                            document.getElementById("txtFirstName").value = '';
+                            document.getElementById("txtLastName").value = '';
+                            document.getElementById("ddlPackage").value = '-1';
                             const modalElement = document.getElementById("modalAddAgent");
                             const modal = new bootstrap.Modal(modalElement);
                             modal.show();
@@ -102,19 +105,19 @@ async function saveAgent() {
         const res = await response.json();
         if (res.result) {
             await loadList(branchID);
-            btn.disabled = true;
+            btn.disabled = false;
             spinner.classList.add("d-none");
             $("#modalAddAgent").modal("hide");
         } else {
             result.innerText = "Si sono verificati degli errori durante il salvataggio";
-            btn.disabled = true;
+            btn.disabled = false;
             spinner.classList.remove("d-none");
             result.classList.remove("d-none");
         }
     } catch (error) {
         console.error(error.message);
         result.innerText = "Si è verificato un errore";
-        btn.disabled = true;
+        btn.disabled = false;
         spinner.classList.remove("d-none");
         result.classList.remove("d-none");
     }
