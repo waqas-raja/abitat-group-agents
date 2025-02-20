@@ -10,12 +10,17 @@ document.addEventListener("DOMContentLoaded", () => {
     loadList(city_id);
 });
 
-function populateDropdown(d, ctrl_id) {
+async function populateDropdown(ctrl_id) {
+    let params = new URLSearchParams();
+    params.append("branch_id", city_id);
+    const response = await fetch(`/api/agents?${params.toString()}`);
+    const json = await response.json();
+    // TODO ... WHAT NAMES SHOULD BE APPEAR TO SELECT
     document.getElementById(ctrl_id).innerHTML = '';
-    for (let i = 0; i < d.length; i++) {
+    for (let i = 0; i < json.payload.length; i++) {
         const opt = document.createElement('option');
-        opt.value = d[i].id;
-        opt.textContent = d[i].purchaseAgent;
+        opt.value = json.payload[i].id;
+        opt.textContent = json.payload[i].name + ' ' + json.payload[i].surname;
         document.getElementById(ctrl_id).appendChild(opt);
     }
 }
@@ -23,20 +28,55 @@ function populateDropdown(d, ctrl_id) {
 function loadList(cid) {
     city_id = cid;
     const d = getData();
-    populateDropdown(d, 'ddlPropertyAcquiredBy');
+    populateDropdown('ddlPropertyAcquiredBy');
     const data = d.filter(function (el) { return el.city_id === parseInt(city_id); });
     const ddlLocation = document.getElementById('ddlPropertyLocation');
     if (ddlLocation !== null) ddlLocation.value = city_id;
     new DevExpress.ui.dxDataGrid(document.getElementById("listOfProperties"), {
-        dataSource: data,
+        // dataSource: data,
+        dataSource: new DevExpress.data.CustomStore({
+            key: "id",
+            load: async function (loadOptions) {
+                let params = new URLSearchParams();
+                params.append("branch_id", city_id);
+                params.append("limit", loadOptions.take || 10);
+                params.append("page", loadOptions.skip / loadOptions.take + 1 || 1);
+                if (loadOptions.filter !== undefined) {
+                    params.append("search", loadOptions.filter.filterValue);
+                }
+                try {
+                    const response = await fetch(`/api/properties?${params.toString()}`);
+                    const json = await response.json();
+                    debugger;
+                    return {
+                        data: json.payload,
+                        totalCount: json.totalCount
+                    };
+                } catch (error) {
+                    console.error("Data fetch error:", error);
+                    return { data: [], totalCount: 0 };
+                }
+            }
+        }),
+        // dataSource: data,
         columnAutoWidth: true,
+        allowColumnResizing: true,
+        allowColumnReordering: true,
         showBorders: true,
+        noDataText: "Nessun dato disponibile",
         rowAlternationEnabled: false,
         grouping: { autoExpandAll: false },
         groupPanel: { visible: true, emptyPanelText: "Trascina qui le colonne per raggruppare" },
         filterRow: { visible: true, applyFilter: "auto" },
         headerFilter: { visible: true },
+        export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
+        stateStoring: { // Permette di salvare la configurazione delle colonne
+            enabled: true,
+            type: "localStorage",
+            storageKey: "gridState"
+        },
         // export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
+        // TODO COLUMNS AS PER DYNAMIC DATA FETCHED
         columns: [
             {
                 dataField: "status",
@@ -138,6 +178,7 @@ function loadList(cid) {
             }
         ],
 
+        // TODO MASTER DETAIL AS PER DYNAMIC DATA FETCHED
         masterDetail: {
             enabled: true,
             template: function (container, options) {
@@ -167,6 +208,7 @@ function loadList(cid) {
                     });
             }
         },
+        remoteOperations: { paging: true, filtering: true, sorting: true },
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
         toolbar: {
