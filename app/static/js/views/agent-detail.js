@@ -1,51 +1,34 @@
-document.addEventListener("DOMContentLoaded", () => {
-    loadAgentDetail();
-    loadSoldPropertiesByAgent();
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadPackages();
+    await Promise.all([
+        loadAgentDetail(),
+        loadSoldPropertiesByAgent()
+    ]);
 });
+
+async function loadPackages() {
+    const ddlPackage = document.getElementById('ddlPackage');
+    ddlPackage.innerHTML = '<option value="-1" selected disabled>Seleziona un pacchetto</option>';
+    const response = await fetch('/api/packages');
+    const r = await response.json();
+    r.payload.forEach(el => { ddlPackage.innerHTML += `<option value="${el.id}">${el.name}</option>`; });
+}
 
 async function loadAgentDetail() {
     const id = document.getElementById('hAgentId').value;
-    const data = [
-        {
-            "id": 1,
-            "first_name": "john",
-            "last_name": "Wick",
-            "commission": 5,
-            "fixed_cost": 55000,
-            "number_of_properties_managed": "50",
-            "email": "john_wick99@mail.com",
-            "phone": "00-33-4512789",
-            "location": "Turino",
-        },
-        {
-            "id": 2,
-            "first_name": "Jason",
-            "last_name": "Statham",
-            "commission": 6,
-            "fixed_cost": 22000,
-            "number_of_properties_managed": "50",
-            "email": "jason_statham222@mail.com",
-            "phone": "00-33-4512789",
-            "location": "Roma",
-        },
-    ];
-    const res = data.filter(function (el) {
-        return el.id === parseInt(id);
-    });
-    document.getElementById("spFirstName").innerText = res[0].first_name ?? "n.d.";
-    document.getElementById("txtFirstName").value = res[0].first_name ?? "n.d.";
-    document.getElementById("spLastName").innerText = res[0].last_name ?? "n.d.";
-    document.getElementById("txtLastName").value = res[0].last_name ?? "n.d.";
-    document.getElementById("spFixedCost").innerText = res[0].fixed_cost ?? "n.d.";
-    document.getElementById("txtFixedCost").value = res[0].fixed_cost ?? "n.d.";
-    document.getElementById("spCommission").innerText = res[0].commission ?? "n.d.";
-    document.getElementById("txtCommission").value = res[0].commission ?? "n.d.";
-    document.getElementById("spEmail").innerText = res[0].email ?? "n.d.";
-    document.getElementById("txtEmail").value = res[0].email ?? "n.d.";
-    document.getElementById("spPhone").innerText = res[0].phone ?? "n.d.";
-    document.getElementById("txtPhone").value = res[0].phone ?? "n.d.";
-    document.getElementById("spLocation").innerText = res[0].location ?? "n.d.";
-    // document.getElementById("txtLocation").value = res[0].location ?? "n.d.";
+    const response = await fetch('/api/agent/' + id);
+    const r = await response.json();
+    document.getElementById("spFirstName").innerText = r.payload.name ?? "n.d.";
+    document.getElementById("txtFirstName").value = r.payload.name ?? "n.d.";
+    document.getElementById("spLastName").innerText = r.payload.surname ?? "n.d.";
+    document.getElementById("txtLastName").value = r.payload.surname ?? "n.d.";
+    document.getElementById("spPackage").innerText = r.payload.package_name ?? "n.d.";
+    document.getElementById("ddlPackage").value = r.payload.package_id ?? "n.d.";
+    document.getElementById("spEmail").innerText = r.payload.email ?? "n.d.";
+    document.getElementById("txtEmail").value =r.payload.email ?? "n.d.";
+    document.getElementById("spPhone").innerText = r.payload.phone ?? "n.d.";
+    document.getElementById("txtPhone").value = r.payload.phone ?? "n.d.";
+    document.getElementById("spLocation").innerText = r.payload.location ?? "n.d.";
 }
 
 function allowEditGeneralInfo() {
@@ -68,7 +51,6 @@ function cancelEditGeneralInfo() {
     document.getElementById("iconAllowEditGenericInfo").classList.remove('d-none');
     loadOverviewData();
 }
-
 
 async function loadSoldPropertiesByAgent() {
     const data = [

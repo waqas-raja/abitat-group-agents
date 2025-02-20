@@ -22,6 +22,7 @@ async function loadList(branch_id) {
     const list_id = BRANCHES_ID[branch_id];
     const response = await fetch("/api/agents?b=" + branch_id);
     const r = await response.json();
+    const hasData = r.payload.length > 0;
     new DevExpress.ui.dxDataGrid(document.getElementById(list_id), {
         dataSource: r.payload,
         columnAutoWidth: true,
@@ -29,9 +30,9 @@ async function loadList(branch_id) {
         noDataText: "Non risultano agenti inseriti in questa filiale",
         rowAlternationEnabled: false,
         grouping: { autoExpandAll: false },
-        groupPanel: { visible: true, emptyPanelText: "Trascina qui le colonne per raggruppare" },
-        filterRow: { visible: true, applyFilter: "auto" },
-        headerFilter: { visible: true },
+        groupPanel: { visible: hasData, emptyPanelText: "Trascina qui le colonne per raggruppare" },
+        filterRow: { visible: hasData, applyFilter: "auto" },
+        headerFilter: { visible: hasData },
         columns: [
             {
                 caption: "Nome Cognome",

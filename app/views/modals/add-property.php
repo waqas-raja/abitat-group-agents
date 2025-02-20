@@ -8,9 +8,9 @@
             <div class="modal-body">
                 <form id="">
                     <div class="row mb-3">
-                        <label for="ddlPropertyAcquiredBy" class="col-sm-4 col-form-label">Agente che ha acquisito</label>
+                        <label for="ddlPurchaseAgent" class="col-sm-4 col-form-label">Agente che ha acquisito</label>
                         <div class="col-sm-8">
-                            <select class="form-select" id="ddlPropertyAcquiredBy">
+                            <select class="form-select" id="ddlPurchaseAgent">
                             </select>
                         </div>
                     </div>

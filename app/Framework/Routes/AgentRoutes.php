@@ -4,7 +4,6 @@ namespace App\Framework\Routes;
 
 use App\Framework\Middlewares\AuthMiddleware;
 use App\Framework\Models\Agent;
-use App\Framework\Models\AgentActivity;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteCollectorProxy;
