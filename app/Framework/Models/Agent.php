@@ -10,9 +10,6 @@ final class Agent {
      * @throws Exception
      */
     public static function GetAll($request, $response) {
-        $token_info = User::GetTokenInfo($request);
-        $user_id = $token_info['id'];
-        $user_role = $token_info['role'];
         $branch = isset($_GET['b']) ? intval($_GET['b']) : 1;
         $q = <<<query
             select 
@@ -70,13 +67,12 @@ final class Agent {
             $data = json_decode($request->getBody()->getContents(), true);
             $name = $data['name'] ?? "";
             $surname = $data['surname'] ?? "";
-            $fixed_cost = $data['fixed_cost'] ?? 0;
             $package_id = $data['package_id'] ?? 0;
             $branch_id = $data['branch_id'] ?? 0;
-            $q = "INSERT INTO agent(name, surname, branch_id, fixed_cost, package_id, ucr) VALUES (?, ?, ?, ?, ?, ?)";
-            $params = [$name, $surname, $branch_id, $fixed_cost, $package_id, $user_id];
+            $q = "INSERT INTO agent(name, surname, branch_id, package_id, ucr) VALUES (?,?,?,?,?)";
+            $params = [$name, $surname, $branch_id, $package_id, $user_id];
             $row_affected = DB::Execute($q, $params);
-            if ($row_affected == 0) throw new Exception("Error inserting agent", 500);
+            if ($row_affected == 0) throw new Exception("Error while insert agent", 500);
             $response->getBody()->write(json_encode(["result" => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {

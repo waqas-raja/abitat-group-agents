@@ -80,17 +80,14 @@ async function saveAgent() {
     const spinner = document.getElementById("spinnerNewAgent");
     const firstName = document.getElementById("txtFirstName").value.trim();
     const lastName = document.getElementById("txtLastName").value.trim();
-    const fixedCost = document.getElementById("txtFixedCost").value.trim();
-    // const commission = document.getElementById("txtCommission");
     const packageID = parseInt(document.getElementById("ddlPackage").value);
     const branchID = parseInt(document.getElementById("ddlLocation").value);
     const result = document.getElementById("spNewAgentResult");
-    if (firstName === '' || lastName === "" || packageID === "" || fixedCost === "") {
+    if (firstName === '' || lastName === "" || packageID === -1) {
         result.innerText = "Si prega di compilare tutti i campi richiesti";
         result.classList.remove("d-none");
         return;
     }
-
     btn.disabled = true;
     spinner.classList.remove("d-none");
     result.classList.add("d-none");
@@ -98,27 +95,27 @@ async function saveAgent() {
     try {
         const response = await fetch("/api/agent", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ "name": firstName, "surname": lastName, "fixed_cost": parseFloat(fixedCost), "package_id": packageID, "branch_id": branchID })
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ "name": firstName, "surname": lastName, "package_id": packageID, "branch_id": branchID })
         });
         const res = await response.json();
         if (res.result) {
-            loadList(ids[branchID - 1], branchID);
+            await loadList(branchID);
             btn.disabled = true;
             spinner.classList.add("d-none");
-            const modalElement = document.getElementById("modalAddAgent");
-            modalElement.classList.remove("show");
-            modalElement.style.display = "none";
-            document.body.classList.remove("modal-open");
-            document.querySelector(".modal-backdrop")?.remove();
-        } else throw new Error("Something went wrong while inserting new agent!");
+            $("#modalAddAgent").modal("hide");
+        } else {
+            result.innerText = "Si sono verificati degli errori durante il salvataggio";
+            btn.disabled = true;
+            spinner.classList.remove("d-none");
+            result.classList.remove("d-none");
+        }
     } catch (error) {
+        console.error(error.message);
+        result.innerText = "Si è verificato un errore";
         btn.disabled = true;
         spinner.classList.remove("d-none");
         result.classList.remove("d-none");
-        result.innerText = error.message !== undefined ? error.message : error;
     }
 }
 
