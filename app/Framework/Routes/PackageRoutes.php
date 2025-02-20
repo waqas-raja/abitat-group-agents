@@ -26,11 +26,11 @@ class PackageRoutes {
         })->add($this->authMiddleware);
 
         $group->patch('/{id}', function (Request $request, Response $response) {
-            throw new HttpNotImplementedException($request, "edit package entry point is not implemented");
+            return Package::Edit($request, $response);
         })->add($this->authMiddleware);
-
+        
         $group->delete('/{id}', function (Request $request, Response $response) {
-            throw new HttpNotImplementedException($request, "delete package entry point is not implemented");
+            return Package::Delete($request, $response);
         })->add($this->authMiddleware);
     }
 }
