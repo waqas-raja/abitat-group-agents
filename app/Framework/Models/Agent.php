@@ -35,12 +35,23 @@ final class Agent {
      * @throws Exception
      */
     public static function GetItem($request, $response) {
-        $token_info = User::GetTokenInfo($request);
-        $user_id = $token_info['id'];
-        $user_role = $token_info['role'];
-        $cid = (int)$request->getAttribute('id');
-        //TODO MARCO
-        $response->getBody()->write(json_encode(["payload" => []]));
+        $agent_id = (int)$request->getAttribute('id');
+        $q = <<<query
+            select 
+                a.*,
+                b.name as branch_name,
+                p.name as package_name,
+                p.fixed_cost as package_fixed_cost,
+                p.percentage as package_percentage,
+                p.dtcr as package_start
+            from agent as a
+            inner join branch as b on b.id = a.branch_id
+            inner join package as p on p.id = a.package_id
+            where a.id = ?
+        query;
+        $rows = DB::Query($q, [$agent_id]);
+        if(count($rows) == 0) throw new Exception("Agent not found", 400);
+        $response->getBody()->write(json_encode(["payload" => $rows[0]]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
