@@ -12,7 +12,6 @@ function loadList(id, data) {
         groupPanel: { visible: true, emptyPanelText: "Trascina qui le colonne per raggruppare" },
         filterRow: { visible: true, applyFilter: "auto" },
         headerFilter: { visible: true },
-        // export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
         columns: [
             { dataField: "date", caption: "Data", allowFiltering: true },
             { dataField: "agent_name", caption: "Agente", allowFiltering: true },
@@ -32,7 +31,6 @@ function loadList(id, data) {
             items: [
                 "groupPanel",
                 "searchPanel",
-                "exportButton",
                 {
                     location: "after",
                     widget: "dxButton",
@@ -55,20 +53,6 @@ function loadList(id, data) {
                 // window.location = `/agent/${e.data.id}`; 
             }
         },
-        // onExporting: function (e) {
-        //     if (e.format === 'xlsx') {
-        //         const workbook = new ExcelJS.Workbook();
-        //         const worksheet = workbook.addWorksheet("Agents");
-        //         DevExpress.excelExporter.exportDataGrid({
-        //             worksheet: worksheet,
-        //             component: e.component,
-        //         }).then(function () {
-        //             workbook.xlsx.writeBuffer().then(function (buffer) {
-        //                 saveAs(new Blob([buffer], { type: "application/octet-stream" }), "abitat-agents.xlsx");
-        //             });
-        //         });
-        //     }
-        // }
     });
 }
 

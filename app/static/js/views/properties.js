@@ -215,7 +215,6 @@ function loadList(cid) {
             items: [
                 "groupPanel",
                 "searchPanel",
-                "exportButton",
             ]
         },
         onRowClick: function (e) {
@@ -229,20 +228,6 @@ function loadList(cid) {
                 // window.location = `/property/${e.data.id}`; 
             }
         },
-        onExporting: function (e) {
-            if (e.format === 'xlsx') {
-                const workbook = new ExcelJS.Workbook();
-                const worksheet = workbook.addWorksheet("Properties");
-                DevExpress.excelExporter.exportDataGrid({
-                    worksheet: worksheet,
-                    component: e.component,
-                }).then(function () {
-                    workbook.xlsx.writeBuffer().then(function (buffer) {
-                        saveAs(new Blob([buffer], { type: "application/octet-stream" }), "abitat-properties.xlsx");
-                    });
-                });
-            }
-        }
     });
 }
 
