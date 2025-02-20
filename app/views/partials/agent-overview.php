@@ -15,35 +15,26 @@
             </div>
             <div id="divInfo">
                 <div class="row mb-0 align-items-center">
-                    <label for="txtFirstName" class="col-sm-5 col-form-label">First Name:</label>
+                    <label for="txtFirstName" class="col-sm-5 col-form-label">Nome:</label>
                     <div class="col-sm-7">
                         <span id="spFirstName" class="valueControl"></span>
                         <input type="text" id="txtFirstName" class="form-control editControl d-none mb-1" value="">
                     </div>
                 </div>
                 <div class="row mb-0 align-items-center">
-                    <label for="txtLastName" class="col-sm-5 col-form-label">Last Name:</label>
+                    <label for="txtLastName" class="col-sm-5 col-form-label">Cognome:</label>
                     <div class="col-sm-7">
                         <span id="spLastName" class="valueControl"></span>
                         <input type="text" id="txtLastName" class="form-control editControl d-none mb-1" value="">
                     </div>
                 </div>
                 <div class="row mb-0 align-items-center">
-                    <label for="txtFixedCost" class="col-sm-5 col-form-label">Fixed Costs:</label>
+                    <label for="ddlPackage" class="col-sm-5 col-form-label">Pacchetto</label>
                     <div class="col-sm-7">
-                        <span id="spFixedCost" class="valueControl"></span>
-                        <input type="number" id="txtFixedCost" class="form-control editControl d-none mb-1" value="">
-                    </div>
-                </div>
-                <div class="row mb-0 align-items-center">
-                    <label for="txtCommission" class="col-sm-5 col-form-label">Commission:</label>
-                    <div class="col-sm-7">
-                        <span id="spCommission" class="valueControl"></span>
+                        <span id="spPackage" class="valueControl"></span>
                         <div class="input-group editControl d-none mb-1">
-                            <input type="number" id="txtCommission" class="form-control">
-                            <span class="input-group-text">%</span>
+                            <select class="form-select" id="ddlPackage"></select>
                         </div>
-                        <!-- <input type="text" id="txtCommission" class="form-control editControl d-none mb-1" value=""> -->
                     </div>
                 </div>
                 <div class="row mb-0 align-items-center">

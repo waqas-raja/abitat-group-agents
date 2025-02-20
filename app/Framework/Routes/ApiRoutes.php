@@ -8,7 +8,6 @@ use App\Framework\Models\Property;
 use App\Framework\Models\Agent;
 use App\Framework\Models\Package;
 use Slim\App;
-use Slim\Exception\HttpNotImplementedException;
 use Slim\Routing\RouteCollectorProxy;
 
 class ApiRoutes {
