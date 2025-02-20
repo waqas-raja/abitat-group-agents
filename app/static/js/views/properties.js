@@ -47,7 +47,6 @@ function loadList(cid) {
                 try {
                     const response = await fetch(`/api/properties?${params.toString()}`);
                     const json = await response.json();
-                    debugger;
                     return {
                         data: json.payload,
                         totalCount: json.totalCount
