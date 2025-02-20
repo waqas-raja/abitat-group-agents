@@ -2,6 +2,8 @@
 $title = 'Pacchetti';
 ob_start();
 require_once __DIR__ . "/../modals/add-package.php";
+require_once __DIR__ . "/../modals/edit-package.php";
+require_once __DIR__ . "/../modals/confirm-delete.php";
 ?>
 
 <div id="package">
