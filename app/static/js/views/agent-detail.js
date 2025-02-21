@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     agentID = parseInt(document.getElementById('hAgentId').value);
     populateDropdown('ddlPackage');
     // populateDropdown('ddlLocation');
-    loadAgentDetail();
+    setTimeout(() => { loadAgentDetail(); }, 500);
     loadSoldPropertiesByAgent();
 });
 
@@ -36,13 +36,13 @@ async function loadAgentDetail() {
     // document.getElementById("spFixedCost").innerText = json.payload[0].package_fixed_cost ?? "n.d.";
     // document.getElementById("txtFixedCost").value = json.payload[0].package_fixed_cost ?? "n.d.";
     document.getElementById("spPackage").innerText = json.payload[0].package_name ?? "n.d.";
-    document.getElementById("ddlPackage").value = json.payload[0].package_id ?? "n.d.";
+    document.getElementById("ddlPackage").value = json.payload[0].package_id ?? 1;
     document.getElementById("spEmail").innerText = json.payload[0].email ?? "n.d.";
     document.getElementById("txtEmail").value = json.payload[0].email ?? "n.d.";
     document.getElementById("spPhone").innerText = json.payload[0].phone ?? "n.d.";
     document.getElementById("txtPhone").value = json.payload[0].phone ?? "n.d.";
     document.getElementById("spLocation").innerText = json.payload[0].branch_name ?? "n.d.";
-    document.getElementById("ddlLocation").value = json.payload[0].branch_id ?? "n.d.";
+    document.getElementById("ddlLocation").value = json.payload[0].branch_id ?? 1;
 }
 
 function allowEditGeneralInfo() {
@@ -66,7 +66,7 @@ function cancelEditGeneralInfo() {
     // loadOverviewData();
 }
 
-async function saveGenericInfo() {
+async function updateGenericInfo() {
     const name = document.getElementById("txtFirstName").value.trim();
     const surname = document.getElementById("txtLastName").value.trim();
     const package = document.getElementById("ddlPackage").value;
@@ -107,6 +107,42 @@ async function saveGenericInfo() {
 
 }
 
+async function deleteAgentModal() {
+    showDeleteConfirmationModal(async function (confirmed) {
+        if (confirmed) {
+            try {
+                const response = await fetch("/api/agent/" + agentID, {
+                    method: "DELETE"
+                });
+                const res = await response.json();
+                if (res.result) {
+                    const modalElement = document.getElementById("modalConfirmDelete");
+                    modalElement.classList.remove("show");
+                    modalElement.style.display = "none";
+                    document.body.classList.remove("modal-open");
+                    document.querySelector(".modal-backdrop")?.remove();
+                    window.location = `/agents`;
+                } else throw new Error("Error while deleting the agent!");
+            } catch (error) {
+                result.innerText = error.message !== undefined ? error.message : error;
+            }
+        }
+    });
+}
+
+function showDeleteConfirmationModal(callback) {
+    const modalElement = document.getElementById("modalConfirmDelete");
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+
+    const confirmButton = document.getElementById("btnConfirmDelete");
+    confirmButton.removeEventListener("click", confirmButton.clickHandler);
+    confirmButton.clickHandler = function (e) {
+        e.stopPropagation();
+        callback(true);
+    };
+    confirmButton.addEventListener("click", confirmButton.clickHandler);
+}
 
 async function loadSoldPropertiesByAgent() {
     const data = [

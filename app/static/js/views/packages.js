@@ -70,21 +70,21 @@ async function loadList(id) {
             items: [
                 "groupPanel",
                 "searchPanel",
-                {
-                    location: "after",
-                    widget: "dxButton",
-                    options: {
-                        icon: "add",
-                        text: "Aggiungi Pacchetto",
-                        onClick: function () {
-                            const modalElement = document.getElementById("modalAddPackage");
-                            const modal = new bootstrap.Modal(modalElement);
-                            modal.show();
-                            // preSelectLocation();
-                        },
-                        elementAttr: { class: "btn-orange" }
-                    }
-                }
+                // {
+                //     location: "after",
+                //     widget: "dxButton",
+                //     options: {
+                //         icon: "add",
+                //         text: "Aggiungi Pacchetto",
+                //         onClick: function () {
+                //             const modalElement = document.getElementById("modalAddPackage");
+                //             const modal = new bootstrap.Modal(modalElement);
+                //             modal.show();
+                //             // preSelectLocation();
+                //         },
+                //         elementAttr: { class: "btn-orange" }
+                //     }
+                // }
             ]
         },
         onRowClick: function (e) {
@@ -100,6 +100,14 @@ async function loadList(id) {
             }
         },
     });
+}
+
+function showAddNewPackageModal() {
+    document.getElementById("spNewPackageResult").innerText = '';
+    const modalElement = document.getElementById("modalAddPackage");
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+    // preSelectLocation();
 }
 
 async function savePackage() {

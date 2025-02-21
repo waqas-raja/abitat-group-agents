@@ -7,9 +7,11 @@ require_once __DIR__ . "/../modals/confirm-delete.php";
 ?>
 
 <div id="package">
-    <div class="pai-card">
+    <div class="pai-card d-flex justify-content-between align-items-center">
         <span class="pai-title">Pacchetti</span>
-        <!-- <div class="bg-light p-3 mt-3"><i>Pagina in allestimento</i></div> -->
+        <button type="button" class="btn btn-orange" onclick="showAddNewPackageModal()">
+            <i class="bi bi-plus-lg me-2"></i> Aggiungi Pacchetto
+        </button>
     </div>
     <div class="mt-3">
         <?php require_once __DIR__ . "/../partials/package-overview.php"; ?>
