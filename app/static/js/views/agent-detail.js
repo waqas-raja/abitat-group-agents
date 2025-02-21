@@ -1,51 +1,48 @@
+let agentID = 0;
 document.addEventListener("DOMContentLoaded", () => {
+    agentID = parseInt(document.getElementById('hAgentId').value);
+    populateDropdown('ddlPackage');
+    // populateDropdown('ddlLocation');
     loadAgentDetail();
     loadSoldPropertiesByAgent();
 });
 
+async function populateDropdown(ctrl_id) {
+    let json;
+    if (ctrl_id === "ddlPackage") {
+        const response = await fetch(`/api/packages`);
+        json = await response.json();
+    } else {
+        // TODO TO GET THE DYNAMIC BRANCHES AND LOAD IN DROPDOWN... 
+        // const response = await fetch(`/api/branches`);
+        // json = await response.json();
+    }
+    document.getElementById(ctrl_id).innerHTML = '';
+    for (let i = 0; i < json.payload.length; i++) {
+        const opt = document.createElement('option');
+        opt.value = json.payload[i].id;
+        opt.textContent = json.payload[i].name;
+        document.getElementById(ctrl_id).appendChild(opt);
+    }
+}
+
 async function loadAgentDetail() {
-    const id = document.getElementById('hAgentId').value;
-    const data = [
-        {
-            "id": 1,
-            "first_name": "john",
-            "last_name": "Wick",
-            "commission": 5,
-            "fixed_cost": 55000,
-            "number_of_properties_managed": "50",
-            "email": "john_wick99@mail.com",
-            "phone": "00-33-4512789",
-            "location": "Turino",
-        },
-        {
-            "id": 2,
-            "first_name": "Jason",
-            "last_name": "Statham",
-            "commission": 6,
-            "fixed_cost": 22000,
-            "number_of_properties_managed": "50",
-            "email": "jason_statham222@mail.com",
-            "phone": "00-33-4512789",
-            "location": "Roma",
-        },
-    ];
-    const res = data.filter(function (el) {
-        return el.id === parseInt(id);
-    });
-    document.getElementById("spFirstName").innerText = res[0].first_name ?? "n.d.";
-    document.getElementById("txtFirstName").value = res[0].first_name ?? "n.d.";
-    document.getElementById("spLastName").innerText = res[0].last_name ?? "n.d.";
-    document.getElementById("txtLastName").value = res[0].last_name ?? "n.d.";
-    document.getElementById("spFixedCost").innerText = res[0].fixed_cost ?? "n.d.";
-    document.getElementById("txtFixedCost").value = res[0].fixed_cost ?? "n.d.";
-    document.getElementById("spCommission").innerText = res[0].commission ?? "n.d.";
-    document.getElementById("txtCommission").value = res[0].commission ?? "n.d.";
-    document.getElementById("spEmail").innerText = res[0].email ?? "n.d.";
-    document.getElementById("txtEmail").value = res[0].email ?? "n.d.";
-    document.getElementById("spPhone").innerText = res[0].phone ?? "n.d.";
-    document.getElementById("txtPhone").value = res[0].phone ?? "n.d.";
-    document.getElementById("spLocation").innerText = res[0].location ?? "n.d.";
-    // document.getElementById("txtLocation").value = res[0].location ?? "n.d.";
+    const response = await fetch(`/api/agent/` + agentID);
+    const json = await response.json();
+    document.getElementById("spFirstName").innerText = json.payload[0].name ?? "n.d.";
+    document.getElementById("txtFirstName").value = json.payload[0].name ?? "n.d.";
+    document.getElementById("spLastName").innerText = json.payload[0].surname ?? "n.d.";
+    document.getElementById("txtLastName").value = json.payload[0].surname ?? "n.d.";
+    // document.getElementById("spFixedCost").innerText = json.payload[0].package_fixed_cost ?? "n.d.";
+    // document.getElementById("txtFixedCost").value = json.payload[0].package_fixed_cost ?? "n.d.";
+    document.getElementById("spPackage").innerText = json.payload[0].package_name ?? "n.d.";
+    document.getElementById("ddlPackage").value = json.payload[0].package_id ?? "n.d.";
+    document.getElementById("spEmail").innerText = json.payload[0].email ?? "n.d.";
+    document.getElementById("txtEmail").value = json.payload[0].email ?? "n.d.";
+    document.getElementById("spPhone").innerText = json.payload[0].phone ?? "n.d.";
+    document.getElementById("txtPhone").value = json.payload[0].phone ?? "n.d.";
+    document.getElementById("spLocation").innerText = json.payload[0].branch_name ?? "n.d.";
+    document.getElementById("ddlLocation").value = json.payload[0].branch_id ?? "n.d.";
 }
 
 function allowEditGeneralInfo() {
@@ -66,7 +63,48 @@ function cancelEditGeneralInfo() {
     document.getElementById("iconSaveEditGenericInfo").classList.add('d-none');
     document.getElementById("iconCancelEditGenericInfo").classList.add('d-none');
     document.getElementById("iconAllowEditGenericInfo").classList.remove('d-none');
-    loadOverviewData();
+    // loadOverviewData();
+}
+
+async function saveGenericInfo() {
+    const name = document.getElementById("txtFirstName").value.trim();
+    const surname = document.getElementById("txtLastName").value.trim();
+    const package = document.getElementById("ddlPackage").value;
+    const email = document.getElementById("txtEmail").value.trim();
+    const phone = document.getElementById("txtPhone").value.trim();
+    const branch = document.getElementById("ddlLocation").value;
+    let result = document.getElementById('errorMsgGen');
+    result.innerText = '';
+    if (!name || !surname || !package || !branch) {
+        result.textContent = "Si prega di compilare tutti i campi obbligatori";
+        result.classList.remove("d-none");
+        return;
+    }
+    // TODO CHECK IF WE NEED THE EMAIL HERE AS THERE IS NO FIELD FOR IT IN DB...
+    // if (!isValidEmail(email)) {
+    //     result.textContent = "L'email fornita non risulta valida";
+    //     result.classList.remove("d-none");
+    //     return;
+    // }
+    if (!(result.classList.contains('d-none'))) result.classList.add("d-none");
+    try {
+        const response = await fetch("/api/agent/" + agentID + "/general-info", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ "name": name, "surname": surname, "package_id": parseInt(package), "branch_id": parseInt(branch) })
+        });
+        const res = await response.json();
+        if (res.result) {
+            loadAgentDetail();
+            cancelEditGeneralInfo();
+        } else throw new Error("Error while updating the agent record!");
+    } catch (error) {
+        result.classList.remove("d-none");
+        result.innerText = error.message !== undefined ? error.message : error;
+    }
+
 }
 
 

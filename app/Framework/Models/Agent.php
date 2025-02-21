@@ -5,11 +5,13 @@ namespace App\Framework\Models;
 use App\Framework\Tools\DB;
 use Exception;
 
-final class Agent {
+final class Agent
+{
     /**
      * @throws Exception
      */
-    public static function GetAll($request, $response) {
+    public static function GetAll($request, $response)
+    {
         $token_info = User::GetTokenInfo($request);
         $user_id = $token_info['id'];
         $user_role = $token_info['role'];
@@ -25,7 +27,7 @@ final class Agent {
             WHERE c.branch_id = ?
         query;
         $params = [$branch];
-        if(!empty($search)) $q .= " AND (c.surname LIKE '%$search%' OR c.name LIKE '%$search%'";
+        if (!empty($search)) $q .= " AND (c.surname LIKE '%$search%' OR c.name LIKE '%$search%'";
         $q .= " ORDER BY c.surname LIMIT $limit OFFSET $offset";
         $agents = DB::Query($q, $params);
         $countQuery = "SELECT COUNT(*) as tot FROM agent as c WHERE c.branch_id = ?";
@@ -44,20 +46,34 @@ final class Agent {
     /**
      * @throws Exception
      */
-    public static function GetItem($request, $response) {
+    public static function GetItem($request, $response)
+    {
         $token_info = User::GetTokenInfo($request);
         $user_id = $token_info['id'];
         $user_role = $token_info['role'];
-        $cid = (int)$request->getAttribute('id');
+        $aid = (int)$request->getAttribute('id');
         //TODO MARCO
-        $response->getBody()->write(json_encode(["payload" => []]));
+        // TODO .... WORKED ON TO GET THE ITEM BY ID.... KINDLY CROSS CHECK IT
+        if (!$aid)
+            throw new Exception('Agent ID not found', 400);
+        $q = <<<query
+            SELECT a.*, p.name as package_name, p.fixed_cost as package_fixed_cost, b.name as branch_name, b.id as branch_id 
+            FROM agent as a
+            LEFT JOIN package as p on p.id = a.package_id 
+            LEFT JOIN branch as b on b.id = a.branch_id 
+            WHERE a.id = ?
+        query;
+        $params = [$aid];
+        $agent = DB::Query($q, $params);
+        $response->getBody()->write(json_encode(["payload" => $agent]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
     /**
      * @throws Exception
      */
-    public static function Delete($request, $response) {
+    public static function Delete($request, $response)
+    {
         $token_info = User::GetTokenInfo($request);
         $user_role = $token_info['role'];
         $cid = (int)$request->getAttribute('id');
@@ -69,7 +85,8 @@ final class Agent {
     /**
      * @throws Exception
      */
-    public static function Add($request, $response) {
+    public static function Add($request, $response)
+    {
         try {
             $token_info = User::GetTokenInfo($request);
             $user_id = $token_info['id'];
@@ -100,30 +117,25 @@ final class Agent {
         $user_id = $token_info['id'];
         $user_role = $token_info['role'];
         $data = $request->getParsedBody();
-        $cid = (int)$request->getAttribute('id');
+        $aid = (int)$request->getAttribute('id');
         //TODO MARCO
-        //        $columns_allowed = self::GetColumns($user_role < Role::STAFF);
-        //        $q = "update contact set ";
-        //        $params = [];
-        //        foreach ($data as $key => $value) {
-        //            if (in_array($key, $columns_allowed)) {
-        //                $q .= "$key = ?, ";
-        //                $params[] = $value;
-        //            }
-        //        }
-        //        $q .= "ule = ?";
-        //        $params[] = $user_id;
-        //        $q .= " where id = ?";
-        //        $params[] = $cid;
-        //        $rows_affected = DB::Execute($q, $params);
-        //        if($rows_affected == 0)
-        //            throw new Exception("An error occurred while I was trying do update a contact", 500);
+        // TODO KINDLY CROSS CHECK THE EDIT GENERIC DETAIL SECTION OF AGENT...
+        $data = json_decode($request->getBody()->getContents(), true);
+        $name = $data['name'] ?? "";
+        $surname = $data['surname'] ?? "";
+        $package_id = $data['package_id'] ?? 0;
+        $branch_id = $data['branch_id'] ?? 0;
 
+        $q = 'UPDATE agent SET name = ?, surname = ?, branch_id = ?, package_id = ? WHERE id = ?';
+        $params = [$name, $surname, $branch_id, $package_id, $aid];
+        $row_affected = DB::Execute($q, $params);
+        if ($row_affected == 0) throw new Exception("Error while updating agent", 500);
         $response->getBody()->write(json_encode(["result" => true]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
-    private static function GetColumns(bool $restricted = true): array {
+    private static function GetColumns(bool $restricted = true): array
+    {
         $rows = DB::Query("show columns from contact");
         $restricted_values = ['id', 'ucr', 'ule', 'dtcr', 'dtle', 'agent', 'list_id'];
         $columns = [];

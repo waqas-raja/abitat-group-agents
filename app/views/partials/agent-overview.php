@@ -3,7 +3,7 @@
         <div class="pai-card position-relative">
             <div class="position-relative">
                 <p class="lato-black text-blue"><i class="bi bi-person-vcard"></i>&nbsp;&nbsp;Informazioni agente</p>
-                <span id="iconAllowEditGenericInfo" class="position-absolute editIcon" role="button" style="right:20px;top:0;" title="Edit" onclick="allowEditGeneralInfo()">
+                <span id="iconAllowEditGenericInfo" class="position-absolute editIcon" role="button" style="right:0px;top:0;" title="Edit" onclick="allowEditGeneralInfo()">
                     <i class="bi bi-pencil"></i>
                 </span>
                 <button id="iconSaveEditGenericInfo" class="btn btn-orange-inverted position-absolute saveIcon d-none py-0 px-2" role="button" style="right:0px;top:0;" title="Save" onclick="saveGenericInfo()">
@@ -15,35 +15,37 @@
             </div>
             <div id="divInfo">
                 <div class="row mb-0 align-items-center">
-                    <label for="txtFirstName" class="col-sm-5 col-form-label">First Name:</label>
+                    <label for="txtFirstName" class="col-sm-5 col-form-label">Nome:<span class="text-danger ms-2 editControl d-none">*</span></label>
                     <div class="col-sm-7">
                         <span id="spFirstName" class="valueControl"></span>
                         <input type="text" id="txtFirstName" class="form-control editControl d-none mb-1" value="">
                     </div>
                 </div>
                 <div class="row mb-0 align-items-center">
-                    <label for="txtLastName" class="col-sm-5 col-form-label">Last Name:</label>
+                    <label for="txtLastName" class="col-sm-5 col-form-label">Cognome:<span class="text-danger ms-2 editControl d-none">*</span></label>
                     <div class="col-sm-7">
                         <span id="spLastName" class="valueControl"></span>
                         <input type="text" id="txtLastName" class="form-control editControl d-none mb-1" value="">
                     </div>
                 </div>
-                <div class="row mb-0 align-items-center">
-                    <label for="txtFixedCost" class="col-sm-5 col-form-label">Fixed Costs:</label>
+                <!-- <div class="row mb-0 align-items-center">
+                    <label for="txtFixedCost" class="col-sm-5 col-form-label">Fixed Costs:<span class="text-danger ms-2 editControl d-none">*</span></label>
                     <div class="col-sm-7">
                         <span id="spFixedCost" class="valueControl"></span>
                         <input type="number" id="txtFixedCost" class="form-control editControl d-none mb-1" value="">
                     </div>
-                </div>
+                </div> -->
                 <div class="row mb-0 align-items-center">
-                    <label for="txtCommission" class="col-sm-5 col-form-label">Commission:</label>
+                    <label for="txtPackage" class="col-sm-5 col-form-label">Pacchetto:<span class="text-danger ms-2 editControl d-none">*</span></label>
                     <div class="col-sm-7">
-                        <span id="spCommission" class="valueControl"></span>
-                        <div class="input-group editControl d-none mb-1">
-                            <input type="number" id="txtCommission" class="form-control">
-                            <span class="input-group-text">%</span>
-                        </div>
-                        <!-- <input type="text" id="txtCommission" class="form-control editControl d-none mb-1" value=""> -->
+                        <span id="spPackage" class="valueControl"></span>
+                        <!-- <input type="text" id="txtPackage" class="form-control editControl d-none mb-1" value=""> -->
+                        <select class="form-select editControl d-none mb-1" id="ddlPackage">
+                            <option selected>Scegli...</option>
+                            <option value="1">Basic</option>
+                            <option value="2">Express</option>
+                            <option value="3">Golden</option>
+                        </select>
                     </div>
                 </div>
                 <div class="row mb-0 align-items-center">
@@ -62,11 +64,17 @@
                 </div>
                 <hr>
                 <div class="row mb-0 align-items-center">
-                    <label for="txtLocation" class="col-sm-5 col-form-label">Location:</label>
+                    <label for="txtLocation" class="col-sm-5 col-form-label">Sede:<span class="text-danger ms-2 editControl d-none">*</span></label>
                     <div class="col-sm-7">
-                        <span id="spLocation" class=""></span>
-                        <!-- <input type="text" id="txtLocation" class="form-control editControl d-none" value=""> -->
+                        <span id="spLocation" class="valueControl"></span>
+                        <select class="form-select editControl d-none" id="ddlLocation">
+                            <option selected>Scegli...</option>
+                            <option value="1">Torino</option>
+                            <option value="2">Moncalieri</option>
+                            <option value="3">Roma</option>
+                        </select>
                     </div>
+                    <div id="errorMsgGen" class="text-danger d-none"></div>
                 </div>
             </div>
         </div>
