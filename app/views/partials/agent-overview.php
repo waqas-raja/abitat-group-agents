@@ -63,7 +63,7 @@
                             <option value="3">Roma</option>
                         </select>
                     </div>
-                    <div id="errorMsgGen" class="text-danger d-none"></div>
+                    <div id="errEditAgent" class="text-danger"></div>
                 </div>
             </div>
         </div>
@@ -72,13 +72,10 @@
         <div class="pai-card mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <p class="lato-black text-blue mb-0">
-                    <i class="bi-piggy-bank me-2"></i>Rientri
+                    <i class="bi-piggy-bank me-2"></i>Riepilogo Rientri
                 </p>
-                <!-- <button class="btn btn-orange" data-bs-toggle="modal" data-bs-target="#callModal">
-                    <i class="bi bi-plus me-2"></i>Registra chiamata effettuata
-                </button> -->
             </div>
-            <div id="listOfSoldProperties" class="mt-3"></div>
+            <div id="listOfReport" class="mt-3"></div>
         </div>
     </div>
 </div>

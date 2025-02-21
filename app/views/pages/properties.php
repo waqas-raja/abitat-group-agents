@@ -10,9 +10,9 @@ require_once __DIR__ . '/../modals/mark-property-sold.php';
         <div class="d-flex justify-content-start align-items-center gap-5">
             <span class="pai-title">Elenco immobili:</span>
             <div class="pai-tabs">
-                <div class="pai-tab active" data-tab="tabContent" onclick="loadList(1)">Torino</div>
-                <div class="pai-tab" data-tab="tabContent" onclick="loadList(2)">Moncalieri</div>
-                <div class="pai-tab" data-tab="tabContent" onclick="loadList(3)">Roma</div>
+                <div class="pai-tab active" data-tab="tabContent" onclick="changeBranch(1)">Torino</div>
+                <div class="pai-tab" data-tab="tabContent" onclick="changeBranch(2)">Moncalieri</div>
+                <div class="pai-tab" data-tab="tabContent" onclick="changeBranch(3)">Roma</div>
             </div>
         </div>
         <button type="button" class="btn btn-orange" onclick="showEditPropertyModal(null, 'Aggiungi proprietà')"><i class="bi bi-plus-lg me-2"></i> Aggiungi Proprietà</button>

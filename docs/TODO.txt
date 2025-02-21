@@ -1,0 +1,20 @@
+PACCHETTI
+- in dettaglio pacchetti, visualizzare l'elenco degli agenti collegati. al click sulla riga deve aprire il dettaglio agente
+- elimina pacchetto deve verificare se ci sono agenti collegati, in quel caso deve chiedere che pacchetto associargli in sostituzione
+
+NOTE SPESE
+- in add nota spesa deve chiedere prima la sede, poi mostrare gli agenti legati a quella sede
+- la lista deve mostrare anche la sede dell'agente
+- il campo agente deve essere cliccabile e aprire il dettaglio agente
+
+AGENTI
+- sarebbe figo mostrare un grafico di andamento nella riga
+
+IMMOBILI
+- add immobile deve chiedere sede (default sede che sto guardando), tipologia, indirizzo, data di acquisto (default oggi), prezzo di acquisto, percentuale commissione agenzia, agente, scadenza mandato
+- verificare caricamento lista con i nuovi campi
+- se non venduto, mostrare pulsante "venduto" nella colonna guadagno
+- modal venduto deve chiedere data di vendita (default oggi), prezzo di vendita, percentuale commissione agenzia, agente
+
+ALTRO
+- inserire possibilità di aggiungere tipologia immobile

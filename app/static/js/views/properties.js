@@ -7,6 +7,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadList(_selectedBranch);
 });
 
+async function changeBranch(branch_id) {
+    _selectedBranch = branch_id;
+    await loadList();
+    await loadAgentFromBranch();
+}
+
 async function loadAgentFromBranch() {
     const ddl = document.getElementById("ddlPurchaseAgent");
     ddl.innerHTML = '';
@@ -15,73 +21,47 @@ async function loadAgentFromBranch() {
     r.payload.forEach(el => ddl.innerHTML += `<option value="${el.id}">${el.surname} ${name}</option>`);
 }
 
-async function loadList(cid) {
-    _selectedBranch = cid;
-    await loadAgentFromBranch();
+async function loadList() {
     const response = await fetch('/api/properties?branch_id=' + _selectedBranch);
     const r = await response.json();
+    const hasData = r.payload.length > 0;
     new DevExpress.ui.dxDataGrid(document.getElementById("listOfProperties"), {
         dataSource: r.payload,
         columnAutoWidth: true,
-        allowColumnResizing: true,
-        allowColumnReordering: true,
         showBorders: true,
         noDataText: "Non risultano immobili registrati per questa sede",
         rowAlternationEnabled: false,
         grouping: { autoExpandAll: false },
-        groupPanel: { visible: true, emptyPanelText: "Trascina qui le colonne per raggruppare" },
-        filterRow: { visible: true, applyFilter: "auto" },
-        headerFilter: { visible: true },
-        export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
+        groupPanel: { visible: hasData, emptyPanelText: "Trascina qui le colonne per raggruppare" },
+        filterRow: { visible: hasData, applyFilter: "auto" },
+        headerFilter: { visible: hasData },
         columns: [
             {
-                dataField: "status",
-                caption: "Stato",
-                allowFiltering: false,
-                width: 50,
+                caption: "Dati generali",
                 alignment: "center",
-                cellTemplate: function(container, options) {
-                    let iconClass, tooltipText;
-                    switch (options.value) {
-                        case "sold":
-                            iconClass = "bi bi-check-circle-fill text-success"; // Icona "venduto"
-                            tooltipText = "Venduto";
-                            break;
-                        case "in_management":
-                            iconClass = "bi bi-hourglass-split text-warning"; // Icona "in gestione"
-                            tooltipText = "In gestione";
-                            break;
-                        default:
-                            iconClass = "bi bi-question-circle text-secondary"; // Icona generica
-                            tooltipText = "Stato sconosciuto";
-                    }
-                    $("<i>")
-                        .addClass(iconClass)
-                        .attr("title", tooltipText)
-                        .appendTo(container);
-                }
+                cssClass: "bg-light",
+                columns: [
+                    {
+                        dataField: "type",
+                        caption: "Tipologia",
+                        allowFiltering: true,
+                        calculateCellValue: function (data) {
+                            switch (data.type) {
+                                case 1: return "Apartment";
+                                case 2: return "Villa";
+                                case 3: return "Farmhouse";
+                            }
+                        }
+                    },
+                    { dataField: "address", caption: "Indirizzo", allowFiltering: true },
+                ]
             },
             {
-                dataField: "type",
-                caption: "Tipologia",
-                allowFiltering: true,
-                calculateCellValue: function (data) {
-                    switch (data.type) {
-                        case 1: return "Apartment";
-                        case 2: return "Villa";
-                        case 3: return "Farmhouse";
-                    }
-                }
-            },
-            { dataField: "address", caption: "Indirizzo", allowFiltering: true },
-            {
-                caption: "Dati di Acquisto",
+                caption: "Acquisto",
                 alignment: "center",
-                cssClass: "alert alert-warning",
+                cssClass: "alert alert-warning rounded-0",
                 columns: [
                     { dataField: "purchase_date", caption: "Data", allowFiltering: true },
-                    { dataField: "purchaseAgent", caption: "Agente", allowFiltering: true },
-                    { dataField: "purchaseSubAgent", caption: "Subagente", allowFiltering: true },
                     {
                         dataField: "purchase_price",
                         caption: "Prezzo",
@@ -89,17 +69,18 @@ async function loadList(cid) {
                         calculateCellValue: function (data) {
                             return formatNumber(data.purchase_price);
                         }
-                    }
+                    },
+                    { dataField: "purchase_percentage", caption: "Percentuale", allowFiltering: true },
+                    { dataField: "purchase_agent", caption: "Agente", allowFiltering: true },
+                    { dataField: "mandate_expiration", caption: "Scadenza", allowFiltering: true },
                 ]
             },
             {
-                caption: "Dati di Vendita",
+                caption: "Vendita",
                 alignment: "center",
-                cssClass: "alert alert-success",
+                cssClass: "alert alert-success rounded-0",
                 columns: [
                     { dataField: "sale_date", caption: "Data", allowFiltering: true },
-                    { dataField: "saleAgent", caption: "Agente", allowFiltering: true },
-                    { dataField: "saleSubAgent", caption: "Subagente", allowFiltering: true },
                     {
                         dataField: "sale_price",
                         caption: "Prezzo",
@@ -108,35 +89,34 @@ async function loadList(cid) {
                             if (data.sale_price !== null) return formatNumber(data.sale_price);
                         }
                     },
+                    { dataField: "sale_percentage", caption: "Percentuale", allowFiltering: true },
+                    { dataField: "sale_agent", caption: "Agente", allowFiltering: true },
 
+                    {
+                        caption: "Guadagno",
+                        allowFiltering: true,
+                        cellTemplate: function(container, options) {
+                            if (!options.data.sale_date && !options.data.sale_price) {
+                                $("<button>")
+                                    .text("Venduto")
+                                    .addClass("btn btn-success")
+                                    .on("click", function (event) {
+                                        event.stopPropagation();
+                                        showMarkPropertySoldModal(options.data);
+                                    })
+                                    .appendTo(container);
+                            } else {
+                                container.text(formatNumber(options.data.sale_price - options.data.purchase_price));
+                            }
+                        }
+                    }
                 ]
             },
-            {
-                caption: "Delta",
-                allowFiltering: true,
-                // calculateCellValue: function (data) {
-                //     if (data.sale_price !== null) return formatNumber(data.sale_price - data.purchase_price);
-                // }
-                cellTemplate: function(container, options) {
-                    if (!options.data.sale_date && !options.data.sale_price) {
-                        $("<button>")
-                            .text("Venduto")
-                            .addClass("btn btn-success")
-                            .on("click", function (event) {
-                                event.stopPropagation();
-                                showMarkPropertySoldModal(options.data);
-                            })
-                            .appendTo(container);
-                    } else {
-                        container.text(formatNumber(options.data.sale_price - options.data.purchase_price));
-                    }
-                }
-            }
         ],
 
         // TODO MASTER DETAIL AS PER DYNAMIC DATA FETCHED
         masterDetail: {
-            enabled: true,
+            enabled: false,
             template: function (container, options) {
                 const details = options.data.details;
                 $("<div>")

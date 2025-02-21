@@ -11,19 +11,15 @@ async function loadList() {
         rowAlternationEnabled: false,
         columns: [
             { dataField: "name", caption: "Nome" },
-            {
-                dataField: "fixed_cost",
-                caption: "Canone fisso",
-                calculateCellValue: function (data) {
-                    return formatNumber(data.fixed_cost);
-                }
-            },
+            { dataField: "fixed_cost", caption: "Canone fisso", alignment:"center" },
             {
                 dataField: "percentage",
                 caption: "Commissione",
+                alignment:"center",
                 calculateCellValue: function (data) { return data.percentage + '%'; }
             },
             { dataField: "note", caption: "Descrizione" },
+            { dataField: "tot_agents", caption: "Agenti", width: 100, alignment:"center", },
         ],
         remoteOperations: { paging: true, filtering: true, sorting: true },
         paging: { pageSize: 10 },
@@ -49,7 +45,7 @@ async function loadList() {
     });
 }
 
-function showAddNewPackageModal() {
+function showModalAddPackage() {
     document.getElementById("spNewPackageResult").innerText = '';
     const modalElement = document.getElementById("modalAddPackage");
     const modal = new bootstrap.Modal(modalElement);
