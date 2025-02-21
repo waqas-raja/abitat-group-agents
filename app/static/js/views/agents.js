@@ -31,53 +31,35 @@ async function loadList(branch_id) {
         rowAlternationEnabled: false,
         grouping: { autoExpandAll: false },
         groupPanel: { visible: hasData, emptyPanelText: "Trascina qui le colonne per raggruppare" },
-        filterRow: { visible: hasData, applyFilter: "auto" },
-        headerFilter: { visible: hasData },
+        searchPanel: { visible: hasData, highlightCaseSensitive: false, width:300 },
+        headerFilter: { visible: false },
         columns: [
             {
                 caption: "Nome Cognome",
-                allowFiltering: true,
+                allowSearch:true,
                 calculateCellValue: function (data) { return data.name + ' ' + data.surname; }
             },
-            { dataField: "package_name", caption: "Pacchetto", allowFiltering: true },
-            { dataField: "package_percentage", caption: "Commissioni", allowFiltering: true },
-            { dataField: "package_fixed_cost", caption: "Costi fissi", allowFiltering: true },
-            { dataField: "managed_properties", caption: "Proprietà in gestione", allowFiltering: true },
-            { dataField: "properties_sold", caption: "Proprietà vendute", allowFiltering: true },
-            { dataField: "total_sales", caption: "Totale vendite", allowFiltering: true },
-            { dataField: "total_commissions", caption: "Totale commissioni", allowFiltering: true },
+            { dataField: "package_name", caption: "Pacchetto" },
+            { dataField: "package_percentage", caption: "Commissioni" },
+            { dataField: "package_fixed_cost", caption: "Costi fissi" },
+            { dataField: "managed_properties", caption: "Proprietà in gestione" },
+            { dataField: "properties_sold", caption: "Proprietà vendute" },
+            { dataField: "total_sales", caption: "Totale vendite" },
+            { dataField: "total_commissions", caption: "Totale commissioni" },
         ],
-        remoteOperations: { paging: true, filtering: true, sorting: true },
+        remoteOperations: { paging: true, sorting: true },
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
         toolbar: {
             items: [
                 "groupPanel",
-                "searchPanel",
-                // {
-                //     location: "after",
-                //     widget: "dxButton",
-                //     options: {
-                //         icon: "add",
-                //         text: "Aggiungi Agente",
-                //         onClick: function () {
-                //             document.getElementById("spNewAgentResult").innerText = '';
-                //             document.getElementById("txtFirstName").value = '';
-                //             document.getElementById("txtLastName").value = '';
-                //             document.getElementById("ddlPackage").value = '-1';
-                //             const modalElement = document.getElementById("modalAddAgent");
-                //             const modal = new bootstrap.Modal(modalElement);
-                //             modal.show();
-                //             preSelectLocation();
-                //         },
-                //         elementAttr: { class: "btn-orange" }
-                //     }
-                // }
+                "searchPanel"
             ]
         },
         onRowClick: function (e) { if (e.rowType === "data") { window.location = `/agent/${e.data.id}`; } },
     });
 }
+
 
 function showAddNewAgentModal() {
     document.getElementById("spNewAgentResult").innerText = '';
