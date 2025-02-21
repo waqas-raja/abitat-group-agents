@@ -1,5 +1,5 @@
 const BRANCHES = { Torino: 1, Moncalieri: 2, Roma: 3 };
-const BRANCHES_ID = {[BRANCHES.Torino]: "listOfTorinoAgents", [BRANCHES.Moncalieri]: "listOfMoncalieriAgents", [BRANCHES.Roma]: "listOfRomaAgents"};
+const BRANCHES_ID = { [BRANCHES.Torino]: "listOfTorinoAgents", [BRANCHES.Moncalieri]: "listOfMoncalieriAgents", [BRANCHES.Roma]: "listOfRomaAgents" };
 document.addEventListener("DOMContentLoaded", async () => {
     initInternalTabs();
     await Promise.all([
@@ -37,7 +37,7 @@ async function loadList(branch_id) {
             {
                 caption: "Nome Cognome",
                 allowFiltering: true,
-                calculateCellValue: function (data) { return data.name +' '+ data.surname; }
+                calculateCellValue: function (data) { return data.name + ' ' + data.surname; }
             },
             { dataField: "package_name", caption: "Pacchetto", allowFiltering: true },
             { dataField: "package_percentage", caption: "Commissioni", allowFiltering: true },
@@ -54,29 +54,40 @@ async function loadList(branch_id) {
             items: [
                 "groupPanel",
                 "searchPanel",
-                {
-                    location: "after",
-                    widget: "dxButton",
-                    options: {
-                        icon: "add",
-                        text: "Aggiungi Agente",
-                        onClick: function () {
-                            document.getElementById("spNewAgentResult").innerText = '';
-                            document.getElementById("txtFirstName").value = '';
-                            document.getElementById("txtLastName").value = '';
-                            document.getElementById("ddlPackage").value = '-1';
-                            const modalElement = document.getElementById("modalAddAgent");
-                            const modal = new bootstrap.Modal(modalElement);
-                            modal.show();
-                            preSelectLocation();
-                        },
-                        elementAttr: { class: "btn-orange" }
-                    }
-                }
+                // {
+                //     location: "after",
+                //     widget: "dxButton",
+                //     options: {
+                //         icon: "add",
+                //         text: "Aggiungi Agente",
+                //         onClick: function () {
+                //             document.getElementById("spNewAgentResult").innerText = '';
+                //             document.getElementById("txtFirstName").value = '';
+                //             document.getElementById("txtLastName").value = '';
+                //             document.getElementById("ddlPackage").value = '-1';
+                //             const modalElement = document.getElementById("modalAddAgent");
+                //             const modal = new bootstrap.Modal(modalElement);
+                //             modal.show();
+                //             preSelectLocation();
+                //         },
+                //         elementAttr: { class: "btn-orange" }
+                //     }
+                // }
             ]
         },
         onRowClick: function (e) { if (e.rowType === "data") { window.location = `/agent/${e.data.id}`; } },
     });
+}
+
+function showAddNewAgentModal() {
+    document.getElementById("spNewAgentResult").innerText = '';
+    document.getElementById("txtFirstName").value = '';
+    document.getElementById("txtLastName").value = '';
+    document.getElementById("ddlPackage").value = '-1';
+    const modalElement = document.getElementById("modalAddAgent");
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+    preSelectLocation();
 }
 
 async function saveAgent() {
@@ -99,7 +110,7 @@ async function saveAgent() {
     try {
         const response = await fetch("/api/agent", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ "name": firstName, "surname": lastName, "package_id": packageID, "branch_id": branchID })
         });
         const res = await response.json();

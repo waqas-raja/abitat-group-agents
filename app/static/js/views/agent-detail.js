@@ -1,4 +1,6 @@
+let agentID = 0;
 document.addEventListener("DOMContentLoaded", async () => {
+    agentID = document.getElementById('hAgentId').value;
     await loadPackages();
     await Promise.all([
         loadAgentDetail(),
@@ -15,8 +17,7 @@ async function loadPackages() {
 }
 
 async function loadAgentDetail() {
-    const id = document.getElementById('hAgentId').value;
-    const response = await fetch('/api/agent/' + id);
+    const response = await fetch('/api/agent/' + agentID);
     const r = await response.json();
     document.getElementById("spFirstName").innerText = r.payload.name ?? "n.d.";
     document.getElementById("txtFirstName").value = r.payload.name ?? "n.d.";
@@ -28,7 +29,8 @@ async function loadAgentDetail() {
     document.getElementById("txtEmail").value =r.payload.email ?? "n.d.";
     document.getElementById("spPhone").innerText = r.payload.phone ?? "n.d.";
     document.getElementById("txtPhone").value = r.payload.phone ?? "n.d.";
-    document.getElementById("spLocation").innerText = r.payload.location ?? "n.d.";
+    document.getElementById("spLocation").innerText = r.payload.branch_name ?? "n.d.";
+    document.getElementById("ddlLocation").value = r.payload.branch_id ?? 1;
 }
 
 function allowEditGeneralInfo() {
@@ -49,7 +51,6 @@ function cancelEditGeneralInfo() {
     document.getElementById("iconSaveEditGenericInfo").classList.add('d-none');
     document.getElementById("iconCancelEditGenericInfo").classList.add('d-none');
     document.getElementById("iconAllowEditGenericInfo").classList.remove('d-none');
-    loadOverviewData();
 }
 
 async function updateGenericInfo() {
