@@ -5,13 +5,19 @@
 ?>
 
 <div id="agents">
-    <div class="pai-card mb-3 d-flex justify-content-start align-items-center gap-4">
-        <span class="pai-title">Elenco agenti:</span>
-        <div class="pai-tabs">
-            <div class="pai-tab active" data-tab="tabContentTorino">Torino</div>
-            <div class="pai-tab" data-tab="tabContentMoncalieri">Moncalieri</div>
-            <div class="pai-tab" data-tab="tabContentRoma">Roma</div>
+
+    <div class="pai-card mb-3 d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-start align-items-center gap-5">
+            <span class="pai-title">Elenco agenti:</span>
+            <div class="pai-tabs">
+                <div class="pai-tab active" data-tab="tabContentTorino">Torino</div>
+                <div class="pai-tab" data-tab="tabContentMoncalieri">Moncalieri</div>
+                <div class="pai-tab" data-tab="tabContentRoma">Roma</div>
+            </div>
         </div>
+        <button type="button" class="btn btn-orange" onclick="showAddNewAgentModal()">
+            <i class="bi bi-plus-lg me-2"></i> Aggiungi Agente
+        </button>
     </div>
     <div id="tabContentTorino" class="pai-tab-content active">
         <div class="pai-card">

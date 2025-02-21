@@ -144,7 +144,7 @@ function handleSidebarExpension() {
 }
 
 function formatNumber(num) {
-    if (num === null) num = 0;
+    if (num === null || num === undefined) num = 0;
     return ((num).toLocaleString('de-DE', {
         style: 'currency',
         currency: 'EUR',

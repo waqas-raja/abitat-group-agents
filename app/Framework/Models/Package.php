@@ -10,7 +10,14 @@ final class Package {
      * @throws Exception
      */
     public static function GetAll($request, $response) {
-        $packages = DB::Query("select * from package order by name");
+        $q = <<<query
+            select 
+                p.*, 
+                (select count(*) from agent where package_id = p.id) as tot_agents
+            from package as p
+            order by p.name
+        query;
+        $packages = DB::Query($q);
         $response->getBody()->write(json_encode(["payload" => $packages]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }

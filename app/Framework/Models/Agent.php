@@ -61,9 +61,14 @@ final class Agent {
     public static function Delete($request, $response) {
         $token_info = User::GetTokenInfo($request);
         $user_role = $token_info['role'];
-        $cid = (int)$request->getAttribute('id');
-        //TODO MARCO
-        $response->getBody()->write(json_encode(["result" => false]));
+        $aid = (int)$request->getAttribute('id');
+        // TODO MARCO
+        // TODO ... IS THERE ANY THING TODO MORE BEFORE DELETING THE AGENT...
+        $q = "DELETE from agent WHERE id = ?";
+        $params = [$aid];
+        $row_affected = DB::Execute($q, $params);
+        if ($row_affected == 0) throw new Exception("Error while deleting the agent", 500);
+        $response->getBody()->write(json_encode(["result" => true]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
@@ -94,31 +99,34 @@ final class Agent {
     /**
      * @throws Exception
      */
-    public static function Update($request, $response)
-    {
-        $token_info = User::GetTokenInfo($request);
-        $user_id = $token_info['id'];
-        $user_role = $token_info['role'];
-        $data = $request->getParsedBody();
-        $cid = (int)$request->getAttribute('id');
-        //TODO MARCO
-        //        $columns_allowed = self::GetColumns($user_role < Role::STAFF);
-        //        $q = "update contact set ";
-        //        $params = [];
-        //        foreach ($data as $key => $value) {
-        //            if (in_array($key, $columns_allowed)) {
-        //                $q .= "$key = ?, ";
-        //                $params[] = $value;
-        //            }
-        //        }
-        //        $q .= "ule = ?";
-        //        $params[] = $user_id;
-        //        $q .= " where id = ?";
-        //        $params[] = $cid;
-        //        $rows_affected = DB::Execute($q, $params);
-        //        if($rows_affected == 0)
-        //            throw new Exception("An error occurred while I was trying do update a contact", 500);
-
+    public static function Update($request, $response) {
+        $aid = (int)$request->getAttribute('id');
+        $data = json_decode($request->getBody()->getContents(), true);
+        $name = $data['name'] ?? "";
+        $surname = $data['surname'] ?? "";
+        $package_id = $data['package_id'] ?? 0;
+        $branch_id = $data['branch_id'] ?? 0;
+        $phone = $data['phone'] ?? "";
+        $email = $data['email'] ?? "";
+        $q_check = 'SELECT name, surname, branch_id, phone, email, package_id FROM agent WHERE id = ?';
+        $curr = DB::Query($q_check, [$aid]);
+        if(!$curr) throw new Exception("Agent $aid not found", 404);
+        $curr = $curr[0];
+        if(
+            $curr['name'] === $name &&
+            $curr['surname'] === $surname &&
+            $curr['branch_id'] == $branch_id &&
+            $curr['phone'] === $phone &&
+            $curr['email'] === $email &&
+            $curr['package_id'] == $package_id
+        ) {
+            $response->getBody()->write(json_encode(["result" => true]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        }
+        $q = 'UPDATE agent SET name = ?, surname = ?, branch_id = ?, phone = ?, email = ?, package_id = ? WHERE id = ?';
+        $params = [$name, $surname, $branch_id, $phone, $email, $package_id, $aid];
+        $row_affected = DB::Execute($q, $params);
+        if ($row_affected == 0) throw new Exception("Error while updating agent", 500);
         $response->getBody()->write(json_encode(["result" => true]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }

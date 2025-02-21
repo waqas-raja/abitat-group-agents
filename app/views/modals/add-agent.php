@@ -8,25 +8,25 @@
             <div class="modal-body">
                 <form id="">
                     <div class="row mb-3">
-                        <label for="txtFirstName" class="col-sm-4 col-form-label">Nome</label>
+                        <label for="txtFirstName" class="col-sm-4 col-form-label">Nome<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="txtFirstName" required>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtLastName" class="col-sm-4 col-form-label">Cognome</label>
+                        <label for="txtLastName" class="col-sm-4 col-form-label">Cognome<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="txtLastName" required>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="ddlPackage" class="col-sm-4 col-form-label">Pacchetto</label>
+                        <label for="ddlPackage" class="col-sm-4 col-form-label">Pacchetto<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlPackage"></select>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="ddlLocation" class="col-sm-4 col-form-label">Sede</label>
+                        <label for="ddlLocation" class="col-sm-4 col-form-label">Sede<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlLocation">
                                 <option value="1">Torino</option>

@@ -85,10 +85,10 @@ class ApiRoutes {
                 $packageRoutes->register($packageGroup);
             });
 
-            $packageRoutes = new PackageRoutes($this->authMiddleware);
-            $group->group('/expense-report', function (RouteCollectorProxy $packageGroup) use ($packageRoutes) {
-                $packageRoutes->register($packageGroup);
-            });
+//            $packageRoutes = new ExpenseReport($this->authMiddleware);
+//            $group->group('/expense-report', function (RouteCollectorProxy $packageGroup) use ($packageRoutes) {
+//                $packageRoutes->register($packageGroup);
+//            });
         });
     }
 }

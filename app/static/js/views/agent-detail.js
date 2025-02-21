@@ -15,8 +15,8 @@ async function loadPackages() {
 }
 
 async function loadAgentDetail() {
-    const id = document.getElementById('hAgentId').value;
-    const response = await fetch('/api/agent/' + id);
+    const aid = document.getElementById("hAgentId").value;
+    const response = await fetch('/api/agent/' + aid);
     const r = await response.json();
     document.getElementById("spFirstName").innerText = r.payload.name ?? "n.d.";
     document.getElementById("txtFirstName").value = r.payload.name ?? "n.d.";
@@ -28,7 +28,8 @@ async function loadAgentDetail() {
     document.getElementById("txtEmail").value =r.payload.email ?? "n.d.";
     document.getElementById("spPhone").innerText = r.payload.phone ?? "n.d.";
     document.getElementById("txtPhone").value = r.payload.phone ?? "n.d.";
-    document.getElementById("spLocation").innerText = r.payload.location ?? "n.d.";
+    document.getElementById("spLocation").innerText = r.payload.branch_name ?? "n.d.";
+    document.getElementById("ddlLocation").value = r.payload.branch_id ?? 1;
 }
 
 function allowEditGeneralInfo() {
@@ -49,75 +50,101 @@ function cancelEditGeneralInfo() {
     document.getElementById("iconSaveEditGenericInfo").classList.add('d-none');
     document.getElementById("iconCancelEditGenericInfo").classList.add('d-none');
     document.getElementById("iconAllowEditGenericInfo").classList.remove('d-none');
-    loadOverviewData();
 }
 
-async function loadSoldPropertiesByAgent() {
-    const data = [
-        {
-            "id": 1,
-            "title": "Alfa SRL",
-            "type": "Residential",
-            "address": "Tecnologia",
-            "surface_area": "Lombardia",
-            "price": 5000,
-            "commission": 5,
-            "status": "Milano",
-            "assigned_agent": "Milano",
-            "publication_date": "22/1/2025",
-            "sale_date": "22/1/2025",
-            "payment_date": "22/1/2025",
-            "sale_price": 5500,
-            "seller": 'Rahat',
-            "buyer": 'Sarti',
-            "note": 'Property is sold',
-        },
-        {
-            "id": 2,
-            "title": "Rahatsol SMC",
-            "type": "Rental",
-            "address": "Tecnologia",
-            "surface_area": "Lombardia",
-            "price": 6000,
-            "commission": 6,
-            "status": "Milano",
-            "assigned_agent": "Milano",
-            "publication_date": "22/1/2025",
-            "sale_date": "22/1/2025",
-            "payment_date": "22/1/2025",
-            "sale_price": 6500,
-            "seller": 'Sarti',
-            "buyer": 'Bourne',
-            "note": 'Property is handed over',
-        },
-    ];
-    loadPropertiesList(data);
+async function updateGenericInfo() {
+    const aid = document.getElementById("hAgentId").value;
+    const name = document.getElementById("txtFirstName").value.trim();
+    const surname = document.getElementById("txtLastName").value.trim();
+    const package_id = parseInt(document.getElementById("ddlPackage").value);
+    const email = document.getElementById("txtEmail").value.trim();
+    const phone = document.getElementById("txtPhone").value.trim();
+    const branch = parseInt(document.getElementById("ddlLocation").value);
+    const err = document.getElementById('errEditAgent');
+    err.innerText = '';
+    if (name === "" || surname === "" || package_id <= 0 || branch < 0) {
+        err.textContent = "Si prega di compilare tutti i campi obbligatori";
+        return;
+    }
+    if (email !== "" && !isValidEmail(email)) {
+        err.textContent = "L'email fornita non risulta valida";
+        return;
+    }
+    try {
+        const response = await fetch("/api/agent/" + aid + "/general-info", {
+            method: "PATCH",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                name: name,
+                surname: surname,
+                package_id: package_id,
+                phone:phone,
+                email:email,
+                branch_id: branch
+            })
+        });
+        const res = await response.json();
+        if (res.result) {
+            await loadAgentDetail();
+            cancelEditGeneralInfo();
+        } else err.innerText = "Si sono verificati degli errori";
+    } catch (error) {
+        err.innerText = "Si sono verificati degli errori";
+        console.error(error.message !== undefined ? error.message : error);
+    }
 }
 
-function loadPropertiesList(data) {
+async function deleteAgentModal() {
+    showDeleteConfirmationModal(async function (confirmed) {
+        if (confirmed) {
+            try {
+                const aid = document.getElementById("hAgentId").value;
+                const response = await fetch("/api/agent/" + aid, {method: "DELETE" });
+                const res = await response.json();
+                if (res.result) {
+                    const modalElement = document.getElementById("modalConfirmDelete");
+                    modalElement.classList.remove("show");
+                    modalElement.style.display = "none";
+                    document.body.classList.remove("modal-open");
+                    document.querySelector(".modal-backdrop")?.remove();
+                    window.location = `/agents`;
+                } else throw new Error("Error while deleting the agent!");
+            } catch (error) {
+                result.innerText = error.message !== undefined ? error.message : error;
+            }
+        }
+    });
+}
+
+function showDeleteConfirmationModal(callback) {
+    const modalElement = document.getElementById("modalConfirmDelete");
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+    const confirmButton = document.getElementById("btnConfirmDelete");
+    confirmButton.removeEventListener("click", confirmButton.clickHandler);
+    confirmButton.clickHandler = function (e) {
+        e.stopPropagation();
+        callback(true);
+    };
+    confirmButton.addEventListener("click", confirmButton.clickHandler);
+}
+
+function loadSoldPropertiesByAgent() {
+    const data = [];
+    const hasData = data.length > 0;
     new DevExpress.ui.dxDataGrid(document.getElementById("listOfSoldProperties"), {
         dataSource: data,
         columnAutoWidth: true,
         showBorders: true,
         rowAlternationEnabled: false,
-        grouping: { autoExpandAll: false },
-        groupPanel: { visible: true, emptyPanelText: "Trascina qui le colonne per raggruppare" },
-        filterRow: { visible: true, applyFilter: "auto" },
-        headerFilter: { visible: true },
+        groupPanel: { visible: hasData, emptyPanelText: "Trascina qui le colonne per raggruppare" },
+        filterRow: { visible: hasData, applyFilter: "auto" },
+        headerFilter: { visible: hasData },
         columns: [
             {
                 caption: "Data vendita",
                 allowFiltering: true,
-                calculateCellValue: function (data) {
-                    return (data.sale_date).slice(3);
-                }
-            },
-            {
-                caption: "Provvigioni",
-                allowFiltering: true,
-                calculateCellValue: function (data) {
-                    return formatNumber(data.commission);
-                }
+                calculateCellValue: function (data) { return (data.sale_date).slice(3); }
             },
             { dataField: "title", caption: "Immobile", allowFiltering: true },
             {
@@ -126,17 +153,17 @@ function loadPropertiesList(data) {
                     return (data.seller + '/' + data.buyer);
                 }
             },
-            { dataField: "payment_date", caption: "Data pagamento", allowFiltering: true },
-            { dataField: "note", caption: "Note", allowFiltering: true },
+            {
+                caption: "Provvigioni",
+                allowFiltering: true,
+                calculateCellValue: function (data) { return formatNumber(data.commission); }
+            },
+
+            { dataField: "payment_date", caption: "Data pagamento", allowFiltering: true }
         ],
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
-        toolbar: {
-            items: [
-                "groupPanel",
-                "searchPanel",
-            ]
-        },
+
         onRowClick: function (e) {
             if (e.rowType === "data") {
                 // window.location = `/property/${e.data.id}`; 
