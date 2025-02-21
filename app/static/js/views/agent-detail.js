@@ -132,7 +132,7 @@ function showDeleteConfirmationModal(callback) {
 function loadSoldPropertiesByAgent() {
     const data = [];
     const hasData = data.length > 0;
-    new DevExpress.ui.dxDataGrid(document.getElementById("listOfSoldProperties"), {
+    new DevExpress.ui.dxDataGrid(document.getElementById("listOfReport"), {
         dataSource: data,
         columnAutoWidth: true,
         showBorders: true,

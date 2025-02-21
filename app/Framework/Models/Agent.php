@@ -23,7 +23,7 @@ final class Agent {
                 0 as total_commissions
             from agent as c
             LEFT JOIN package as p on p.id = c.package_id 
-            WHERE c.branch_id = ?
+            WHERE c.enabled = 1 and c.branch_id = ?
         query;
         $params = [$branch];
         $agents = DB::Query($q, $params);
@@ -59,14 +59,8 @@ final class Agent {
      * @throws Exception
      */
     public static function Delete($request, $response) {
-        $token_info = User::GetTokenInfo($request);
-        $user_role = $token_info['role'];
         $aid = (int)$request->getAttribute('id');
-        // TODO MARCO
-        // TODO ... IS THERE ANY THING TODO MORE BEFORE DELETING THE AGENT...
-        $q = "DELETE from agent WHERE id = ?";
-        $params = [$aid];
-        $row_affected = DB::Execute($q, $params);
+        $row_affected = DB::Execute("update agent set enabled = 0 where id = ?", [$aid]);
         if ($row_affected == 0) throw new Exception("Error while deleting the agent", 500);
         $response->getBody()->write(json_encode(["result" => true]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
