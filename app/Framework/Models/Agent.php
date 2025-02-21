@@ -76,9 +76,14 @@ final class Agent
     {
         $token_info = User::GetTokenInfo($request);
         $user_role = $token_info['role'];
-        $cid = (int)$request->getAttribute('id');
-        //TODO MARCO
-        $response->getBody()->write(json_encode(["result" => false]));
+        $aid = (int)$request->getAttribute('id');
+        // TODO MARCO
+        // TODO ... IS THERE ANY THING TODO MORE BEFORE DELETING THE AGENT...
+        $q = "DELETE from agent WHERE id = ?";
+        $params = [$aid];
+        $row_affected = DB::Execute($q, $params);
+        if ($row_affected == 0) throw new Exception("Error while deleting the agent", 500);
+        $response->getBody()->write(json_encode(["result" => true]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
@@ -94,14 +99,15 @@ final class Agent
             $data = json_decode($request->getBody()->getContents(), true);
             $name = $data['name'] ?? "";
             $surname = $data['surname'] ?? "";
-            $fixed_cost = $data['fixed_cost'] ?? 0;
             $package_id = $data['package_id'] ?? 0;
             $branch_id = $data['branch_id'] ?? 0;
-            $q = "INSERT INTO agent(name, surname, branch_id, fixed_cost, package_id, ucr) VALUES (?, ?, ?, ?, ?, ?)";
-            $params = [$name, $surname, $branch_id, $fixed_cost, $package_id, $user_id];
-            $row_affected = DB::Execute($q, $params);
-            if ($row_affected == 0) throw new Exception("Error inserting agent", 500);
-            $response->getBody()->write(json_encode(["result" => true]));
+            // $q = 'INSERT INTO agent (name, surname, branch_id, package_id, ucr) VALUES (?, ?, ?, ?, ?)';
+            // $params = [$name, $surname, $branch_id, $package_id, $user_id];
+            // $row_affected = DB::Execute($q, $params);
+            $q = "INSERT INTO agent (`name`, surname, branch_id, package_id, ucr) VALUES ('John', 'Doe', 1, 2, 3)";
+            $row_affected = DB::Execute($q);
+            if (!$row_affected) throw new Exception("Error inserting agent", 500);
+            $response->getBody()->write(json_encode(["result" => true, "params" => '', "row affected" => $row_affected]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
             throw new Exception('Failed to add agent: ' . $e->getMessage());

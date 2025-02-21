@@ -141,7 +141,7 @@ async function saveAgent() {
     const packageID = parseInt(document.getElementById("ddlPackage").value);
     const branchID = parseInt(document.getElementById("ddlLocation").value);
     const result = document.getElementById("spNewAgentResult");
-    if (firstName === '' || lastName === "" || packageID === "" || fixedCost === "") {
+    if (firstName === '' || lastName === "" || packageID === "") {
         result.innerText = "Si prega di compilare tutti i campi richiesti";
         result.classList.remove("d-none");
         return;
@@ -151,18 +151,20 @@ async function saveAgent() {
     spinner.classList.remove("d-none");
     result.classList.add("d-none");
     result.innerText = "";
+    debugger;
     try {
         const response = await fetch("/api/agent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ "name": firstName, "surname": lastName, "fixed_cost": parseFloat(fixedCost), "package_id": packageID, "branch_id": branchID })
+            body: JSON.stringify({ "name": firstName, "surname": lastName, "package_id": packageID, "branch_id": branchID })
         });
         const res = await response.json();
+        debugger;
         if (res.result) {
             loadList(ids[branchID - 1], branchID);
-            btn.disabled = true;
+            btn.disabled = false;
             spinner.classList.add("d-none");
             const modalElement = document.getElementById("modalAddAgent");
             modalElement.classList.remove("show");
@@ -171,6 +173,7 @@ async function saveAgent() {
             document.querySelector(".modal-backdrop")?.remove();
         } else throw new Error("Something went wrong while inserting new agent!");
     } catch (error) {
+        debugger;
         btn.disabled = true;
         spinner.classList.remove("d-none");
         result.classList.remove("d-none");
