@@ -8,19 +8,19 @@
             <div class="modal-body">
                 <form id="">
                     <div class="row mb-3">
-                        <label for="txtFirstName" class="col-sm-4 col-form-label">First Name</label>
+                        <label for="txtFirstName" class="col-sm-4 col-form-label">Nome<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="txtFirstName" required>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtLastName" class="col-sm-4 col-form-label">Last Name</label>
+                        <label for="txtLastName" class="col-sm-4 col-form-label">Cognome<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="txtLastName" required>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtFixedCost" class="col-sm-4 col-form-label">Fixed Costs</label>
+                        <label for="txtFixedCost" class="col-sm-4 col-form-label">Costi fissi<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <input type="number" class="form-control" id="txtFixedCost" required>
                         </div>
@@ -32,7 +32,7 @@
                         </div>
                     </div> -->
                     <div class="row mb-3">
-                        <label for="ddlPackage" class="col-sm-4 col-form-label">Package</label>
+                        <label for="ddlPackage" class="col-sm-4 col-form-label">Pacchetto<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlPackage">
                                 <option selected>Scegli...</option>
@@ -43,7 +43,7 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="ddlLocation" class="col-sm-4 col-form-label">Location</label>
+                        <label for="ddlLocation" class="col-sm-4 col-form-label">Sede<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlLocation">
                                 <option selected>Scegli...</option>

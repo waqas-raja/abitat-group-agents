@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function init() {
     const datas = [getDateMoncalieri(), getDateRoma(), getDateTorino()];
     // for (let i = 0; i < ids.length; i++) { loadList(ids[i], datas[i]); }
-    for (let i = 0; i < ids.length; i++) { loadList(ids[i], i+1); }
+    for (let i = 0; i < ids.length; i++) { loadList(ids[i], i + 1); }
 }
 
 async function loadList(ctrl_id, branch_id) {
@@ -55,35 +55,40 @@ async function loadList(ctrl_id, branch_id) {
             {
                 caption: "Nome Cognome",
                 allowFiltering: true,
+                visibleIndex: 0,
                 calculateCellValue: function (data) {
-                    return data.name +' '+ data.surname;
+                    return data.name + ' ' + data.surname;
                 }
             },
-            { dataField: "commission", caption: "Commissioni", allowFiltering: true },
-            { 
+            { dataField: "commission", caption: "Commissioni", allowFiltering: true, visibleIndex: 1, },
+            {
                 dataField: "fixed_cost",
                 caption: "Costi fissi",
                 allowFiltering: true,
+                visibleIndex: 2,
                 calculateCellValue: function (data) {
                     return formatNumber(data.fixed_cost);
                 }
             },
-            { dataField: "number_of_properties_managed", caption: "Proprietà in gestione", allowFiltering: true },
-            { 
+            { dataField: "number_of_properties_managed", caption: "Proprietà in gestione", allowFiltering: true, visibleIndex: 3, },
+            {
                 dataField: "properties_sold",
                 caption: "Proprietà vendute",
-                allowFiltering: true
+                allowFiltering: true,
+                visibleIndex: 4,
             },
-            { 
+            {
                 caption: "Totale vendite",
                 allowFiltering: true,
+                visibleIndex: 5,
                 calculateCellValue: function (data) {
                     return formatNumber((data.number_of_properties_managed * data.fixed_cost) - data.fixed_cost);
                 }
             },
-            { 
+            {
                 caption: "Totale commissioni",
                 allowFiltering: true,
+                visibleIndex: 6,
                 calculateCellValue: function (data) {
                     return formatNumber(((data.fixed_cost * (parseFloat(data.commission) / 100)) * data.number_of_properties_managed) - data.fixed_cost);
                 }
@@ -96,26 +101,34 @@ async function loadList(ctrl_id, branch_id) {
             items: [
                 "groupPanel",
                 "searchPanel",
-                {
-                    location: "after",
-                    widget: "dxButton",
-                    options: {
-                        icon: "add",
-                        text: "Aggiungi Agente",
-                        onClick: function () {
-                            document.getElementById("spNewAgentResult").innerText = '';
-                            const modalElement = document.getElementById("modalAddAgent");
-                            const modal = new bootstrap.Modal(modalElement);
-                            modal.show();
-                            preSelectLocation();
-                        },
-                        elementAttr: { class: "btn-orange" }
-                    }
-                }
+                // {
+                //     location: "after",
+                //     widget: "dxButton",
+                //     options: {
+                //         icon: "add",
+                //         text: "Aggiungi Agente",
+                //         onClick: function () {
+                //             document.getElementById("spNewAgentResult").innerText = '';
+                //             const modalElement = document.getElementById("modalAddAgent");
+                //             const modal = new bootstrap.Modal(modalElement);
+                //             modal.show();
+                //             preSelectLocation();
+                //         },
+                //         elementAttr: { class: "btn-orange" }
+                //     }
+                // }
             ]
         },
         onRowClick: function (e) { if (e.rowType === "data") { window.location = `/agent/${e.data.id}`; } },
     });
+}
+
+function showAddNewAgentModal() {
+    document.getElementById("spNewAgentResult").innerText = '';
+    const modalElement = document.getElementById("modalAddAgent");
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+    preSelectLocation();
 }
 
 async function saveAgent() {
@@ -259,7 +272,7 @@ function getDateTorino() {
             "commission": "5%",
             "fixed_cost": 1500,
             "number_of_properties_managed": 25,
-            "properties_sold":7
+            "properties_sold": 7
         },
         {
             "id": 2,
@@ -268,7 +281,7 @@ function getDateTorino() {
             "commission": "6%",
             "fixed_cost": 1300,
             "number_of_properties_managed": 18,
-            "properties_sold":36
+            "properties_sold": 36
         },
         {
             "id": 3,
@@ -277,7 +290,7 @@ function getDateTorino() {
             "commission": "4.5%",
             "fixed_cost": 1600,
             "number_of_properties_managed": 30,
-            "properties_sold":13
+            "properties_sold": 13
         },
         {
             "id": 4,
@@ -286,7 +299,7 @@ function getDateTorino() {
             "commission": "5.5%",
             "fixed_cost": 1400,
             "number_of_properties_managed": 20,
-            "properties_sold":23
+            "properties_sold": 23
         }
     ];
 }
