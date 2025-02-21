@@ -28,24 +28,13 @@
                         <input type="text" id="txtLastName" class="form-control editControl d-none mb-1" value="">
                     </div>
                 </div>
-                <!-- <div class="row mb-0 align-items-center">
-                    <label for="txtFixedCost" class="col-sm-5 col-form-label">Fixed Costs:<span class="text-danger ms-2 editControl d-none">*</span></label>
-                    <div class="col-sm-7">
-                        <span id="spFixedCost" class="valueControl"></span>
-                        <input type="number" id="txtFixedCost" class="form-control editControl d-none mb-1" value="">
-                    </div>
-                </div> -->
                 <div class="row mb-0 align-items-center">
-                    <label for="txtPackage" class="col-sm-5 col-form-label">Pacchetto:<span class="text-danger ms-2 editControl d-none">*</span></label>
+                    <label for="ddlPackage" class="col-sm-5 col-form-label">Pacchetto:<span class="text-danger ms-2 editControl d-none">*</span></label>
                     <div class="col-sm-7">
                         <span id="spPackage" class="valueControl"></span>
-                        <!-- <input type="text" id="txtPackage" class="form-control editControl d-none mb-1" value=""> -->
-                        <select class="form-select editControl d-none mb-1" id="ddlPackage">
-                            <option selected>Scegli...</option>
-                            <option value="1">Basic</option>
-                            <option value="2">Express</option>
-                            <option value="3">Golden</option>
-                        </select>
+                        <div class="input-group editControl d-none mb-1">
+                            <select class="form-select" id="ddlPackage"></select>
+                        </div>
                     </div>
                 </div>
                 <div class="row mb-0 align-items-center">
@@ -56,7 +45,7 @@
                     </div>
                 </div>
                 <div class="row mb-0 align-items-center">
-                    <label for="txtPhone" class="col-sm-5 col-form-label">Telephone:</label>
+                    <label for="txtPhone" class="col-sm-5 col-form-label">Telefono:</label>
                     <div class="col-sm-7">
                         <span id="spPhone" class="valueControl"></span>
                         <input type="text" id="txtPhone" class="form-control editControl d-none mb-1" value="">

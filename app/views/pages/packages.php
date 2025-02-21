@@ -13,8 +13,8 @@ require_once __DIR__ . "/../modals/confirm-delete.php";
             <i class="bi bi-plus-lg me-2"></i> Aggiungi Pacchetto
         </button>
     </div>
-    <div class="mt-3">
-        <?php require_once __DIR__ . "/../partials/package-overview.php"; ?>
+    <div class="pai-card mt-3">
+        <div id="listOfPackages"></div>
     </div>
 </div>
 <script src="/static/js/views/packages.js"></script>

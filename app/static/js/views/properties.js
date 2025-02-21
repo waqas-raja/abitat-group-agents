@@ -1,82 +1,38 @@
-const cities = [
-    { id: 1, name: 'Torino' },
-    { id: 2, name: 'Moncalieri' },
-    { id: 3, name: 'Roma' },
-];
-let city_id = 1;
-document.addEventListener("DOMContentLoaded", () => {
+const BRANCHES = { Torino: 1, Moncalieri: 2, Roma: 3 };
+let _selectedBranch = BRANCHES.Torino;
+
+document.addEventListener("DOMContentLoaded", async () => {
     initInternalTabs();
     initDateControl("txtPropertySoldDate");
-    loadList(city_id);
+    await loadList(_selectedBranch);
 });
 
-async function populateDropdown(ctrl_id) {
-    let params = new URLSearchParams();
-    params.append("branch_id", city_id);
-    const response = await fetch(`/api/agents?${params.toString()}`);
-    const json = await response.json();
-    // TODO ... WHAT NAMES SHOULD BE APPEAR TO SELECT
-    document.getElementById(ctrl_id).innerHTML = '';
-    for (let i = 0; i < json.payload.length; i++) {
-        const opt = document.createElement('option');
-        opt.value = json.payload[i].id;
-        opt.textContent = json.payload[i].name + ' ' + json.payload[i].surname;
-        document.getElementById(ctrl_id).appendChild(opt);
-    }
+async function loadAgentFromBranch() {
+    const ddl = document.getElementById("ddlPurchaseAgent");
+    ddl.innerHTML = '';
+    const response = await fetch(`/api/agents?b=${_selectedBranch}}`);
+    const r = await response.json();
+    r.payload.forEach(el => ddl.innerHTML += `<option value="${el.id}">${el.surname} ${name}</option>`);
 }
 
-function loadList(cid) {
-    city_id = cid;
-    const d = getData();
-    populateDropdown('ddlPropertyAcquiredBy');
-    const data = d.filter(function (el) { return el.city_id === parseInt(city_id); });
-    const ddlLocation = document.getElementById('ddlPropertyLocation');
-    if (ddlLocation !== null) ddlLocation.value = city_id;
+async function loadList(cid) {
+    _selectedBranch = cid;
+    await loadAgentFromBranch();
+    const response = await fetch('/api/properties?branch_id=' + _selectedBranch);
+    const r = await response.json();
     new DevExpress.ui.dxDataGrid(document.getElementById("listOfProperties"), {
-        // dataSource: data,
-        dataSource: new DevExpress.data.CustomStore({
-            key: "id",
-            load: async function (loadOptions) {
-                let params = new URLSearchParams();
-                params.append("branch_id", city_id);
-                params.append("limit", loadOptions.take || 10);
-                params.append("page", loadOptions.skip / loadOptions.take + 1 || 1);
-                if (loadOptions.filter !== undefined) {
-                    params.append("search", loadOptions.filter.filterValue);
-                }
-                try {
-                    const response = await fetch(`/api/properties?${params.toString()}`);
-                    const json = await response.json();
-                    debugger;
-                    return {
-                        data: json.payload,
-                        totalCount: json.totalCount
-                    };
-                } catch (error) {
-                    console.error("Data fetch error:", error);
-                    return { data: [], totalCount: 0 };
-                }
-            }
-        }),
-        // dataSource: data,
+        dataSource: r.payload,
         columnAutoWidth: true,
         allowColumnResizing: true,
         allowColumnReordering: true,
         showBorders: true,
-        noDataText: "Nessun dato disponibile",
+        noDataText: "Non risultano immobili registrati per questa sede",
         rowAlternationEnabled: false,
         grouping: { autoExpandAll: false },
         groupPanel: { visible: true, emptyPanelText: "Trascina qui le colonne per raggruppare" },
         filterRow: { visible: true, applyFilter: "auto" },
         headerFilter: { visible: true },
         export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
-        stateStoring: { // Permette di salvare la configurazione delle colonne
-            enabled: true,
-            type: "localStorage",
-            storageKey: "gridState"
-        },
-        // export: { enabled: true, allowExportSelectedData: true, formats: ['xlsx'] },
-        // TODO COLUMNS AS PER DYNAMIC DATA FETCHED
         columns: [
             {
                 dataField: "status",
@@ -234,7 +190,7 @@ function loadList(cid) {
 async function saveProperty() {
     const btn = document.getElementById("btnSaveProperty");
     const spinner = document.getElementById("spinnerNewProperty");
-    const acquiredBy = document.getElementById("ddlPropertyAcquiredBy").value.trim();
+    const acquiredBy = document.getElementById("ddlPurchaseAgent").value.trim();
     const type = document.getElementById("ddlPropertyType").value.trim();
     const address = document.getElementById("txtPropertyAddress");
     const purchase_price = document.getElementById("txtPropertyPurchasePrice");
@@ -258,7 +214,7 @@ function showEditPropertyModal(res, modalTitle) {
     document.getElementById('txtPropertyAddress').value = res !== null ? res[0].address : '';
     document.getElementById('txtPropertyPurchasePrice').value = res !== null ? res[0].purchase_price : '';
     document.getElementById('modalAddPropertyLabel').innerText = modalTitle;
-    document.getElementById('ddlPropertyLocation').value = city_id;
+    document.getElementById('ddlPropertyLocation').value = _selectedBranch;
     const modalElement = document.getElementById("modalAddProperty");
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
@@ -297,253 +253,4 @@ function savePropertyMarkedAsSold() {
     spinner.classList.remove("d-none");
     result.classList.add("d-none");
     result.innerText = "";
-}
-
-function getData() {
-    return [
-        {
-            "id": 1,
-            "title": "Attico in Centro",
-            "type": 2,
-            "address": "Via Roma, 45, Torino",
-            "city_id": 1,
-            "purchase_price": 350000,
-            "status": "in_management",
-            "purchaseAgent": "Marco Rossi (100%)",
-            "purchaseSubAgent": "",
-            "purchase_date": "01/12/2024",
-            "sale_date": null,
-            "sale_price": null,
-            "saleAgent": "Elena Galli (100%)",
-            "saleSubAgent": "",
-            "details": [
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Adeguamento al mercato",
-                },
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Riallineamento con immobili simili",
-                },
-            ]
-        },
-        {
-            "id": 2,
-            "title": "Bilocale Economico",
-            "type": 1,
-            "address": "Corso Francia, 120, Torino",
-            "city_id": 1,
-            "purchase_price": 120000,
-            "status": "sold",
-            "purchaseAgent": "Laura Bianchi (80%)",
-            "purchaseSubAgent": "Mario Rossi (20%)",
-            "purchase_date": "01/12/2024",
-            "sale_date": "10/01/2025",
-            "sale_price": 115000,
-            "saleAgent": "Elena Galli (80%)",
-            "saleSubAgent": "Mario Rossi (20%)",
-            "details": [
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Maggiore richiesta nella zona",
-                },
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Riduzione per incentivare l’acquisto",
-                },
-            ]
-        },
-        {
-            "id": 3,
-            "title": "Villa con Giardino",
-            "type": 3,
-            "address": "Via delle Mimose, 10, Roma",
-            "city_id": 3,
-            "purchase_price": 650000,
-            "status": "in_management",
-            "purchaseAgent": "Alessandro Verdi (50%)",
-            "purchaseSubAgent": "Mario Rossi (50%)",
-            "purchase_date": "01/12/2024",
-            "sale_date": null,
-            "sale_price": null,
-            "saleAgent": "Alessandro Verdi (100%)",
-            "saleSubAgent": "",
-            "details": [
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Adeguamento ai prezzi della concorrenza",
-                }
-            ]
-        },
-        {
-            "id": 4,
-            "title": "Monolocale Moderno",
-            "type": 1,
-            "address": "Via Garibaldi, 22, Torino",
-            "city_id": 1,
-            "purchase_price": 95000,
-            "status": "sold",
-            "purchaseAgent": "Giulia Neri (100%)",
-            "purchaseSubAgent": "",
-            "purchase_date": "01/12/2024",
-            "sale_date": "05/01/2025",
-            "sale_price": 97000,
-            "saleAgent": "Luca Ferrari (30%)",
-            "saleSubAgent": "Laura Bianchi (70%)",
-            "details": [
-
-            ]
-        },
-        {
-            "id": 5,
-            "title": "Trilocale Panoramico",
-            "type": 2,
-            "address": "Via Tiburtina, 78, Roma",
-            "city_id": 3,
-            "purchase_price": 210000,
-            "status": "in_management",
-            "purchaseAgent": "Luca Ferrari (100%)",
-            "purchaseSubAgent": "",
-            "purchase_date": "01/12/2024",
-            "sale_date": null,
-            "sale_price": null,
-            "saleAgent": "Alessandro Verdi (80%)",
-            "saleSubAgent": "Laura Bianchi (20%)",
-            "details": [
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Aggiornamento post perizia",
-                },
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Richiesta del venditore",
-                },
-            ]
-        },
-        {
-            "id": 6,
-            "title": "Rustico con Terreno",
-            "type": 4,
-            "address": "Strada Provinciale 32, Torino",
-            "city_id": 1,
-            "purchase_price": 180000,
-            "status": "in_management",
-            "purchaseAgent": "Elena Galli (100%)",
-            "purchaseSubAgent": "",
-            "purchase_date": "01/12/2024",
-            "sale_date": null,
-            "sale_price": null,
-            "saleAgent": "Alessandro Verdi (100%)",
-            "saleSubAgent": "",
-            "details": [
-
-            ]
-        },
-        {
-            "id": 7,
-            "title": "Appartamento di Lusso",
-            "type": 2,
-            "address": "Via Veneto, 15, Roma",
-            "city_id": 3,
-            "purchase_price": 950000,
-            "status": "sold",
-            "purchaseAgent": "Simone De Luca (60%)",
-            "purchaseSubAgent": "Elena Galli (40%)",
-            "purchase_date": "01/12/2024",
-            "sale_date": "20/12/2024",
-            "sale_price": 930000,
-            "saleAgent": "Elena Galli (100%)",
-            "saleSubAgent": "",
-            "details": [
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Adeguamento post valutazione bancaria",
-                },
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Miglioramento condizioni di vendita",
-                },
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Cambio di strategia di vendita",
-                },
-            ]
-        },
-        {
-            "id": 8,
-            "title": "Open Space in Centro",
-            "type": 1,
-            "address": "Piazza Castello, 8, Torino",
-            "city_id": 1,
-            "purchase_price": 220000,
-            "status": "in_management",
-            "purchaseAgent": "Martina Bianchi (100%)",
-            "purchaseSubAgent": "",
-            "purchase_date": "01/12/2024",
-            "sale_date": null,
-            "sale_price": null,
-            "saleAgent": "Elena Galli (100%)",
-            "saleSubAgent": "",
-            "details": [
-
-            ]
-        },
-        {
-            "id": 9,
-            "title": "Casa Storica",
-            "type": 3,
-            "address": "Via Appia Antica, 45, Roma",
-            "city_id": 3,
-            "purchase_price": 1250000,
-            "status": "in_management",
-            "purchaseAgent": "Alberto Russo (100%)",
-            "purchaseSubAgent": "",
-            "purchase_date": "01/12/2024",
-            "sale_date": null,
-            "sale_price": null,
-            "saleAgent": "Elena Galli (100%)",
-            "saleSubAgent": "",
-            "details": [
-
-            ]
-        },
-        {
-            "id": 10,
-            "title": "Quadrilocale Ristrutturato",
-            "type": 2,
-            "address": "Via Po, 16, Torino",
-            "city_id": 1,
-            "purchase_price": 320000,
-            "status": "sold",
-            "purchaseAgent": "Giovanni Conte (60%)",
-            "purchaseSubAgent": "Simone De Luca (40%)",
-            "purchase_date": "01/12/2024",
-            "sale_date": "18/01/2025",
-            "sale_price": 315000,
-            "saleAgent": "Elena Galli (100%)",
-            "saleSubAgent": "",
-            "details": [
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Prezzo rivisto dopo trattativa",
-                },
-                {
-                    "date": "28/12/2024",
-                    "new_price": 60000,
-                    "note": "Rialzo dovuto a rivalutazione della zona",
-                },
-            ]
-        }
-    ];
 }

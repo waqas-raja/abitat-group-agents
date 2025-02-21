@@ -1,48 +1,34 @@
-let agentID = 0;
-document.addEventListener("DOMContentLoaded", () => {
-    agentID = parseInt(document.getElementById('hAgentId').value);
-    populateDropdown('ddlPackage');
-    // populateDropdown('ddlLocation');
-    setTimeout(() => { loadAgentDetail(); }, 500);
-    loadSoldPropertiesByAgent();
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadPackages();
+    await Promise.all([
+        loadAgentDetail(),
+        loadSoldPropertiesByAgent()
+    ]);
 });
 
-async function populateDropdown(ctrl_id) {
-    let json;
-    if (ctrl_id === "ddlPackage") {
-        const response = await fetch(`/api/packages`);
-        json = await response.json();
-    } else {
-        // TODO TO GET THE DYNAMIC BRANCHES AND LOAD IN DROPDOWN... 
-        // const response = await fetch(`/api/branches`);
-        // json = await response.json();
-    }
-    document.getElementById(ctrl_id).innerHTML = '';
-    for (let i = 0; i < json.payload.length; i++) {
-        const opt = document.createElement('option');
-        opt.value = json.payload[i].id;
-        opt.textContent = json.payload[i].name;
-        document.getElementById(ctrl_id).appendChild(opt);
-    }
+async function loadPackages() {
+    const ddlPackage = document.getElementById('ddlPackage');
+    ddlPackage.innerHTML = '<option value="-1" selected disabled>Seleziona un pacchetto</option>';
+    const response = await fetch('/api/packages');
+    const r = await response.json();
+    r.payload.forEach(el => { ddlPackage.innerHTML += `<option value="${el.id}">${el.name}</option>`; });
 }
 
 async function loadAgentDetail() {
-    const response = await fetch(`/api/agent/` + agentID);
-    const json = await response.json();
-    document.getElementById("spFirstName").innerText = json.payload[0].name ?? "n.d.";
-    document.getElementById("txtFirstName").value = json.payload[0].name ?? "n.d.";
-    document.getElementById("spLastName").innerText = json.payload[0].surname ?? "n.d.";
-    document.getElementById("txtLastName").value = json.payload[0].surname ?? "n.d.";
-    // document.getElementById("spFixedCost").innerText = json.payload[0].package_fixed_cost ?? "n.d.";
-    // document.getElementById("txtFixedCost").value = json.payload[0].package_fixed_cost ?? "n.d.";
-    document.getElementById("spPackage").innerText = json.payload[0].package_name ?? "n.d.";
-    document.getElementById("ddlPackage").value = json.payload[0].package_id ?? 1;
-    document.getElementById("spEmail").innerText = json.payload[0].email ?? "n.d.";
-    document.getElementById("txtEmail").value = json.payload[0].email ?? "n.d.";
-    document.getElementById("spPhone").innerText = json.payload[0].phone ?? "n.d.";
-    document.getElementById("txtPhone").value = json.payload[0].phone ?? "n.d.";
-    document.getElementById("spLocation").innerText = json.payload[0].branch_name ?? "n.d.";
-    document.getElementById("ddlLocation").value = json.payload[0].branch_id ?? 1;
+    const id = document.getElementById('hAgentId').value;
+    const response = await fetch('/api/agent/' + id);
+    const r = await response.json();
+    document.getElementById("spFirstName").innerText = r.payload.name ?? "n.d.";
+    document.getElementById("txtFirstName").value = r.payload.name ?? "n.d.";
+    document.getElementById("spLastName").innerText = r.payload.surname ?? "n.d.";
+    document.getElementById("txtLastName").value = r.payload.surname ?? "n.d.";
+    document.getElementById("spPackage").innerText = r.payload.package_name ?? "n.d.";
+    document.getElementById("ddlPackage").value = r.payload.package_id ?? "n.d.";
+    document.getElementById("spEmail").innerText = r.payload.email ?? "n.d.";
+    document.getElementById("txtEmail").value =r.payload.email ?? "n.d.";
+    document.getElementById("spPhone").innerText = r.payload.phone ?? "n.d.";
+    document.getElementById("txtPhone").value = r.payload.phone ?? "n.d.";
+    document.getElementById("spLocation").innerText = r.payload.location ?? "n.d.";
 }
 
 function allowEditGeneralInfo() {
@@ -63,7 +49,7 @@ function cancelEditGeneralInfo() {
     document.getElementById("iconSaveEditGenericInfo").classList.add('d-none');
     document.getElementById("iconCancelEditGenericInfo").classList.add('d-none');
     document.getElementById("iconAllowEditGenericInfo").classList.remove('d-none');
-    // loadOverviewData();
+    loadOverviewData();
 }
 
 async function updateGenericInfo() {
