@@ -1,20 +1,24 @@
 PACCHETTI
-- in dettaglio pacchetti, visualizzare l'elenco degli agenti collegati. al click sulla riga deve aprire il dettaglio agente
-- elimina pacchetto deve verificare se ci sono agenti collegati, in quel caso deve chiedere che pacchetto associargli in sostituzione
+- In the package detail page, display the list of linked agents. Clicking on a row should open the agent detail page.
+- When deleting a package, the system should check if there are linked agents. If there are, it should prompt the user to select a replacement package to assign to them.
 
 NOTE SPESE
-- in add nota spesa deve chiedere prima la sede, poi mostrare gli agenti legati a quella sede
-- la lista deve mostrare anche la sede dell'agente
-- il campo agente deve essere cliccabile e aprire il dettaglio agente
-
-AGENTI
-- sarebbe figo mostrare un grafico di andamento nella riga
+- When adding an expense note, the system should first ask for the location, then display the agents associated with that location
+- The list should also display the agent's location.
+- The agent field should be clickable and open the agent detail page
 
 IMMOBILI
-- add immobile deve chiedere sede (default sede che sto guardando), tipologia, indirizzo, data di acquisto (default oggi), prezzo di acquisto, percentuale commissione agenzia, agente, scadenza mandato
-- verificare caricamento lista con i nuovi campi
-- se non venduto, mostrare pulsante "venduto" nella colonna guadagno
-- modal venduto deve chiedere data di vendita (default oggi), prezzo di vendita, percentuale commissione agenzia, agente
+- Add property should ask for location (default to the currently viewed location), type, address, purchase date (default to today), purchase price, agency commission percentage, agent, and mandate expiration date.
+- Verify that the list loads correctly with the new fields (the layout win)
+- If not sold, display a "Sold" button in the earnings column.
+- The "Sold" modal should ask for sale date (default to today), sale price, agency commission percentage, and agent.
 
-ALTRO
-- inserire possibilità di aggiungere tipologia immobile
+OTHER
+- Use the DevExpress dropdown menu to allow users to select the property type when adding a new property.
+  Check if DevExpress provides an option to add a new entry directly from the dropdown (e.g., an inline "Add new type" feature). If such a feature exists, implement it; otherwise, we will consider an alternative approach.
+
+
+
+
+
+
