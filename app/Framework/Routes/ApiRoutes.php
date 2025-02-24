@@ -58,6 +58,10 @@ class ApiRoutes {
             $group->get('/packages', function ($request, $response) {
                 return Package::GetAll($request, $response);
             })->add($this->authMiddleware);
+            
+            $group->get('/package/agents/{id}', function ($request, $response) {
+                return Package::GetLinkedAgents($request, $response);
+            })->add($this->authMiddleware);
 
             $group->get('/expense-reports', function ($request, $response) {
                 return ExpenseReport::GetAll($request, $response);

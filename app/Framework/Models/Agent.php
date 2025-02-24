@@ -125,6 +125,19 @@ final class Agent {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
+    /**
+     * @throws Exception
+     */
+    public static function UpdateAlternatePackage($request, $response) {
+        $pid = (int)$request->getAttribute('id');
+        $data = json_decode($request->getBody()->getContents(), true);
+        $agent_id = $data['agent_id'] ?? 0;
+        $row_affected = DB::Execute("update agent set package_id = ? where id = ?", [$pid, $agent_id]);
+        if ($row_affected == 0) throw new Exception("Error while updating alternate package for agent", 500);
+        $response->getBody()->write(json_encode(["result" => true, "package" => $pid, "agent" => $agent_id,]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
     private static function GetColumns(bool $restricted = true): array {
         $rows = DB::Query("show columns from contact");
         $restricted_values = ['id', 'ucr', 'ule', 'dtcr', 'dtle', 'agent', 'list_id'];

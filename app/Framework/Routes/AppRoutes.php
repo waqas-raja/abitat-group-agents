@@ -93,6 +93,15 @@ class AppRoutes {
             $response->getBody()->write(ob_get_clean());
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
+        
+        $app->get('/package/{id}', function ($request, $response) {
+            $pid = $request->getAttribute('id');
+            extract(['pid' => $pid]);
+            ob_start();
+            require_once __DIR__ . '/../../views/pages/package-detail.php';
+            $response->getBody()->write(ob_get_clean());
+            return $response->withHeader('Content-Type', 'text/html');
+        })->add($this->authMiddleware);
 
         $app->get('/property/{id}', function ($request, $response) {
             $cid = $request->getAttribute('id');
