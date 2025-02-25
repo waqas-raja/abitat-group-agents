@@ -2,13 +2,13 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalAddExpenseReportLabel"><i class="bi bi-buildings me-3"></i>Aggiungi Note spese</h5>
+                <h5 class="modal-title" id="modalAddExpenseReportLabel"><i class="bi bi-piggy-bank me-3"></i>Aggiungi Note spese</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="">
                 <div class="row mb-3">
-                        <label for="ddlLocation" class="col-sm-4 col-form-label">Posizione</label>
+                        <label for="ddlLocation" class="col-sm-4 col-form-label">Sede</label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlLocation" onchange="getRelevantAgents()">
                             </select>
