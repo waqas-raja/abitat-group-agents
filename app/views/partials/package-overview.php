@@ -2,7 +2,7 @@
     <div class="col-4">
         <div class="pai-card position-relative">
             <div class="position-relative">
-                <p class="lato-black text-blue"><i class="bi bi-person-vcard"></i>&nbsp;&nbsp;Informazioni pacchetti</p>
+                <p class="lato-black text-blue"><i class="bi bi-person-vcard me-2"></i>Informazioni pacchetto</p>
                 <span id="iconAllowEditGenericInfo" class="position-absolute editIcon" role="button" style="right:0px;top:0;" title="Edit" onclick="allowEditGeneralInfo()">
                     <i class="bi bi-pencil"></i>
                 </span>

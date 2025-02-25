@@ -12,7 +12,7 @@ require_once __DIR__ . "/../modals/select-alternate-package.php";
     <div class="pai-card d-flex justify-content-between align-items-center mb-3">
         <span class="pai-title">Dettaglio Pacchetto</span>
         <button type="button" class="btn btn-link text-danger border" onclick="deletePackageModal()">
-            <i class="bi bi-trash3 me-2"></i> Elimina pacchetti
+            <i class="bi bi-trash3 me-2"></i> Elimina pacchetto
         </button>
     </div>
     <?php require_once __DIR__ . "/../partials/package-overview.php"; ?>
