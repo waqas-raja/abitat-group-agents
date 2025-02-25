@@ -33,5 +33,9 @@ class ExpenseReportRoutes {
         $group->delete('/{id}', function (Request $request, Response $response) {
             return ExpenseReport::Delete($request, $response);
         })->add($this->authMiddleware);
+        
+        $group->get('/agents/{id}', function (Request $request, Response $response) {
+            return ExpenseReport::GetAgentsByBranchId($request, $response);
+        })->add($this->authMiddleware);
     }
 }
