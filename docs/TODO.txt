@@ -3,9 +3,9 @@ V - In the package detail page, display the list of linked agents. Clicking on a
 V - When deleting a package, the system should check if there are linked agents. If there are, it should prompt the user to select a replacement package to assign to them.
 
 NOTE SPESE
-- When adding an expense note, the system should first ask for the location, then display the agents associated with that location
-- The list should also display the agent's location.
-- The agent field should be clickable and open the agent detail page
+V - When adding an expense note, the system should first ask for the location, then display the agents associated with that location
+V - The list should also display the agent's location.
+V - The agent field should be clickable and open the agent detail page
 
 IMMOBILI
 - Add property should ask for location (default to the currently viewed location), type, address, purchase date (default to today), purchase price, agency commission percentage, agent, and mandate expiration date.
