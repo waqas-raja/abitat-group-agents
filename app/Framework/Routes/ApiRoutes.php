@@ -66,6 +66,10 @@ class ApiRoutes {
             $group->get('/expense-reports', function ($request, $response) {
                 return ExpenseReport::GetAll($request, $response);
             })->add($this->authMiddleware);
+            
+            $group->get('/branches', function ($request, $response) {
+                return ExpenseReport::GetAllBranches($request, $response);
+            })->add($this->authMiddleware);
 
             // Entity's routes
 
@@ -89,10 +93,11 @@ class ApiRoutes {
                 $packageRoutes->register($packageGroup);
             });
 
-//            $packageRoutes = new ExpenseReport($this->authMiddleware);
-//            $group->group('/expense-report', function (RouteCollectorProxy $packageGroup) use ($packageRoutes) {
-//                $packageRoutes->register($packageGroup);
-//            });
+           $expenseRoutes = new ExpenseReportRoutes($this->authMiddleware);
+           $group->group('/expense-report', function (RouteCollectorProxy $expenseGroup) use ($expenseRoutes) {
+               $expenseRoutes->register($expenseGroup);
+           });
+           
         });
     }
 }

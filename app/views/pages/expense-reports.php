@@ -7,11 +7,13 @@ require_once __DIR__ . "/../modals/add-expense-report.php";
 <div id="noteSpese">
     <div class="pai-card">
         <span class="pai-title">Note spese</span>
-        <!-- <div class="bg-light p-3 mt-3"><i>Pagina in allestimento</i></div> -->
     </div>
 </div>
 <div class="mt-3">
-    <?php require_once __DIR__ . "/../partials/expense-report-overview.php"; ?>
+    <div class="pai-card">
+        <div id="listOfExpense" class="mt-3">
+        </div>
+    </div>
 </div>
 <script src="/static/js/views/expense-report.js"></script>
 
