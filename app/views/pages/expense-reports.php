@@ -5,8 +5,11 @@ require_once __DIR__ . "/../modals/add-expense-report.php";
 ?>
 
 <div id="noteSpese">
-    <div class="pai-card">
+        <div class="pai-card d-flex justify-content-between align-items-center">
         <span class="pai-title">Note spese</span>
+        <button type="button" class="btn btn-orange" onclick="showModalAddExpenseReport()">
+            <i class="bi bi-plus-lg me-2"></i> Aggiungi Note spese
+        </button>
     </div>
 </div>
 <div class="mt-3">

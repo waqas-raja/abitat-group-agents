@@ -1,23 +1,16 @@
 document.addEventListener("DOMContentLoaded", async () => {
     await loadLocations();
-    await getAndLoadAgents();
     await loadList("listOfExpense");
 });
 
 async function loadLocations() {
     const ddlLocation = document.getElementById('ddlLocation');
-    ddlLocation.innerHTML = '<option value="-1" selected disabled>Seleziona la posizione</option>';
+    ddlLocation.innerHTML = '<option value="-1" selected disabled>Seleziona la sede</option>';
     const response = await fetch('/api/branches');
     const r = await response.json();
     r.payload.forEach(el => { ddlLocation.innerHTML += `<option value="${el.id}">${el.name}</option>`; });
-}
-
-async function getAndLoadAgents() {
     const ddlAgent = document.getElementById('ddlAgent');
     ddlAgent.innerHTML = '<option value="-1" selected disabled>Seleziona la agente</option>';
-    const response = await fetch('/api/agents');
-    const r = await response.json();
-    r.payload.forEach(el => { ddlAgent.innerHTML += `<option value="${el.id}">${el.name + ` ` + el.surname}</option>`; });
 }
 
 async function getRelevantAgents() {
@@ -27,10 +20,9 @@ async function getRelevantAgents() {
     const response = await fetch('/api/expense-report/agents/' + branchID);
     const r = await response.json();
     if (r.payload.length > 0) r.payload.forEach(el => { ddlAgent.innerHTML += `<option value="${el.id}">${el.name + ` ` + el.surname}</option>`; });
-    else getAndLoadAgents();
 }
 
-function loadList(id) {
+async function loadList(id) {
     new DevExpress.ui.dxDataGrid(document.getElementById(id), {
         dataSource: new DevExpress.data.CustomStore({
             key: "id",
@@ -61,29 +53,42 @@ function loadList(id) {
         noDataText: "Nessun dato disponibile",
         rowAlternationEnabled: false,
         grouping: { autoExpandAll: false },
-        groupPanel: { visible: true, emptyPanelText: "Trascina qui le colonne per raggruppare" },
+        groupPanel: { visible: false, emptyPanelText: "Trascina qui le colonne per raggruppare" },
         filterRow: { visible: true, applyFilter: "auto" },
         headerFilter: { visible: true },
-        
+        export: { enabled: false, allowExportSelectedData: true, formats: ['xlsx'] },
+        stateStoring: {
+            enabled: true,
+            type: "localStorage",
+            storageKey: "gridState"
+        },
         columns: [
-            { dataField: "id", caption: "ID", allowFiltering: true },
-            { 
+            {
+                dataField: "dt",
+                caption: "Data",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    const dt = (data.dt).split('-');
+                    return dt[2] + "/" + dt[1] + "/" + dt[0];
+                }
+            },
+            {
                 dataField: "agent_name",
                 caption: "Agente",
                 allowFiltering: true,
                 cellTemplate: function (container, options) {
                     let agentId = options.data.agent_id;
                     $("<span>")
-                    .addClass("dx-link")
-                    .text(options.value)
-                    .on("click", function () {
-                        window.location.href = "/agent/" + agentId;
-                    })
-                    .appendTo(container);
+                        .addClass("dx-link")
+                        .text(options.value)
+                        .on("click", function () {
+                            window.location.href = "/agent/" + agentId;
+                        })
+                        .appendTo(container);
                 }
             },
-            { dataField: "branch_name", caption: "Posizione", allowFiltering: true },
-            { 
+            { dataField: "branch_name", caption: "Sede", allowFiltering: true },
+            {
                 dataField: "value",
                 caption: "Costo",
                 allowFiltering: true,
@@ -97,6 +102,7 @@ function loadList(id) {
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
         toolbar: {
+            visible: false,
             items: [
                 "groupPanel",
                 "searchPanel",
@@ -107,21 +113,32 @@ function loadList(id) {
                         icon: "add",
                         text: "Aggiungi Note spese",
                         onClick: function () {
-                            const modalElement = document.getElementById("modalAddExpenseReport");
-                            const modal = new bootstrap.Modal(modalElement);
-                            modal.show();
+                            showModalAddExpenseReport();
                         },
                         elementAttr: { class: "btn-orange" }
                     }
                 }
             ]
         },
-        onRowClick: function (e) { 
-            if (e.rowType === "data") { 
+        onRowClick: function (e) {
+            if (e.rowType === "data") {
                 // window.location = `/agent/${e.data.id}`; 
             }
         },
     });
+}
+
+function showModalAddExpenseReport() {
+    document.getElementById('ddlLocation').value = -1;
+    document.getElementById('ddlAgent').value = -1;
+    document.getElementById('txtDate').value = '';
+    document.getElementById('txtCost').value = '';
+    document.getElementById('txtDescription').value = '';
+    const result = document.getElementById("spNewExpenseResult");
+    result.classList.add("d-none");
+    const modalElement = document.getElementById("modalAddExpenseReport");
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
 }
 
 async function saveExpenseReport() {

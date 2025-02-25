@@ -39,6 +39,10 @@ async function loadList() {
 }
 
 function showModalAddPackage() {
+    document.getElementById("txtName").innerText = '';
+    document.getElementById("txtFixedFee").innerText = '';
+    document.getElementById("txtPercentage").innerText = '';
+    document.getElementById("txtDescription").innerText = '';
     document.getElementById("spNewPackageResult").innerText = '';
     const modalElement = document.getElementById("modalAddPackage");
     const modal = new bootstrap.Modal(modalElement);
