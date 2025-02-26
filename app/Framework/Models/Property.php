@@ -97,5 +97,29 @@ final class Property
         $response->getBody()->write(json_encode(["result" => true]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
+    
+    /**
+     * @throws Exception
+     */
+    public static function MarkAsSold($request, $response) {
+        $property_id = $request->getAttribute('id');
+        if (!$property_id)
+            throw new Exception('Property ID is required', 400);
+        $token_info = User::GetTokenInfo($request);
+        $user_id = $token_info['id'];
+        $user_role = $token_info['role'];
+        $data = json_decode($request->getBody()->getContents(), true);
+        $sale_date = $data['sale_date'] ? date("Y-m-d", strtotime($data['sale_date'])) : date("Y-m-d");
+        $sale_price = $data['sale_price'] ?? 0;
+        $sale_agency_percentage = $data['sale_agency_percentage'] ?? 0;
+        $sale_agent_id = $data['sale_agent_id'] ?? 0;
+        $delta = $data['delta'] ?? 0;
+        $q = 'UPDATE property SET sale_date = ?, sale_price = ?, sale_agency_percentage = ?, sale_agent_id = ?, delta = ?, ucr = ? WHERE id = ?';
+        $params = [$sale_date, $sale_price, $sale_agency_percentage, $sale_agent_id, $delta, $user_id, $property_id];
+        $row_affected = DB::Execute($q, $params);
+        if ($row_affected == 0) throw new Exception("Error while marking the property sold", 500);
+        $response->getBody()->write(json_encode(["result" => true]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
 
 }

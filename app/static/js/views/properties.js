@@ -3,7 +3,8 @@ let _selectedBranch = BRANCHES.Torino;
 
 document.addEventListener("DOMContentLoaded", async () => {
     initInternalTabs();
-    initDateControl("txtPropertySoldDate");
+    initDateControl("txtPropertySoldDate", true);
+    initDateControl("txtPropertyPurchaseDate", true);
     initDateControl("txtPropertyPurchaseDate", true);
     initDateControl("txtPropertyExpireDate");
     await populateDropdown('ddlPropertyLocation', 'branches', 'Seleziona la sede');
@@ -29,9 +30,12 @@ async function changeBranch(branch_id) {
 async function loadAgentFromBranch() {
     const ddl = document.getElementById("ddlPurchaseAgent");
     ddl.innerHTML = '<option value="-1" selected disabled>Seleziona agente</option>';
+    const ddlSold = document.getElementById("ddlPropertySoldAgent");
+    ddlSold.innerHTML = '<option value="-1" selected disabled>Seleziona agente</option>';
     const response = await fetch(`/api/agents?b=${_selectedBranch}}`);
     const r = await response.json();
     r.payload.forEach(el => ddl.innerHTML += `<option value="${el.id}">${el.name} ${el.surname}</option>`);
+    r.payload.forEach(el => ddlSold.innerHTML += `<option value="${el.id}">${el.name} ${el.surname}</option>`);
 }
 
 async function loadList() {
@@ -88,7 +92,7 @@ async function loadList() {
                         caption: "Prezzo",
                         allowFiltering: true,
                         calculateCellValue: function (data) {
-                            return formatNumber(data.purchase_price);
+                            return formatNumber(parseFloat(data.purchase_price));
                         }
                     },
                     {
@@ -96,11 +100,19 @@ async function loadList() {
                         caption: "Percentuale",
                         allowFiltering: true,
                         calculateCellValue: function (data) {
-                            return formatNumber(data.purchase_agency_percentage);
+                            return data.purchase_agency_percentage + " %";
                         }
                     },
                     { dataField: "purchase_agent", caption: "Agente", allowFiltering: true },
-                    { dataField: "mandate_expiration", caption: "Scadenza", allowFiltering: true },
+                    { 
+                        dataField: "mandate_expiration",
+                        caption: "Scadenza",
+                        allowFiltering: true,
+                        calculateCellValue: function (data) {
+                            const d = (data.mandate_expiration).split('-');
+                            return d[2] + '/' + d[1] + '/' + d[0];
+                        }
+                    },
                 ]
             },
             {
@@ -108,18 +120,34 @@ async function loadList() {
                 alignment: "center",
                 cssClass: "alert alert-success rounded-0",
                 columns: [
-                    { dataField: "sale_date", caption: "Data", allowFiltering: true },
+                    { 
+                        dataField: "sale_date",
+                        caption: "Data",
+                        allowFiltering: true,
+                        calculateCellValue: function (data) {
+                            if (data.sale_date !== null && data.sale_date !== undefined) {
+                                const d = (data.sale_date).split('-');
+                                return d[2] + '/' + d[1] + '/' + d[0];
+                            }
+                        }
+                    },
                     {
                         dataField: "sale_price",
                         caption: "Prezzo",
                         allowFiltering: true,
                         calculateCellValue: function (data) {
-                            if (data.sale_price !== null) return formatNumber(data.sale_price);
+                            if (data.sale_price !== null) return formatNumber(parseFloat(data.sale_price));
                         }
                     },
-                    { dataField: "sale_percentage", caption: "Percentuale", allowFiltering: true },
-                    { dataField: "sale_agent", caption: "Agente", allowFiltering: true },
-
+                    { 
+                        dataField: "sale_percentage", 
+                        caption: "Percentuale", 
+                        allowFiltering: true,
+                        calculateCellValue: function (data) {
+                            if (data.sale_agency_percentage !== null) return data.sale_agency_percentage + " %";
+                        }
+                    },
+                    { dataField: "sale_agent_name", caption: "Agente", allowFiltering: true },
                     {
                         caption: "Guadagno",
                         allowFiltering: true,
@@ -134,7 +162,7 @@ async function loadList() {
                                     })
                                     .appendTo(container);
                             } else {
-                                container.text(formatNumber(options.data.sale_price - options.data.purchase_price));
+                                container.text(formatNumber(parseInt(options.data.delta)));
                             }
                         }
                     }
@@ -266,36 +294,62 @@ function showEditPropertyModal(res, modalTitle) {
 }
 
 function showMarkPropertySoldModal(data) {
+    document.getElementById("hSoldProperty").value = data.id;
+    document.getElementById("hPropertyPurchasePrice").value = data.purchase_price;
     const label = document.getElementById("cbMarkPropertySoldLabel");
-    label.innerHTML = 'Contrassegna la proprietà a ' + data.address + ' come venduta <span class="text-danger ms-2">*</span>';
+    label.innerHTML = 'Contrassegna la proprietà a <b>' + data.address + '</b> come venduta <span class="text-danger ms-2">*</span>';
     document.getElementById("spMarkPropertySoldResult").innerText = '';
     const modalElement = document.getElementById("modalMarkPropertySold");
     const modal = new bootstrap.Modal(modalElement);
     if (data !== null) modal.show();
-    else {
-        modalElement.classList.remove("show");
-        modalElement.style.display = "none";
-        document.body.classList.remove("modal-open");
-        document.querySelector(".modal-backdrop")?.remove();
-    }
+    else $('#modalMarkPropertySold').modal('hide');
 }
 
-function savePropertyMarkedAsSold() {
+async function savePropertyMarkedAsSold() {
     const btn = document.getElementById("btnSaveMarkPropertySold");
     const spinner = document.getElementById("spinnerMarkPropertySold");
-    const date = $("#txtPropertySoldDate").dxDateBox("instance").option("value");
-    const price = document.getElementById("txtPropertySoldPrice").value;
+    const date = $("#txtPropertySoldDate").dxDateBox("instance").option("text");
+    const salePrice = document.getElementById("txtPropertySoldPrice").value;
+    const commission = document.getElementById("txtAgencyPropertySoldCommission").value;
     const agent = document.getElementById("ddlPropertySoldAgent").value;
     const mark = document.getElementById("cbMarkPropertySold");
     const result = document.getElementById("spMarkPropertySoldResult");
-    if (date.toLocaleDateString("en-GB") === "" || price === "" || agent === "" || !mark.checked) {
+    if (date === "" || salePrice === "" || commission === "" || agent === "" || !mark.checked) {
         result.innerText = "Si prega di compilare tutti i campi richiesti";
         result.classList.remove("d-none");
         return;
     }
-    showMarkPropertySoldModal(null);
     btn.disabled = true;
     spinner.classList.remove("d-none");
     result.classList.add("d-none");
     result.innerText = "";
+    const proID = parseInt(document.getElementById('hSoldProperty').value);
+    const purchasePrice = parseInt(document.getElementById('hPropertyPurchasePrice').value);
+    const delta = parseFloat(parseInt(salePrice) - purchasePrice);
+    // TODO SAVE NEW PROPERTY API...  AND EIDT PROPERTY DETAIL API...
+    try {
+        const response = await fetch('/api/property/sold/' + proID, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ "sale_date": date, "sale_price": parseInt(salePrice), "sale_agency_percentage": parseInt(commission), "sale_agent_id": parseInt(agent), "delta": delta })
+        });
+        const res = await response.json();
+        if (res.result) {
+            loadList();
+            const ele = document.getElementsByClassName('pai-tabs');
+            if (parseInt(location) === 1) ele[0].children[0].click();
+            else if (parseInt(location) === 2) ele[0].children[1].click();
+            else if (parseInt(location) === 3) ele[0].children[2].click();
+            btn.disabled = false;
+            spinner.classList.add("d-none");
+            $('#modalMarkPropertySold').modal('hide');
+        } else throw new Error("Something went wrong while manipulating the property!");
+    } catch (error) {
+        btn.disabled = true;
+        spinner.classList.remove("d-none");
+        result.classList.remove("d-none");
+        result.innerText = error.message !== undefined ? error.message : error;
+    }
 }
