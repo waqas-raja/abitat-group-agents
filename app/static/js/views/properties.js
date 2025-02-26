@@ -144,7 +144,8 @@ async function loadList() {
                         caption: "Percentuale", 
                         allowFiltering: true,
                         calculateCellValue: function (data) {
-                            if (data.sale_agency_percentage !== null) return data.sale_agency_percentage + " %";
+                            if (data.sale_agency_percentage !== null && data.sale_agency_percentage > 0) return data.sale_agency_percentage + " %";
+                            else return '';
                         }
                     },
                     { dataField: "sale_agent_name", caption: "Agente", allowFiltering: true },
