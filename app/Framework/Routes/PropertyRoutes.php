@@ -27,7 +27,10 @@ class PropertyRoutes {
 
         $group->patch('/{id}', function (Request $request, Response $response) {
             return Property::Edit($request, $response);
-            // throw new HttpNotImplementedException($request, "edit property entry point is not implemented");
+        })->add($this->authMiddleware);
+        
+        $group->patch('/sold/{id}', function (Request $request, Response $response) {
+            return Property::MarkAsSold($request, $response);
         })->add($this->authMiddleware);
 
         $group->delete('/{id}', function (Request $request, Response $response) {
