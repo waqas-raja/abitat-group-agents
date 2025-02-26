@@ -70,6 +70,10 @@ class ApiRoutes {
             $group->get('/branches', function ($request, $response) {
                 return ExpenseReport::GetAllBranches($request, $response);
             })->add($this->authMiddleware);
+            
+            $group->get('/property-types', function ($request, $response) {
+                return Property::GetAllPropertyTypes($request, $response);
+            })->add($this->authMiddleware);
 
             // Entity's routes
 

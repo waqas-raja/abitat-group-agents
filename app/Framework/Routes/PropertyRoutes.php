@@ -3,6 +3,7 @@
 namespace App\Framework\Routes;
 
 use App\Framework\Middlewares\AuthMiddleware;
+use App\Framework\Models\Property;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpNotImplementedException;
@@ -17,7 +18,7 @@ class PropertyRoutes {
 
     public function register(RouteCollectorProxy $group): void {
         $group->post('', function (Request $request, Response $response) {
-            throw new HttpNotImplementedException($request, "add property entry point is not implemented");
+            return Property::Add($request, $response);
         })->add($this->authMiddleware);
 
         $group->get('/{id}', function (Request $request, Response $response) {
@@ -25,7 +26,8 @@ class PropertyRoutes {
         })->add($this->authMiddleware);
 
         $group->patch('/{id}', function (Request $request, Response $response) {
-            throw new HttpNotImplementedException($request, "edit property entry point is not implemented");
+            return Property::Edit($request, $response);
+            // throw new HttpNotImplementedException($request, "edit property entry point is not implemented");
         })->add($this->authMiddleware);
 
         $group->delete('/{id}', function (Request $request, Response $response) {

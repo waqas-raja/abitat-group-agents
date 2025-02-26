@@ -7,45 +7,59 @@
             </div>
             <div class="modal-body">
                 <form id="">
+                    <input type="hidden" id="hEditProperty" value="">
                     <div class="row mb-3">
-                        <label for="ddlPurchaseAgent" class="col-sm-4 col-form-label">Agente che ha acquisito</label>
+                        <label for="ddlPropertyLocation" class="col-sm-4 col-form-label">Sede<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <select class="form-select" id="ddlPropertyLocation">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="ddlPropertyType" class="col-sm-4 col-form-label">Tipo<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <select class="form-select" id="ddlPropertyType">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="txtPropertyAddress" class="col-sm-4 col-form-label">Indirizzo<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="txtPropertyAddress" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="txtPropertyPurchaseDate" class="col-sm-4 col-form-label">Data di acquisto<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <div id="txtPropertyPurchaseDate" style="font-size: 1rem;"></div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="txtPropertyPurchasePrice" class="col-sm-4 col-form-label">Prezzo di acquisto<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="txtPropertyPurchasePrice" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="txtAgencyPropertyCommission" class="col-sm-4 col-form-label">Prezzo di acquisto<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="txtAgencyPropertyCommission">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="ddlPurchaseAgent" class="col-sm-4 col-form-label">Agente che ha acquisito<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlPurchaseAgent">
                             </select>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="ddlPropertyType" class="col-sm-4 col-form-label">Tipo</label>
+                        <label for="txtPropertyExpireDate" class="col-sm-4 col-form-label">Data di scadenza<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
-                            <select class="form-select" id="ddlPropertyType">
-                                <option value="" selected>Seleziona la tipologia...</option>
-                                <option value="1">Appartamento</option>
-                                <option value="2">Villa</option>
-                                <option value="3">Rudere</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label for="txtPropertyAddress" class="col-sm-4 col-form-label">Indirizzo</label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="txtPropertyAddress" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label for="txtPropertyPurchasePrice" class="col-sm-4 col-form-label">Prezzo di acquisto</label>
-                        <div class="col-sm-8">
-                            <input type="number" class="form-control" id="txtPropertyPurchasePrice" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label for="ddlPropertyLocation" class="col-sm-4 col-form-label">Sede</label>
-                        <div class="col-sm-8">
-                            <select class="form-select" id="ddlPropertyLocation">
-                                <option value="" selected>Seleziona la sede...</option>
-                                <option value="1">Torino</option>
-                                <option value="2">Moncalieri</option>
-                                <option value="3">Roma</option>
-                            </select>
+                            <div id="txtPropertyExpireDate" style="font-size: 1rem;"></div>
                         </div>
                     </div>
                     <span id="spNewPorpertyResult" class="text-danger d-none"></span>
