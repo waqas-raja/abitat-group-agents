@@ -188,9 +188,7 @@ async function loadList() {
             }
             if (e.rowType === "data") {
                 const res = r.payload.length === 1 ? r.payload : r.payload.filter(function (el) { return el.id === parseInt(e.data.id); });
-                // document.getElementById('').value = res[0].id;
                 showEditPropertyModal(res, 'Modifica proprietà');
-                // window.location = `/property/${e.data.id}`; 
             }
         },
     });
@@ -235,10 +233,10 @@ async function saveProperty() {
         const res = await response.json();
         if (res.result) {
             const ele = document.getElementsByClassName('pai-tabs');
+            loadList();
             if (parseInt(location) === 1) ele[0].children[0].click();
             else if (parseInt(location) === 2) ele[0].children[1].click();
             else if (parseInt(location) === 3) ele[0].children[2].click();
-            loadList();
             btn.disabled = false;
             spinner.classList.add("d-none");
             $('#modalAddProperty').modal('hide');

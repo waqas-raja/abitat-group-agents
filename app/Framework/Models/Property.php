@@ -90,7 +90,7 @@ final class Property
         $mandate_expiration = $data['mandate_expiration'] ? date("Y-m-d", strtotime($data['mandate_expiration'])) : date("Y-m-d");
 
         $q = 'UPDATE property SET address = ?, branch_id = ?, city = ?, property_type = ?, purchase_date = ?, purchase_price = ?, purchase_agent_percentage = ?, purchase_agency_percentage = ?, purchase_agent_id = ?, mandate_expiration = ?, ucr = ? WHERE id = ?';
-        $params = [$address, $branch_id, $city, $property_type, $purchase_date, $purchase_price, $purchase_agent_percentage, $purchase_agency_percentage, $purchase_agent_id, $mandate_expiration, $user_id];
+        $params = [$address, $branch_id, $city, $property_type, $purchase_date, $purchase_price, $purchase_agent_percentage, $purchase_agency_percentage, $purchase_agent_id, $mandate_expiration, $user_id, $property_id];
 
         $row_affected = DB::Execute($q, $params);
         if ($row_affected == 0) throw new Exception("Error while updating property", 500);
