@@ -10,6 +10,12 @@
                     <input type="hidden" id="hSoldProperty">
                     <input type="hidden" id="hPropertyPurchasePrice">
                     <div class="row mb-3">
+                        <label for="txtAddressDisable" class="col-sm-4 col-form-label">Indirizzo</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="txtAddressDisable" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <label for="txtPropertySoldDate" class="col-sm-4 col-form-label">Data di vendita<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <div id="txtPropertySoldDate" style="font-size: 1rem;"></div>
@@ -35,12 +41,6 @@
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlPropertySoldAgent">
                             </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="cbMarkPropertySold" required>
-                            <label id="cbMarkPropertySoldLabel" class="form-check-label" for="cbMarkPropertySold"></label>
                         </div>
                     </div>
                     <span id="spMarkPropertySoldResult" class="text-danger d-none"></span>
