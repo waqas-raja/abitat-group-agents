@@ -104,7 +104,7 @@ async function loadList() {
                         }
                     },
                     { dataField: "purchase_agent", caption: "Agente", allowFiltering: true },
-                    { 
+                    {
                         dataField: "mandate_expiration",
                         caption: "Scadenza",
                         allowFiltering: true,
@@ -120,7 +120,7 @@ async function loadList() {
                 alignment: "center",
                 cssClass: "alert alert-success rounded-0",
                 columns: [
-                    { 
+                    {
                         dataField: "sale_date",
                         caption: "Data",
                         allowFiltering: true,
@@ -139,9 +139,9 @@ async function loadList() {
                             if (data.sale_price !== null) return formatNumber(parseFloat(data.sale_price));
                         }
                     },
-                    { 
-                        dataField: "sale_percentage", 
-                        caption: "Percentuale", 
+                    {
+                        dataField: "sale_percentage",
+                        caption: "Percentuale",
                         allowFiltering: true,
                         calculateCellValue: function (data) {
                             if (data.sale_agency_percentage !== null && data.sale_agency_percentage > 0) return data.sale_agency_percentage + " %";
@@ -289,6 +289,19 @@ function showEditPropertyModal(res, modalTitle) {
     document.getElementById('txtAgencyPropertyCommission').value = res !== null ? res[0].purchase_agency_percentage : '';
     document.getElementById('ddlPurchaseAgent').value = res !== null ? res[0].purchase_agent_id : '-1';
     $("#txtPropertyExpireDate").dxDateBox("instance").option("value", res !== null ? new Date(res[0].mandate_expiration) : '');
+    let btn = document.getElementById('btnMarkPropertySold');
+    btn.classList.add('d-none');
+    if (res !== null) {
+        if (res[0].sale_date === null) {
+            btn.classList.remove('d-none');
+            btn.replaceWith(btn.cloneNode(true));
+            btn = document.getElementById('btnMarkPropertySold');
+            btn.addEventListener('click', function () {
+                $('#modalAddProperty').modal('hide');
+                showMarkPropertySoldModal(res[0]);
+            });
+        }
+    }
     const modalElement = document.getElementById("modalAddProperty");
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
