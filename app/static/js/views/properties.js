@@ -14,11 +14,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function populateDropdown(ctrl_id, entry_point, title) {
-    const ddlLocation = document.getElementById(ctrl_id);
-    ddlLocation.innerHTML = '<option value="-1" selected disabled>' + title + '</option>';
     const response = await fetch('/api/' + entry_point);
     const r = await response.json();
-    r.payload.forEach(el => { ddlLocation.innerHTML += `<option value="${el.id}">${el.name}</option>`; });
+    if (ctrl_id === "ddlPropertyType") initAutocompleteControl(r.payload, 'autocompletePropertyType', 'name', 'name');
+    else {
+        const ddlLocation = document.getElementById(ctrl_id);
+        ddlLocation.innerHTML = '<option value="-1" selected disabled>' + title + '</option>';
+        r.payload.forEach(el => { ddlLocation.innerHTML += `<option value="${el.id}">${el.name}</option>`; });
+    }
 }
 
 async function changeBranch(branch_id) {
@@ -153,18 +156,7 @@ async function loadList() {
                         caption: "Guadagno",
                         allowFiltering: true,
                         cellTemplate: function (container, options) {
-                            if (!options.data.sale_date && !options.data.sale_price) {
-                                $("<button>")
-                                    .text("Venduto")
-                                    .addClass("btn btn-success")
-                                    .on("click", function (event) {
-                                        event.stopPropagation();
-                                        showMarkPropertySoldModal(options.data);
-                                    })
-                                    .appendTo(container);
-                            } else {
-                                container.text(formatNumber(parseInt(options.data.delta)));
-                            }
+                            options.data.sale_date !== null ? container.text(formatNumber(parseInt(options.data.delta))) : '';
                         }
                     }
                 ]
@@ -227,7 +219,7 @@ async function saveProperty() {
     const btn = document.getElementById("btnSaveProperty");
     const spinner = document.getElementById("spinnerNewProperty");
     const location = parseInt(document.getElementById("ddlPropertyLocation").value);
-    const type = parseInt(document.getElementById("ddlPropertyType").value);
+    const type = parseInt(document.getElementById("hTxtPropertyType").value);
     const address = document.getElementById("txtPropertyAddress").value.trim();
     const propertyPurchaseDate = $("#txtPropertyPurchaseDate").dxDateBox("instance").option("text");
     const propertyPurchasePrice = document.getElementById("txtPropertyPurchasePrice").value.trim();
@@ -282,7 +274,16 @@ function showEditPropertyModal(res, modalTitle) {
     res === null ? document.getElementById('hEditProperty').value = '' : document.getElementById('hEditProperty').value = res[0].id;
     document.getElementById('modalAddPropertyLabel').innerHTML = '<i class="bi bi-buildings me-3"></i>' + modalTitle;
     document.getElementById('ddlPropertyLocation').value = res !== null ? res[0].branch_id : _selectedBranch;
-    document.getElementById('ddlPropertyType').value = res !== null ? res[0].property_type : '-1';
+    let propertyName = '';
+    if (res !== null) {
+        switch (res[0].property_type) {
+            case 1: propertyName = "Apartment"; break;
+            case 2: propertyName = "Villa"; break;
+            case 3: propertyName = "Farmhouse"; break;
+        }
+    }
+    $("#autocompletePropertyType").dxAutocomplete("instance").option("value", propertyName);
+    document.getElementById('hTxtPropertyType').value = res !== null ? res[0].property_type : 0;
     document.getElementById('txtPropertyAddress').value = res !== null ? res[0].address : '';
     if (res !== null) $("#txtPropertyPurchaseDate").dxDateBox("instance").option("value", new Date(res[0].purchase_date));
     document.getElementById('txtPropertyPurchasePrice').value = res !== null ? res[0].purchase_price : '';
@@ -310,8 +311,8 @@ function showEditPropertyModal(res, modalTitle) {
 function showMarkPropertySoldModal(data) {
     document.getElementById("hSoldProperty").value = data.id;
     document.getElementById("hPropertyPurchasePrice").value = data.purchase_price;
-    const label = document.getElementById("cbMarkPropertySoldLabel");
-    label.innerHTML = 'Contrassegna la proprietà a <b>' + data.address + '</b> come venduta <span class="text-danger ms-2">*</span>';
+    const label = document.getElementById("txtAddressDisable");
+    if (label !== undefined) label.value = data.address;
     document.getElementById("spMarkPropertySoldResult").innerText = '';
     const modalElement = document.getElementById("modalMarkPropertySold");
     const modal = new bootstrap.Modal(modalElement);
@@ -326,9 +327,8 @@ async function savePropertyMarkedAsSold() {
     const salePrice = document.getElementById("txtPropertySoldPrice").value;
     const commission = document.getElementById("txtAgencyPropertySoldCommission").value;
     const agent = document.getElementById("ddlPropertySoldAgent").value;
-    const mark = document.getElementById("cbMarkPropertySold");
     const result = document.getElementById("spMarkPropertySoldResult");
-    if (date === "" || salePrice === "" || commission === "" || agent === "" || !mark.checked) {
+    if (date === "" || salePrice === "" || commission === "" || agent === "") {
         result.innerText = "Si prega di compilare tutti i campi richiesti";
         result.classList.remove("d-none");
         return;
@@ -366,4 +366,23 @@ async function savePropertyMarkedAsSold() {
         result.classList.remove("d-none");
         result.innerText = error.message !== undefined ? error.message : error;
     }
+}
+
+function initAutocompleteControl(data, ctr_id, displayExpr, searchExpr) {
+    $(`#${ctr_id}`).dxAutocomplete({
+        dataSource: data,
+        displayExpr: displayExpr,
+        valueExpr: displayExpr,
+        placeholder: 'cercare',
+        minSearchLength: 2,
+        searchExpr: [searchExpr],
+        searchTimeout: 300,
+        onSelectionChanged: el => {
+            if (el.selectedItem) document.getElementById('hTxtPropertyType').value = el.selectedItem.id;
+        },
+        onContentReady: function (e) {
+            const items = e.component.getDataSource().items();
+            // console.log("Items in Dropdown:", items);
+        },
+    });
 }

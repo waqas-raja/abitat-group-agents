@@ -18,8 +18,8 @@
                     <div class="row mb-3">
                         <label for="ddlPropertyType" class="col-sm-4 col-form-label">Tipo<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
-                            <select class="form-select" id="ddlPropertyType">
-                            </select>
+                            <div id="autocompletePropertyType" class="" style="font-size: 1.1rem; color:#212529; padding-left: 0.20rem;"></div>
+                            <input type="hidden" id="hTxtPropertyType">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -31,7 +31,7 @@
                     <div class="row mb-3">
                         <label for="txtPropertyPurchaseDate" class="col-sm-4 col-form-label">Data di acquisto<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
-                            <div id="txtPropertyPurchaseDate" style="font-size: 1rem;"></div>
+                            <div id="txtPropertyPurchaseDate" style="font-size: 1.1rem; color:#212529;"></div>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -59,7 +59,7 @@
                     <div class="row mb-3">
                         <label for="txtPropertyExpireDate" class="col-sm-4 col-form-label">Data di scadenza<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
-                            <div id="txtPropertyExpireDate" style="font-size: 1rem;"></div>
+                            <div id="txtPropertyExpireDate" style="font-size: 1.1rem; color: #212529;"></div>
                         </div>
                     </div>
                     <span id="spNewPorpertyResult" class="text-danger d-none"></span>
