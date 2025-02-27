@@ -8,10 +8,10 @@ V - The list should also display the agent's location.
 V - The agent field should be clickable and open the agent detail page
 
 IMMOBILI
-- Add property should ask for location (default to the currently viewed location), type, address, purchase date (default to today), purchase price, agency commission percentage, agent, and mandate expiration date.
-- Verify that the list loads correctly with the new fields (the layout win)
-- If not sold, display a "Sold" button in the earnings column.
-- The "Sold" modal should ask for sale date (default to today), sale price, agency commission percentage, and agent.
+V - Add property should ask for location (default to the currently viewed location), type, address, purchase date (default to today), purchase price, agency commission percentage, agent, and mandate expiration date.
+V - Verify that the list loads correctly with the new fields (the layout win)
+V - If not sold, display a "Sold" button in the earnings column.
+V - The "Sold" modal should ask for sale date (default to today), sale price, agency commission percentage, and agent.
 
 OTHER
 - Use the DevExpress dropdown menu to allow users to select the property type when adding a new property.
