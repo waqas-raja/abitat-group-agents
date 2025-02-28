@@ -75,6 +75,13 @@ class AppRoutes {
             $response->getBody()->write(ob_get_clean());
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
+        
+        $app->get('/property-types', function ($request, $response) {
+            ob_start();
+            require_once __DIR__ . '/../../views/pages/property-types.php';
+            $response->getBody()->write(ob_get_clean());
+            return $response->withHeader('Content-Type', 'text/html');
+        })->add($this->authMiddleware);
 
         $app->get('/user/{id}', function ($request, $response) {
             $cid = $request->getAttribute('id');
