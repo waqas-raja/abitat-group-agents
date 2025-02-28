@@ -16,8 +16,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function populateDropdown(ctrl_id, entry_point, title) {
     const response = await fetch('/api/' + entry_point);
     const r = await response.json();
-    if (ctrl_id === "ddlPropertyType") initAutocompleteControl(r.payload, 'autocompletePropertyType', 'name', 'name');
-    else {
+    if (ctrl_id === "ddlPropertyType") {
+        initAutocompleteControl(r.payload, 'autocompletePropertyType', 'name', 'name');
+        const selectBoxData = new DevExpress.data.DataSource({
+            store: r.payload
+        });
+    
+        $("#selectBoxContainer").dxSelectBox({
+            dataSource: selectBoxData,
+            valueExpr: 'id',
+            displayExpr: 'name',
+            acceptCustomValue: true,
+            onCustomItemCreating: function(e) {
+                let nextId;
+                selectBoxData.store().totalCount().done(count => {
+                    nextId = count + 1;
+                });
+    
+                const newItem = { id: nextId, name: e.text };
+                debugger;
+    
+                selectBoxData.store().insert(newItem).done(() => {
+                    // Reload the data source to update the list
+                    selectBoxData.reload();
+                    // Set the newly added item as the selected value
+                    e.customItem = newItem;
+                });
+            }
+        });
+    } else {
         const ddlLocation = document.getElementById(ctrl_id);
         ddlLocation.innerHTML = '<option value="-1" selected disabled>' + title + '</option>';
         r.payload.forEach(el => { ddlLocation.innerHTML += `<option value="${el.id}">${el.name}</option>`; });

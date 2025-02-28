@@ -9,6 +9,12 @@
                 <form id="">
                     <input type="hidden" id="hEditProperty" value="">
                     <div class="row mb-3">
+                        <label for="ddlPropertyLocation" class="col-sm-4 col-form-label">Just For Testing (Remove Later)<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <div id="selectBoxContainer"></div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <label for="ddlPropertyLocation" class="col-sm-4 col-form-label">Sede<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlPropertyLocation">
