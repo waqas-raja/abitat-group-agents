@@ -21,6 +21,10 @@ class PackageRoutes {
             return Package::Add($request, $response);
         })->add($this->authMiddleware);
 
+        $group->get('/{id}', function (Request $request, Response $response) {
+            return Package::GetItem($request, $response);
+        })->add($this->authMiddleware);
+
         $group->patch('/{id}', function (Request $request, Response $response) {
             return Package::Edit($request, $response);
         })->add($this->authMiddleware);
@@ -28,5 +32,10 @@ class PackageRoutes {
         $group->delete('/{id}', function (Request $request, Response $response) {
             return Package::Delete($request, $response);
         })->add($this->authMiddleware);
+        
+        // $group->get('/agents/{id}', function (Request $request, Response $response) {
+        //     return Package::GetLinkedAgents($request, $response);
+        // })->add($this->authMiddleware);
+
     }
 }

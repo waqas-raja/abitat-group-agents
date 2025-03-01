@@ -44,6 +44,17 @@ final class Package {
             throw new Exception('Failed to add package: ' . $e->getMessage());
         }
     }
+
+    /**
+     * @throws Exception
+     */
+    public static function GetItem($request, $response) {
+        $package_id = (int)$request->getAttribute('id');
+        $rows = DB::Query("select * from package where id = ?", [$package_id]);
+        if(count($rows) == 0) throw new Exception("Package not found", 400);
+        $response->getBody()->write(json_encode(["payload" => $rows[0]]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
     
     public static function Edit($request, $response) {
         try {
@@ -83,6 +94,22 @@ final class Package {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
             throw new Exception('Failed to delete the package: ' . $e->getMessage());
+        }
+    }
+    
+    public static function GetLinkedAgents($request, $response) {
+        try {
+            $id = $request->getAttribute('id');
+            if (!$id)
+                throw new Exception('Package ID is required', 400);
+            // TODO CHECK IF THERE IS NEED TO ADD IN LOGIC
+            $q = "SELECT * from agent WHERE package_id = ?";
+            $params = [$id];
+            $linkedAgents = DB::Query($q, $params);
+            $response->getBody()->write(json_encode(["payload" => $linkedAgents]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $e) {
+            throw new Exception('Failed to get the linked agents: ' . $e->getMessage());
         }
     }
 }

@@ -31,5 +31,9 @@ class AgentRoutes {
         $group->patch('/{id}/general-info', function (Request $request, Response $response) {
             return Agent::Update($request, $response);
         })->add($this->authMiddleware);
+        
+        $group->patch('/{id}/alter-package', function (Request $request, Response $response) {
+            return Agent::UpdateAlternatePackage($request, $response);
+        })->add($this->authMiddleware);
     }
 }

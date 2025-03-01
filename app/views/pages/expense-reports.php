@@ -5,13 +5,18 @@ require_once __DIR__ . "/../modals/add-expense-report.php";
 ?>
 
 <div id="noteSpese">
-    <div class="pai-card">
+        <div class="pai-card d-flex justify-content-between align-items-center">
         <span class="pai-title">Note spese</span>
-        <!-- <div class="bg-light p-3 mt-3"><i>Pagina in allestimento</i></div> -->
+        <button type="button" class="btn btn-orange" onclick="showModalAddExpenseReport()">
+            <i class="bi bi-plus-lg me-2"></i> Aggiungi Note spese
+        </button>
     </div>
 </div>
 <div class="mt-3">
-    <?php require_once __DIR__ . "/../partials/expense-report-overview.php"; ?>
+    <div class="pai-card">
+        <div id="listOfExpense" class="mt-3">
+        </div>
+    </div>
 </div>
 <script src="/static/js/views/expense-report.js"></script>
 

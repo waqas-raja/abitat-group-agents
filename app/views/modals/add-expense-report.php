@@ -2,26 +2,29 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalAddExpenseReportLabel"><i class="bi bi-buildings me-3"></i>Aggiungi Note spese</h5>
+                <h5 class="modal-title" id="modalAddExpenseReportLabel"><i class="bi bi-piggy-bank me-3"></i>Aggiungi Note spese</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="">
-                    <div class="row mb-3">
-                        <label for="txtDate" class="col-sm-4 col-form-label">Data<span class="text-danger ms-2">*</span></label>
+                <div class="row mb-3">
+                        <label for="ddlLocation" class="col-sm-4 col-form-label">Sede</label>
                         <div class="col-sm-8">
-                            <input type="date" class="form-control" id="txtDate" required>
+                            <select class="form-select" id="ddlLocation" onchange="getRelevantAgents()">
+                            </select>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="ddlAgent" class="col-sm-4 col-form-label">Agente<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlAgent">
-                                <option value="" selected>Scegli...</option>
-                                <option value="1">Marco</option>
-                                <option value="2">Elisa</option>
-                                <option value="3">Derossi</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="txtDate" class="col-sm-4 col-form-label">Data<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <input type="date" class="form-control" id="txtDate" required>
                         </div>
                     </div>
                     <div class="row mb-3">

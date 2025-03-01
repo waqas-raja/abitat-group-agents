@@ -75,6 +75,13 @@ class AppRoutes {
             $response->getBody()->write(ob_get_clean());
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);
+        
+        $app->get('/property-types', function ($request, $response) {
+            ob_start();
+            require_once __DIR__ . '/../../views/pages/property-types.php';
+            $response->getBody()->write(ob_get_clean());
+            return $response->withHeader('Content-Type', 'text/html');
+        })->add($this->authMiddleware);
 
         $app->get('/user/{id}', function ($request, $response) {
             $cid = $request->getAttribute('id');
@@ -90,6 +97,15 @@ class AppRoutes {
             extract(['aid' => $cid]);
             ob_start();
             require_once __DIR__ . '/../../views/pages/agent-detail.php';
+            $response->getBody()->write(ob_get_clean());
+            return $response->withHeader('Content-Type', 'text/html');
+        })->add($this->authMiddleware);
+        
+        $app->get('/package/{id}', function ($request, $response) {
+            $pid = $request->getAttribute('id');
+            extract(['pid' => $pid]);
+            ob_start();
+            require_once __DIR__ . '/../../views/pages/package-detail.php';
             $response->getBody()->write(ob_get_clean());
             return $response->withHeader('Content-Type', 'text/html');
         })->add($this->authMiddleware);

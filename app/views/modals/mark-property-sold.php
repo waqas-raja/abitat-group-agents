@@ -7,33 +7,40 @@
             </div>
             <div class="modal-body">
                 <form id="">
+                    <input type="hidden" id="hSoldProperty">
+                    <input type="hidden" id="hPropertyPurchasePrice">
                     <div class="row mb-3">
-                        <label for="txtPropertySoldDate" class="col-sm-4 col-form-label">Data<span class="text-danger ms-2">*</span></label>
+                        <label for="txtAddressDisable" class="col-sm-4 col-form-label">Indirizzo</label>
                         <div class="col-sm-8">
-                            <div id="txtPropertySoldDate"></div>
+                            <input type="text" id="txtAddressDisable" class="form-control" disabled>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtPropertySoldPrice" class="col-sm-4 col-form-label">Prezzo<span class="text-danger ms-2">*</span></label>
+                        <label for="txtPropertySoldDate" class="col-sm-4 col-form-label">Data di vendita<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="txtPropertySoldPrice" required>
+                            <div id="txtPropertySoldDate" style="font-size: 1rem;"></div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="txtPropertySoldPrice" class="col-sm-4 col-form-label">Prezzo di vendita<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" id="txtPropertySoldPrice" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="txtAgencyPropertySoldCommission" class="col-sm-4 col-form-label">Commissione agenzia<span class="text-danger ms-2">*</span></label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="txtAgencyPropertySoldCommission">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="ddlPropertySoldAgent" class="col-sm-4 col-form-label">Agente<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <select class="form-select" id="ddlPropertySoldAgent">
-                                <option value="" selected>Scegli...</option>
-                                <option value="1">Marco</option>
-                                <option value="2">Elisa</option>
-                                <option value="3">Derossi</option>
                             </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="cbMarkPropertySold" required>
-                            <label id="cbMarkPropertySoldLabel" class="form-check-label" for="cbMarkPropertySold"></label>
                         </div>
                     </div>
                     <span id="spMarkPropertySoldResult" class="text-danger d-none"></span>
