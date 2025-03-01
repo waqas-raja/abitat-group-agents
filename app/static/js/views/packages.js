@@ -39,6 +39,7 @@ async function loadList() {
 }
 
 function showModalAddPackage() {
+
     document.getElementById("txtName").innerText = '';
     document.getElementById("txtFixedFee").innerText = '';
     document.getElementById("txtPercentage").innerText = '';

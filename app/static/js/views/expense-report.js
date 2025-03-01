@@ -120,6 +120,7 @@ async function loadList(id) {
                 }
             ]
         },
+
         onRowClick: function (e) {
             if (e.rowType === "data") {
                 // window.location = `/agent/${e.data.id}`; 

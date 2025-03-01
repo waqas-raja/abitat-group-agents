@@ -177,5 +177,4 @@ final class Property
         $response->getBody()->write(json_encode(["result" => true]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
-
 }
