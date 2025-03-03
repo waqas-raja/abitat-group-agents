@@ -1,24 +1,17 @@
-PACCHETTI
-V - In the package detail page, display the list of linked agents. Clicking on a row should open the agent detail page.
-V - When deleting a package, the system should check if there are linked agents. If there are, it should prompt the user to select a replacement package to assign to them.
 
-NOTE SPESE
-V - When adding an expense note, the system should first ask for the location, then display the agents associated with that location
-V - The list should also display the agent's location.
-V - The agent field should be clickable and open the agent detail page
+PROPERTY TYPES
+- Reduce the table size—it doesn’t need to be full width on this page.
+- In the New and Edit modals, use the same icon as in the menu.
+- In the Edit modal, change the title to "Edit Property Type".
 
-IMMOBILI
-V - Add property should ask for location (default to the currently viewed location), type, address, purchase date (default to today), purchase price, agency commission percentage, agent, and mandate expiration date.
-V - Verify that the list loads correctly with the new fields (the layout win)
-V - If not sold, display a "Sold" button in the earnings column.
-V - The "Sold" modal should ask for sale date (default to today), sale price, agency commission percentage, and agent.
+EXPENSE NOTES
+- Add the option to group records in the grid.
+- Enable edit and delete functionality for records.
 
-OTHER
-- Use the DevExpress dropdown menu to allow users to select the property type when adding a new property.
-  Check if DevExpress provides an option to add a new entry directly from the dropdown (e.g., an inline "Add new type" feature). If such a feature exists, implement it; otherwise, we will consider an alternative approach.
+PROPERTIES
+- Replace the autocomplete for property type selection with a dropdown select instead.
 
-
-
-
-
-
+PASSWORD RECOVERY (Login Page)
+- Clicking on "Recover Password" displays an error message.
+- Try sending an email with a newly generated password. If you don’t already have a Brevo account, create one (it’s free) and use its API keys for testing.
+- Set the values in the environment variables so we can easily modify them without changing the code.

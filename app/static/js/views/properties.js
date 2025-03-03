@@ -261,7 +261,7 @@ async function saveProperty() {
             btn.disabled = false;
             spinner.classList.add("d-none");
             $('#modalAddProperty').modal('hide');
-        } else throw new Error("Something went wrong while manipulating the property!");
+        } else throw new Error("Si sono verificati degli errori");
     } catch (error) {
         btn.disabled = true;
         spinner.classList.remove("d-none");
@@ -359,7 +359,7 @@ async function savePropertyMarkedAsSold() {
             btn.disabled = false;
             spinner.classList.add("d-none");
             $('#modalMarkPropertySold').modal('hide');
-        } else throw new Error("Something went wrong while manipulating the property!");
+        } else throw new Error("Si sono verificati degli errori");
     } catch (error) {
         btn.disabled = true;
         spinner.classList.remove("d-none");
@@ -373,7 +373,7 @@ function initAutocompleteControl(data, ctr_id, displayExpr, searchExpr) {
         dataSource: data,
         displayExpr: displayExpr,
         valueExpr: displayExpr,
-        placeholder: 'cercare',
+        placeholder: 'Cerca una tipologia',
         minSearchLength: 2,
         searchExpr: [searchExpr],
         searchTimeout: 300,
