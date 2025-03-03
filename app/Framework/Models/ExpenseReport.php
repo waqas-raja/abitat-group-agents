@@ -64,6 +64,7 @@ final class ExpenseReport {
      * @throws Exception
      */
     public static function Add($request, $response) {
+
         $token_info = User::GetTokenInfo($request);
         $user_id = $token_info['id'];
         $user_role = $token_info['role'];
@@ -78,7 +79,6 @@ final class ExpenseReport {
         if ($row_affected == 0) throw new Exception("Error while insert expense report", 500);
         $response->getBody()->write(json_encode(["result" => true]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-        
     }
 
     /**

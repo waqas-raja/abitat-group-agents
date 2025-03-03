@@ -36,5 +36,6 @@ class PackageRoutes {
         // $group->get('/agents/{id}', function (Request $request, Response $response) {
         //     return Package::GetLinkedAgents($request, $response);
         // })->add($this->authMiddleware);
+
     }
 }
