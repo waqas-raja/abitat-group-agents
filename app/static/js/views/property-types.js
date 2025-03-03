@@ -70,7 +70,7 @@ async function loadList() {
             ]
         },
         onRowClick: function (e) {
-            showModalAddPropertyType(e.data);
+            showModalAddPropertyType(e.data, "Modifica tipo di proprietà");
             if (e.rowType === "data") {
                 // window.location = `/agent/${e.data.id}`; 
             }
@@ -78,7 +78,8 @@ async function loadList() {
     });
 }
 
-function showModalAddPropertyType(data = null) {
+function showModalAddPropertyType(data = null, title) {
+    document.getElementById("modalAddPropertyTypeLabel").innerHTML = '<i class="bi bi-shop me-3"></i>' + title;
     document.getElementById("txtPropertyType").value = data !== null ? data.name : '';
     document.getElementById("hPropertyType").value = data !== null ? data.id : '';
     document.getElementById("spNewPropertyTypeResult").innerText = '';

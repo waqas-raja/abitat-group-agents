@@ -1,8 +1,8 @@
 
 PROPERTY TYPES
-- Reduce the table size—it doesn’t need to be full width on this page.
-- In the New and Edit modals, use the same icon as in the menu.
-- In the Edit modal, change the title to "Edit Property Type".
+V - Reduce the table size—it doesn’t need to be full width on this page.
+V - In the New and Edit modals, use the same icon as in the menu.
+V - In the Edit modal, change the title to "Edit Property Type".
 
 EXPENSE NOTES
 - Add the option to group records in the grid.
