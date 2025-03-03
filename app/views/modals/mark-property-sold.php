@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtAgencyPropertySoldCommission" class="col-sm-4 col-form-label">Commissione agenzia<span class="text-danger ms-2">*</span></label>
+                        <label for="txtAgencyPropertySoldCommission" class="col-sm-4 col-form-label">Commissione agenzia (%)<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <div class="input-group">
                                 <input type="number" class="form-control" id="txtAgencyPropertySoldCommission">

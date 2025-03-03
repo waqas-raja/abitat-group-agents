@@ -108,7 +108,7 @@ final class User {
         $row_affected = DB::Execute($q, $params);
         if($row_affected == 0) throw new Exception("Error updating user password", 500);
         $response->getBody()->write(json_encode(['result' => true]));
-        //TODO Inviare mail transazionale con la nuova password
+        //TODO send transactional email with new psw
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 

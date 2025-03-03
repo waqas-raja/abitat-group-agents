@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtAgencyPropertyCommission" class="col-sm-4 col-form-label">Commissione agenzia<span class="text-danger ms-2">*</span></label>
+                        <label for="txtAgencyPropertyCommission" class="col-sm-4 col-form-label">Commissione agenzia (%)<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <div class="input-group">
                                 <input type="number" class="form-control" id="txtAgencyPropertyCommission">
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="txtPropertyExpireDate" class="col-sm-4 col-form-label">Data di scadenza<span class="text-danger ms-2">*</span></label>
+                        <label for="txtPropertyExpireDate" class="col-sm-4 col-form-label">Scadenza mandato<span class="text-danger ms-2">*</span></label>
                         <div class="col-sm-8">
                             <div id="txtPropertyExpireDate" style="font-size: 1.1rem; color: #212529;"></div>
                         </div>
@@ -67,7 +67,7 @@
             </div>
             <div class="modal-footer d-flex justify-content-between">
                 <div>
-                    <button type="button" id="btnMarkPropertySold" class="btn btn-success"><i class="bi bi-check-lg"></i> Venduto</button>
+                    <button type="button" id="btnMarkPropertySold" class="btn btn-outline-success">Imposta come venduto</button>
                 </div>
                 <div>
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x"></i> Annulla</button>

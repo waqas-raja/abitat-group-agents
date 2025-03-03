@@ -80,6 +80,7 @@ async function recoverPassword() {
     const email = document.getElementById('txtRecoveryEmail').value.trim();
     const msg = document.getElementById('spRecoveryResult');
     msg.textContent = '';
+    msg.classList.remove("text-danger", "text-success");
     if (!email) {
         msg.textContent = 'Il campo email è obbligatorio.';
         msg.classList.add('text-danger');
@@ -103,12 +104,13 @@ async function recoverPassword() {
             return;
         }
         const data = await response.json();
-
-        //TODO
-
-        msg.textContent = 'Email di recupero inviata con successo! Controlla la tua casella di posta.';
-        msg.classList.remove('text-danger');
-        msg.classList.add('text-success');
+        if(data.response) {
+            msg.textContent = 'Email di recupero inviata con successo! Controlla la tua casella di posta.';
+            msg.classList.add('text-success');
+        } else {
+            msg.textContent = 'Si sono verificati degli errori.';
+            msg.classList.add('text-danger');
+        }
     } catch (error) {
         msg.textContent = 'Si è verificato un errore. Riprova più tardi.';
         msg.classList.add('text-danger');
