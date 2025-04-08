@@ -2,6 +2,7 @@ const BRANCHES = { Torino: 1, Moncalieri: 2, Roma: 3 };
 const BRANCHES_ID = { [BRANCHES.Torino]: "listOfTorinoAgents", [BRANCHES.Moncalieri]: "listOfMoncalieriAgents", [BRANCHES.Roma]: "listOfRomaAgents" };
 document.addEventListener("DOMContentLoaded", async () => {
     initInternalTabs();
+    showDataAsPerLoggedUser();
     await Promise.all([
         loadPackages(),
         loadList(BRANCHES.Torino),
@@ -9,6 +10,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         loadList(BRANCHES.Roma)
     ]);
 });
+
+function showDataAsPerLoggedUser() {
+    if (localStorage.ulocation !== "null") {
+        const tabs = document.querySelectorAll('.pai-tab');
+        tabs.forEach((ele) => { ele.classList.add('visually-hidden'); });
+        switch (parseInt(localStorage.ulocation)) {
+            case BRANCHES.Torino: document.getElementById('tabTorino').classList.remove("visually-hidden"); break;
+            case BRANCHES.Moncalieri: document.getElementById('tabMoncalieri').classList.remove("visually-hidden"); break;
+            case BRANCHES.Roma: document.getElementById('tabRoma').classList.remove("visually-hidden"); break;
+        }
+    }
+}
 
 async function loadPackages() {
     const ddlPackage = document.getElementById('ddlPackage');

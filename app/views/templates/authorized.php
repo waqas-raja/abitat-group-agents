@@ -13,9 +13,9 @@
                     <a id="menuUsers" href="/users" class="visually-hidden text-secondary text-decoration-none hover-orange" title="Gestione Utenti">
                         <i class="bi bi-people fs-4"></i>
                     </a>
-                    <a id="menuSettings" href="/settings" class="visually-hidden text-secondary text-decoration-none hover-orange" title="Impostazioni">
-                        <i class="bi bi-gear fs-4"></i>
-                    </a>
+<!--                    <a id="menuSettings" href="/settings" class="visually-hidden text-secondary text-decoration-none hover-orange" title="Impostazioni">-->
+<!--                        <i class="bi bi-gear fs-4"></i>-->
+<!--                    </a>-->
                     <a id="menuUserProfile" href="/user-profile" class="text-secondary text-decoration-none hover-orange" title="Profilo Utente">
                         <i class="bi bi-person-circle fs-4"></i>
                     </a>

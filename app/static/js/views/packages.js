@@ -32,25 +32,22 @@ async function loadList() {
         },
         onRowClick: function (e) {
             if (e.rowType === "data") {
-                document.getElementById('hPackageId').value = e.data.id;
-                document.getElementById('txtUpdateName').value = e.data.name;
-                document.getElementById('txtUpdateFixedFee').value = e.data.fixed_cost;
-                document.getElementById('txtUpdatePercentage').value = e.data.percentage;
-                document.getElementById('txtUpdateDescription').value = e.data.note;
-                const modalElement = document.getElementById("modalEditPackage");
-                const modal = new bootstrap.Modal(modalElement);
-                modal.show();
+                window.location = `/package/${e.data.id}`;
             }
         },
     });
 }
 
 function showModalAddPackage() {
+
+    document.getElementById("txtName").innerText = '';
+    document.getElementById("txtFixedFee").innerText = '';
+    document.getElementById("txtPercentage").innerText = '';
+    document.getElementById("txtDescription").innerText = '';
     document.getElementById("spNewPackageResult").innerText = '';
     const modalElement = document.getElementById("modalAddPackage");
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
-    // preSelectLocation();
 }
 
 async function savePackage() {

@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    await loadPackages();
     await Promise.all([
         loadAgentDetail(),
-        loadSoldPropertiesByAgent()
+        loadPackages(),
+        loadAgentTransactions()
     ]);
 });
 
@@ -102,21 +102,18 @@ async function deleteAgentModal() {
                 const response = await fetch("/api/agent/" + aid, {method: "DELETE" });
                 const res = await response.json();
                 if (res.result) {
-                    const modalElement = document.getElementById("modalConfirmDelete");
-                    modalElement.classList.remove("show");
-                    modalElement.style.display = "none";
-                    document.body.classList.remove("modal-open");
-                    document.querySelector(".modal-backdrop")?.remove();
+                    $("#modalConfirmDelete").modal('hide');
                     window.location = `/agents`;
                 } else throw new Error("Error while deleting the agent!");
             } catch (error) {
-                result.innerText = error.message !== undefined ? error.message : error;
+                document.getElementById("deleteErrorMessage").innerText = error.message !== undefined ? error.message : error;
             }
         }
     });
 }
 
 function showDeleteConfirmationModal(callback) {
+    document.getElementById("deleteErrorMessage").innerHTML = '';
     const modalElement = document.getElementById("modalConfirmDelete");
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
@@ -129,7 +126,7 @@ function showDeleteConfirmationModal(callback) {
     confirmButton.addEventListener("click", confirmButton.clickHandler);
 }
 
-function loadSoldPropertiesByAgent() {
+async function loadAgentTransactions() {
     const data = [];
     const hasData = data.length > 0;
     new DevExpress.ui.dxDataGrid(document.getElementById("listOfReport"), {
@@ -142,7 +139,7 @@ function loadSoldPropertiesByAgent() {
         headerFilter: { visible: hasData },
         columns: [
             {
-                caption: "Data vendita",
+                caption: "Data",
                 allowFiltering: true,
                 calculateCellValue: function (data) { return (data.sale_date).slice(3); }
             },

@@ -18,7 +18,7 @@ ob_start();
         </div>
     </div>
     <div id="tabContentPropertiesSummary" class="pai-tab-content active">
-        <div class="row row-cols-4">
+        <div id="propertyCategorySection" class="row row-cols-md-3 row-cols-lg-5">
             <div class="col">
                 <div class="pai-card p-0">
                     <div class="alert alert-success px-3 py-2">
@@ -27,39 +27,15 @@ ob_start();
                     </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="pai-card p-0">
-                    <div class="alert alert-secondary px-3 py-2">
-                        <div id="totHouse" class="fs-5 fw-bold">80</div>
-                        <small class="">Numero di Case indipendenti</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="pai-card p-0">
-                    <div class="alert alert-info px-3 py-2">
-                        <div id="totVilla" class="fs-5 fw-bold">80</div>
-                        <small class="">Numero di Ville</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="pai-card p-0">
-                    <div class="alert alert-primary px-3 py-2">
-                        <div id="overallProp" class="fs-5 fw-bold">240</div>
-                        <small class="">Totale Immobili</small>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="row mb-3">
             <div class="col-lg-7">
                 <div class="pai-card">
-                    <div id="locationBasedSummaryChart" style="height:200px"></div>
+                    <div id="locationBasedSummaryChart" style="height:auto;"></div>
                 </div>
             </div>
             <div class="col-lg-5">
-                <div class="row row-cols-2">
+                <div id="propertySummaries" class="row row-cols-2">
                     <div class="col">
                         <div class="pai-card mb-3">
                             <div class="card p-3">
@@ -67,43 +43,13 @@ ob_start();
                             </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="pai-card mb-3">
-                            <div class="card p-3"><span id="moncalieriSummary"></span></div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="pai-card mb-3">
-                            <div class="card p-3"><span id="romaSummary"></span></div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="pai-card mb-3">
-                            <div class="card p-3"><span id="overallSummary"></span></div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-3">
+        <div id="pieChartsPresentation" class="row row-cols-md-2 row-cols-lg-4">
+            <div class="col">
                 <div class="pai-card">
                     <div id="torinoPie" class=""></div>
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="pai-card">
-                    <div id="moncalieriPie" class=""></div>
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="pai-card">
-                    <div id="romaPie" class=""></div>
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="pai-card">
-                    <div id="totalPie" class=""></div>
                 </div>
             </div>
         </div>

@@ -1,12 +1,32 @@
-document.addEventListener("DOMContentLoaded", init);
+let _isStaff = false;
+document.addEventListener("DOMContentLoaded", async () => {
+    await init();
+    loadRoles();
+});
 
 async function init() {
     try {
         const response = await fetch("/api/users");
         const data = await response.json();
-        if(data.payload === undefined) throw new Error("Data payload is undefined");
+        if (data.payload === undefined) throw new Error("Data payload is undefined");
         loadList(data.payload);
     } catch (error) { console.error("Errore durante la chiamata:", error); }
+}
+
+async function loadLocations() {
+    const ddlLocation = document.getElementById('ddlNewUserLocation');
+    ddlLocation.innerHTML = '<option value="-1" selected disabled>Seleziona la sede</option>';
+    const response = await fetch('/api/branches');
+    const r = await response.json();
+    r.payload.forEach(el => { ddlLocation.innerHTML += `<option value="${el.id}">${el.name}</option>`; });
+}
+
+async function loadRoles() {
+    const ddlLocation = document.getElementById('ddlNewUserRole');
+    ddlLocation.innerHTML = '<option value="-1" selected disabled>Seleziona la ruolo</option>';
+    const response = await fetch('/api/roles');
+    const r = await response.json();
+    r.payload.forEach(el => { ddlLocation.innerHTML += `<option value="${el.id}">${el.name}</option>`; });
 }
 
 function loadList(data) {
@@ -46,7 +66,7 @@ function loadList(data) {
                 }
             ]
         },
-        onRowClick: function(e) {
+        onRowClick: function (e) {
             document.getElementById("hUserId").value = e.data.id;
             document.getElementById("txtEditUserName").value = e.data.name || "N/A";
             document.getElementById("txtEditUserSurname").value = e.data.surname || "N/A";
@@ -68,10 +88,19 @@ async function saveUser() {
     const result = document.getElementById("spNewUserResult");
     result.textContent = "";
     result.classList.add("d-none");
-    if (!name || !surname || !email || !password || !role) {
+    if (!name || !surname || !email || !password || role == '-1') {
         result.textContent = "Tutti i campi sono obbligatori";
         result.classList.remove("d-none");
         return;
+    }
+    let location = '';
+    if (_isStaff) {
+        location = document.getElementById('ddlNewUserLocation').value;
+        if (location == '-1') {
+            result.textContent = "Tutti i campi sono obbligatori";
+            result.classList.remove("d-none");
+            return;
+        }
     }
     if (!isValidEmail(email)) {
         result.textContent = "L'email fornita non risulta valida";
@@ -82,18 +111,26 @@ async function saveUser() {
     const btn = document.getElementById("btnSaveUser");
     spinner.classList.remove("d-none");
     btn.disabled = true;
+    let params = { "name": name, "surname": surname, "email": email, "password": password, "role": parseInt(role) };
+    if (_isStaff) params["location"] = parseInt(location);
     try {
-        const response = await fetch(
-            "api/user",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name: name, surname: surname, email: email, password: password, role: role })
+        const response = await fetch("api/user", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(params)
         });
         const data = await response.json();
-        init();
-        const modal = new bootstrap.Modal(document.getElementById("modalAddUser"));
-        modal.hide();
+        if (data.result) {
+            await init();
+            btn.disabled = false;
+            spinner.classList.add("d-none");
+            $("#modalAddUser").modal("hide");
+        } else {
+            result.innerText = "Si sono verificati degli errori durante il salvataggio";
+            btn.disabled = false;
+            spinner.classList.remove("d-none");
+            result.classList.remove("d-none");
+        }
     } catch (error) {
         console.error("Error adding user:", error);
         result.textContent = "Si è verificato un errore durante il salvataggio.";
@@ -104,7 +141,18 @@ async function saveUser() {
     }
 }
 
+async function handleStaffLocation() {
+    if (parseInt(document.getElementById('ddlNewUserRole').value) === 500) {
+        const btn = document.getElementById("btnSaveUser");
+        btn.disabled = true;
+        _isStaff = true;
+        await loadLocations();
+        btn.disabled = false;
+        document.getElementById('userLocationSection').classList.remove('d-none');
+    } else document.getElementById('userLocationSection').classList.add('d-none');
+}
+
 async function disableUser() {
     const userId = document.getElementById("hUserId").value;
-    confirm('the user with id = '+ userId + ', is going to disable');
+    confirm('the user with id = ' + userId + ', is going to disable');
 }

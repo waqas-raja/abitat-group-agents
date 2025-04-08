@@ -66,8 +66,10 @@ async function signIn() {
             return;
         }
         const data = await response.json();
+        debugger;
         localStorage.setItem("uname", data.name);
         localStorage.setItem("urole", data.role);
+        localStorage.setItem("ulocation", data.location);
         window.location.href = '/dashboard';
     } catch (error) {
         msg.textContent = 'Si è verificato un errore. Riprova più tardi.';
@@ -80,6 +82,7 @@ async function recoverPassword() {
     const email = document.getElementById('txtRecoveryEmail').value.trim();
     const msg = document.getElementById('spRecoveryResult');
     msg.textContent = '';
+    msg.classList.remove("text-danger", "text-success");
     if (!email) {
         msg.textContent = 'Il campo email è obbligatorio.';
         msg.classList.add('text-danger');
@@ -98,17 +101,18 @@ async function recoverPassword() {
         });
         if (!response.ok) {
             const error = await response.json();
-            msg.textContent = error.message || 'Recupero password fallito.';
+            msg.textContent = error.error || 'Recupero password fallito.';
             msg.classList.add('text-danger');
             return;
         }
         const data = await response.json();
-
-        //TODO
-
-        msg.textContent = 'Email di recupero inviata con successo! Controlla la tua casella di posta.';
-        msg.classList.remove('text-danger');
-        msg.classList.add('text-success');
+        if(data.result) {
+            msg.textContent = 'Email di recupero inviata con successo! Controlla la tua casella di posta.';
+            msg.classList.add('text-success');
+        } else {
+            msg.textContent = 'Si sono verificati degli errori.';
+            msg.classList.add('text-danger');
+        }
     } catch (error) {
         msg.textContent = 'Si è verificato un errore. Riprova più tardi.';
         msg.classList.add('text-danger');

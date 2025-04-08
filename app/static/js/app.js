@@ -63,9 +63,20 @@ function setCopyright(){
 
 function setUserLoggedSettings() {
     document.getElementById("spUserLoggedName").innerText = `Ciao ${localStorage.uname}!`;
-    if(localStorage.urole > 100) {
+    if(parseInt(localStorage.urole) === 900) {
         document.getElementById("menuUsers").classList.remove("visually-hidden");
-        document.getElementById("menuSettings").classList.remove("visually-hidden");
+        // document.getElementById("menuSettings").classList.remove("visually-hidden");
+        document.getElementById("menuPropertyTypes").classList.remove("visually-hidden");
+        document.getElementById("menuPropertyTypesAlt").classList.remove("visually-hidden");
+        document.getElementById("menuPackages").classList.remove("visually-hidden");
+        document.getElementById("menuPackagesAlt").classList.remove("visually-hidden");
+    } else if (parseInt(localStorage.urole) === 500) {
+        document.getElementById("menuUsers").classList.add("visually-hidden");
+        // document.getElementById("menuSettings").classList.add("visually-hidden");
+        document.getElementById("menuPropertyTypes").classList.add("visually-hidden");
+        document.getElementById("menuPropertyTypesAlt").classList.add("visually-hidden");
+        document.getElementById("menuPackages").classList.add("visually-hidden");
+        document.getElementById("menuPackagesAlt").classList.add("visually-hidden");
     }
 }
 

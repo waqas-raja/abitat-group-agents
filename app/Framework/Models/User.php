@@ -9,6 +9,7 @@ use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Random\RandomException;
+use GuzzleHttp\Client;
 
 final class User {
     /**
@@ -35,7 +36,7 @@ final class User {
         $mobile = $data['mobile'] ?? '';
         $os = $data['os'] ?? '';
         if(empty($email) || empty($psw)) throw new Exception('Email and password are required', 400);
-        $q = "SELECT u.id, u.name, u.role_id FROM user as u WHERE u.email = ? AND u.psw = ?";
+        $q = "SELECT u.id, u.name, u.role_id, u.location FROM user as u WHERE u.email = ? AND u.psw = ?";
         $rows = DB::Query($q, [$email, sha1($psw)]);
         if(count($rows) == 0) throw new Exception('Invalid email or password', 401);
         if(count($rows) > 1) throw new Exception("Invalid number of users with the same email", 500);
@@ -58,7 +59,7 @@ final class User {
             'httponly' => true
         ];
         setcookie('token', $token, $cookieParams);
-        $response->getBody()->write(json_encode(['name' => $u['name'], 'role' => $u['role_id']]));
+        $response->getBody()->write(json_encode(['name' => $u['name'], 'role' => $u['role_id'], 'location' => $u['location']]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
@@ -102,13 +103,63 @@ final class User {
     public static function ResetPassword($request, $response) {
         $token_info = self::GetTokenInfo($request);
         $user_id = $token_info['id'];
+        $data = json_decode($request->getBody()->getContents(), true);
+        $emailTo = $data['email'] ?? '';
+        if($emailTo === '') throw new Exception("Email address is needed to send new pasword", 500);
+
+        $query = "SELECT id from user where email = ?";
+        $row = DB::Query($query, [$emailTo]);
+        if (empty($row)) throw new Exception("L'e-mail fornita non è disponibile nel sistema", 500);
+
         $rnd_psw = bin2hex(random_bytes(16));
+        // $rnd_psw = 'Test123#';
         $q = "update user set psw = sha1(?), force_change_psw = 1 where id = ?";
-        $params = [$rnd_psw, $user_id];
+        $params = [$rnd_psw, $row[0]['id']];
         $row_affected = DB::Execute($q, $params);
         if($row_affected == 0) throw new Exception("Error updating user password", 500);
-        $response->getBody()->write(json_encode(['result' => true]));
-        //TODO Inviare mail transazionale con la nuova password
+        //TODO send transactional email with new psw
+        // Load environment variables
+        $API_KEY = getenv('BREVO_API_KEY');
+        $SENDER_EMAIL = getenv('SENDER_EMAIL');
+        $SENDER_NAME = getenv('SENDER_NAME');
+        $BASE_URI = getenv('BASE_URI');
+
+        $client = new Client([
+            'base_uri' => $BASE_URI,
+            'verify' => false,
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'api-key' => $API_KEY
+            ]
+        ]);
+    
+        $body = [
+            'sender' => [
+                'name' => $SENDER_NAME,
+                'email' => $SENDER_EMAIL
+            ],
+            'to' => [
+                [
+                    'email' => $emailTo,
+                    'name' => $emailTo
+                ]
+            ],
+            'subject' => 'Your New Password',
+            'htmlContent' => "<p>Hello $emailTo,</p>
+                              <p>Your new password is: <b>$rnd_psw</b></p>
+                              <p>Please change it after logging in.</p>"
+        ];
+
+        try {
+            $res = $client->post('smtp/email', [
+                'json' => $body
+            ]);
+            $response->getBody()->write(json_encode(['result' => true]));
+        } catch (\Exception $e) {
+            $errorMessage = "Error sending email: " . $e->getMessage();
+            $response->getBody()->write(json_encode(['result' => false, "errorMessage" => $errorMessage]));
+        }
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
@@ -152,18 +203,19 @@ final class User {
         $user_id = $token_info['id'];
         $user_role = $token_info['role'];
         if($user_role < Role::STAFF) throw new Exception('Unauthorized request', 401);
-        $parsedBody = $request->getParsedBody();
-        $name = $parsedBody['name'] ?? "";
-        $surname = $parsedBody['surname'] ?? "";
-        $email = $parsedBody['email'] ?? "";
-        $role_id = $parsedBody['role_id'] ?? "";
+        $data = json_decode($request->getBody()->getContents(), true);
+        $name = $data['name'] ?? "";
+        $surname = $data['surname'] ?? "";
+        $email = $data['email'] ?? "";
+        $role_id = $data['role'] ?? "";
+        $location_id = $data['location'] ?? null;
         if(empty($name) || empty($surname) || empty($email))
             throw new Exception('Name, surname and email are required', 400);
         if(!in_array($role_id, Role::ToList()))
             throw new Exception('Role id is not allowed', 400);
-        $rnd_psw = bin2hex(random_bytes(16));
-        $q = "insert into user (name, surname, email, role_id, psw, force_change_psw, ucr, ule) values (?, ?, ?, ?, sha1(?), 1, ?, ?)";
-        $params = [$name, $surname, $email, $role_id, $rnd_psw, $user_id, $user_id];
+        $rnd_psw = $data['password'] ?? bin2hex(random_bytes(16));
+        $q = "insert into user (name, surname, email, role_id, location, psw, force_change_psw, ucr, ule) values (?, ?, ?, ?, ?, sha1(?), 1, ?, ?)";
+        $params = [$name, $surname, $email, $role_id, $location_id, $rnd_psw, $user_id, $user_id];
         $row_affected = DB::Execute($q, $params);
         if($row_affected == 0) throw new Exception("Error inserting user", 500);
         $response->getBody()->write(json_encode(["result" => true, "psw" => $rnd_psw]));
@@ -199,6 +251,16 @@ final class User {
         $rows = DB::Query($q, $params);
         if (count($rows) == 0) throw new Exception("User not found", 404);
         $response->getBody()->write(json_encode(["payload" => $rows[0]]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+    
+    /**
+     * @throws Exception
+     */
+    public static function GetRoles($request, $response) {
+        $rows = DB::Query("select * from td_role");
+        if (count($rows) == 0) throw new Exception("Roles not found", 404);
+        $response->getBody()->write(json_encode(["payload" => $rows]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 

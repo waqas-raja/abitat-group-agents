@@ -8,6 +8,7 @@ use App\Framework\Models\User;
 use App\Framework\Models\Property;
 use App\Framework\Models\Agent;
 use App\Framework\Models\Package;
+use App\Framework\Models\PropertyType;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
@@ -46,6 +47,10 @@ class ApiRoutes {
             $group->get('/users', function ($request, $response) {
                 return User::GetAll($request, $response);
             })->add($this->authMiddleware);
+            
+            $group->get('/roles', function ($request, $response) {
+                return User::GetRoles($request, $response);
+            })->add($this->authMiddleware);
 
             $group->get('/agents', function ($request, $response) {
                 return Agent::GetAll($request, $response);
@@ -58,9 +63,21 @@ class ApiRoutes {
             $group->get('/packages', function ($request, $response) {
                 return Package::GetAll($request, $response);
             })->add($this->authMiddleware);
+            
+            $group->get('/package/agents/{id}', function ($request, $response) {
+                return Package::GetLinkedAgents($request, $response);
+            })->add($this->authMiddleware);
 
             $group->get('/expense-reports', function ($request, $response) {
                 return ExpenseReport::GetAll($request, $response);
+            })->add($this->authMiddleware);
+            
+            $group->get('/branches', function ($request, $response) {
+                return ExpenseReport::GetAllBranches($request, $response);
+            })->add($this->authMiddleware);
+            
+            $group->get('/property-types', function ($request, $response) {
+                return PropertyType::GetAllPropertyTypes($request, $response);
             })->add($this->authMiddleware);
 
             // Entity's routes
@@ -85,10 +102,16 @@ class ApiRoutes {
                 $packageRoutes->register($packageGroup);
             });
 
-//            $packageRoutes = new ExpenseReport($this->authMiddleware);
-//            $group->group('/expense-report', function (RouteCollectorProxy $packageGroup) use ($packageRoutes) {
-//                $packageRoutes->register($packageGroup);
-//            });
+           $expenseRoutes = new ExpenseReportRoutes($this->authMiddleware);
+           $group->group('/expense-report', function (RouteCollectorProxy $expenseGroup) use ($expenseRoutes) {
+               $expenseRoutes->register($expenseGroup);
+           });
+           
+           $expenseRoutes = new PropertyTypeRoutes($this->authMiddleware);
+           $group->group('/property-type', function (RouteCollectorProxy $expenseGroup) use ($expenseRoutes) {
+               $expenseRoutes->register($expenseGroup);
+           });
+           
         });
     }
 }

@@ -10,9 +10,9 @@
         <div class="d-flex justify-content-start align-items-center gap-5">
             <span class="pai-title">Elenco agenti:</span>
             <div class="pai-tabs">
-                <div class="pai-tab active" data-tab="tabContentTorino">Torino</div>
-                <div class="pai-tab" data-tab="tabContentMoncalieri">Moncalieri</div>
-                <div class="pai-tab" data-tab="tabContentRoma">Roma</div>
+                <div id="tabTorino" class="pai-tab active" data-tab="tabContentTorino">Torino</div>
+                <div id="tabMoncalieri" class="pai-tab" data-tab="tabContentMoncalieri">Moncalieri</div>
+                <div id="tabRoma" class="pai-tab" data-tab="tabContentRoma">Roma</div>
             </div>
         </div>
         <button type="button" class="btn btn-orange" onclick="showAddNewAgentModal()">

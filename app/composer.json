@@ -16,6 +16,7 @@
     "slim/psr7": "^1.7",
     "twig/twig": "^3.16",
     "firebase/php-jwt": "^6.10",
-    "phpoffice/phpspreadsheet": "^3.6"
+    "phpoffice/phpspreadsheet": "^3.6",
+    "guzzlehttp/guzzle": "^7.9"
   }
 }

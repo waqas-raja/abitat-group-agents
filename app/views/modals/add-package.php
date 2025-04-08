@@ -31,7 +31,6 @@
                             <textarea class="form-control" id="txtDescription" rows="3"></textarea>
                         </div>
                     </div>
-                    
                     <span id="spNewPackageResult" class="text-danger d-none"></span>
                 </form>
             </div>
