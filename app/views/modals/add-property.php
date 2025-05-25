@@ -79,12 +79,13 @@
                 </form>
             </div>
             <div class="modal-footer text-end">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x"></i> Annulla</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x"></i> Chiudi</button>
                 <button id="btnSaveProperty" type="button" class="btn btn-orange" onclick="saveProperty()">
                     <i class="bi bi-check-lg"></i> Salva
                     <div id="spinnerNewProperty" class="spinner-border spinner-border-sm d-none" role="status"><span class="visually-hidden">Loading...</span></div>
                 </button>
-                <button type="button" id="btnMarkPropertySold" class="btn btn-orange"><i class="bi bi-piggy-bank me-2"></i> Inserisci la vendita</button>
+                <button type="button" id="btnAddPriceReduction" class="btn btn-orange-inverted"><i class="bi bi-arrow-bar-down me-2"></i> Ribassa il prezzo</button>
+                <button type="button" id="btnMarkPropertySold" class="btn btn-orange"><i class="bi bi-piggy-bank me-2"></i> Registra la vendita</button>
             </div>
         </div>
     </div>

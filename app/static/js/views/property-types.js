@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    // initInternalTabs();
     await loadList();
 });
 
@@ -39,11 +38,6 @@ async function loadList() {
         filterRow: { visible: true, applyFilter: "auto" },
         headerFilter: { visible: true },
         export: { enabled: false, allowExportSelectedData: true, formats: ['xlsx'] },
-        stateStoring: {
-            enabled: true,
-            type: "localStorage",
-            storageKey: "gridState"
-        },
         columns: [
             { dataField: "name", caption: "Tipo di proprietà", allowFiltering: true },
         ],

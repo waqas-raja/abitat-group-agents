@@ -330,6 +330,9 @@ function showModalAddEditProperty(res, modalTitle) {
     $("#txtPropertyExpireDate").dxDateBox("instance").option("value", isDetail ? new Date(prop.mandate_expiration) : '');
     $("#txtPropertyExpireDate").dxDateBox("instance").option("disabled", isDetail);
     document.getElementById("spNewPorpertyResult").innerHTML = '';
+
+    document.getElementById('btnAddPriceReduction').style.display = isDetail ? "inline" : "none";
+
     let btn = document.getElementById('btnMarkPropertySold');
     btn.classList.add('d-none');
     if (isDetail) {

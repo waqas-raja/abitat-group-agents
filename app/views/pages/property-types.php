@@ -14,8 +14,7 @@ require_once __DIR__ . "/../modals/add-property-type.php";
 </div>
 <div class="mt-3">
     <div class="pai-card w-50">
-        <div id="listOfPropertyTypes" class="mt-3">
-        </div>
+        <div id="listOfPropertyTypes" class="mt-3"></div>
     </div>
 </div>
 <script src="/static/js/views/property-types.js"></script>

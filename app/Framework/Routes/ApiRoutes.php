@@ -9,6 +9,7 @@ use App\Framework\Models\Property;
 use App\Framework\Models\Agent;
 use App\Framework\Models\Package;
 use App\Framework\Models\PropertyType;
+use App\Framework\Models\Stats;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
@@ -102,16 +103,20 @@ class ApiRoutes {
                 $packageRoutes->register($packageGroup);
             });
 
-           $expenseRoutes = new ExpenseReportRoutes($this->authMiddleware);
-           $group->group('/expense-report', function (RouteCollectorProxy $expenseGroup) use ($expenseRoutes) {
-               $expenseRoutes->register($expenseGroup);
-           });
-           
-           $expenseRoutes = new PropertyTypeRoutes($this->authMiddleware);
-           $group->group('/property-type', function (RouteCollectorProxy $expenseGroup) use ($expenseRoutes) {
-               $expenseRoutes->register($expenseGroup);
-           });
-           
+            $expenseRoutes = new ExpenseReportRoutes($this->authMiddleware);
+            $group->group('/expense-report', function (RouteCollectorProxy $expenseGroup) use ($expenseRoutes) {
+                $expenseRoutes->register($expenseGroup);
+            });
+
+            $propertyTypeRoutes = new PropertyTypeRoutes($this->authMiddleware);
+            $group->group('/property-type', function (RouteCollectorProxy $propertyTypeGroup) use ($propertyTypeRoutes) {
+                $propertyTypeRoutes->register($propertyTypeGroup);
+            });
+
+            $statsRoutes = new StatsRoutes($this->authMiddleware);
+            $group->group('/stats', function (RouteCollectorProxy $statsGroup) use ($statsRoutes) {
+                $statsRoutes->register($statsGroup);
+            });
         });
     }
 }
