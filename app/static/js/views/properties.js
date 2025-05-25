@@ -104,7 +104,7 @@ async function loadList() {
                     },
                     {
                         dataField: "acquisition_agency_percentage",
-                        caption: "% Agenzia",
+                        caption: "% Abitat",
                         allowFiltering: false,
                         calculateCellValue: function (data) {
                             return (data.acquisition_agency_percentage) + " %";
@@ -160,7 +160,7 @@ async function loadList() {
                     },
                     {
                         dataField: "sale_percentage",
-                        caption: "% Agenzia",
+                        caption: "% Abitat",
                         allowFiltering: false,
                         calculateCellValue: function (data) {
                             if (data.sale_agency_percentage !== null && data.sale_agency_percentage > 0) return data.sale_agency_percentage + " %";
@@ -233,7 +233,7 @@ async function loadList() {
             if (e.rowType === "data") {
                 if (e.data.sale_date) return; // Disabilita click se venduto
                 const res = r.payload.length === 1 ? r.payload : r.payload.filter(el => el.id === parseInt(e.data.id));
-                showModalAddEditProperty(res, 'Modifica proprietà');
+                showModalAddEditProperty(res, 'Dettaglio immobile');
             }
         },
     });
@@ -306,28 +306,40 @@ async function saveProperty() {
 }
 
 function showModalAddEditProperty(res, modalTitle) {
-    res === null ? document.getElementById('hEditProperty').value = '' : document.getElementById('hEditProperty').value = res[0].id;
+    const prop = res === null ? null : res[0];
+    const isDetail = res !== null;
+    document.getElementById('hEditProperty').value = isDetail ? prop.id : '';
     document.getElementById('modalAddPropertyLabel').innerHTML = '<i class="bi bi-buildings me-3"></i>' + modalTitle;
-    document.getElementById('ddlPropertyLocation').value = res !== null ? res[0].branch_id : _selectedBranch;
-    document.getElementById('ddlPropertyType').value = res !== null ? res[0].property_type : -1;
-    document.getElementById('txtPropertyAddress').value = res !== null ? res[0].address : '';
-    document.getElementById('txtPropertyCity').value = res !== null ? res[0].city : '';
-    if (res !== null) $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("value", new Date(res[0].acquisition_date));
-    document.getElementById('txtPropertyAcquisitionPrice').value = res !== null ? res[0].acquisition_price : '';
-    document.getElementById('txtAgencyPropertyCommission').value = res !== null ? res[0].acquisition_agency_percentage : '3';
-    document.getElementById('ddlAcquisitionAgent').value = res !== null ? res[0].acquisition_agent_id : '-1';
-    $("#txtPropertyExpireDate").dxDateBox("instance").option("value", res !== null ? new Date(res[0].mandate_expiration) : '');
+    document.getElementById('btnSaveProperty').style.display = isDetail ? "none" : "inline";
+    document.getElementById('ddlPropertyLocation').value = isDetail ? prop.branch_id : _selectedBranch;
+    document.getElementById('ddlPropertyLocation').disabled = isDetail;
+    document.getElementById('ddlPropertyType').value = isDetail ? prop.property_type : -1;
+    document.getElementById('ddlPropertyType').disabled = isDetail;
+    document.getElementById('txtPropertyAddress').value = isDetail ? prop.address : '';
+    document.getElementById('txtPropertyAddress').disabled = isDetail;
+    document.getElementById('txtPropertyCity').value = isDetail ? prop.city : '';
+    document.getElementById('txtPropertyCity').disabled = isDetail;
+    if(isDetail) $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("value", new Date(prop.acquisition_date));
+    $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("disabled", isDetail);
+    document.getElementById('txtPropertyAcquisitionPrice').value = isDetail ? prop.acquisition_price : '';
+    document.getElementById('txtPropertyAcquisitionPrice').disabled = isDetail;
+    document.getElementById('txtAgencyPropertyCommission').value = isDetail ? prop.acquisition_agency_percentage : '3';
+    document.getElementById('txtAgencyPropertyCommission').disabled = isDetail;
+    document.getElementById('ddlAcquisitionAgent').value = isDetail ? prop.acquisition_agent_id : '-1';
+    document.getElementById('ddlAcquisitionAgent').disabled = isDetail;
+    $("#txtPropertyExpireDate").dxDateBox("instance").option("value", isDetail ? new Date(prop.mandate_expiration) : '');
+    $("#txtPropertyExpireDate").dxDateBox("instance").option("disabled", isDetail);
     document.getElementById("spNewPorpertyResult").innerHTML = '';
     let btn = document.getElementById('btnMarkPropertySold');
     btn.classList.add('d-none');
-    if (res !== null) {
-        if (res[0].sale_date === null) {
+    if (isDetail) {
+        if (prop.sale_date === null) {
             btn.classList.remove('d-none');
             btn.replaceWith(btn.cloneNode(true));
             btn = document.getElementById('btnMarkPropertySold');
             btn.addEventListener('click', function () {
                 $('#modalAddProperty').modal('hide');
-                showMarkPropertySoldModal(res[0]);
+                showMarkPropertySoldModal(prop);
             });
         }
     }

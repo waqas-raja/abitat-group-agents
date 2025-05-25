@@ -76,6 +76,10 @@
                     </div>
                     <div id="errEditAgent" class="text-danger"></div>
                 </div>
+                <hr>
+                <button type="button" class="btn btn-link text-danger border" onclick="deleteAgentModal()">
+                    <i class="bi bi-trash3 me-2"></i> Elimina agente
+                </button>
             </div>
         </div>
     </div>
@@ -83,7 +87,7 @@
         <div class="pai-card mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <p class="lato-black text-blue mb-0">
-                    <i class="bi-piggy-bank me-2"></i>Riepilogo Rientri
+                    <i class="bi bi-piggy-bank me-2"></i>Riepilogo Rientri
                 </p>
             </div>
             <div id="listOfReport" class="mt-3"></div>

@@ -129,10 +129,12 @@ function showDeleteConfirmationModal(callback) {
 }
 
 async function loadAgentTransactions() {
-    const data = [];
-    const hasData = data.length > 0;
+    const aid = document.getElementById("hAgentId").value;
+    const response = await fetch(`/api/agent/${aid}/report`);
+    const res = await response.json();
+    const hasData = res.payload.length > 0;
     new DevExpress.ui.dxDataGrid(document.getElementById("listOfReport"), {
-        dataSource: data,
+        dataSource: res.payload,
         columnAutoWidth: true,
         showBorders: true,
         rowAlternationEnabled: false,
@@ -141,32 +143,123 @@ async function loadAgentTransactions() {
         headerFilter: { visible: hasData },
         columns: [
             {
+                dataField: "dt",
                 caption: "Data",
                 allowFiltering: true,
-                calculateCellValue: function (data) { return (data.sale_date).slice(3); }
-            },
-            { dataField: "title", caption: "Immobile", allowFiltering: true },
-            {
-                caption: "Propr/Acquir", allowFiltering: true,
                 calculateCellValue: function (data) {
-                    return (data.seller + '/' + data.buyer);
+                    const d = (data.dt).split('-');
+                    return d[2] + '/' + d[1] + '/' + d[0];
+                }
+            },
+            {
+                caption: "Tipologia", allowFiltering: true,
+                calculateCellValue: function (data) {
+                    switch (data.expense_type) {
+                        case 'A': return 'Acquisizione';
+                        case 'S': return 'Vendita';
+                        case 'E': return 'Extra';
+                        case 'P': return 'Pagamento provvigioni';
+                        default: return '';
+                    }
+                }
+            },
+            {
+                caption: "Descrizione", allowFiltering: true,
+                calculateCellValue: function (data) {
+                    switch (data.expense_type) {
+                        case 'A': return data.property;
+                        case 'S': return data.property;
+                        case 'E': return data.reason;
+                        case 'P': return '';
+                        default: return '';
+                    }
                 }
             },
             {
                 caption: "Provvigioni",
                 allowFiltering: true,
-                calculateCellValue: function (data) { return formatNumber(data.commission); }
-            },
-
-            { dataField: "payment_date", caption: "Data pagamento", allowFiltering: true }
+                alignment:"right",
+                cellTemplate: function (container, options) {
+                    const isPositive = options.data.expense_type === 'P';
+                    const colorClass = isPositive ? 'text-success' : 'text-danger';
+                    const value = formatNumber(options.data.value) + " €";
+                    $("<span>").addClass(colorClass).text(value).appendTo(container);
+                }
+            }
         ],
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
-
-        onRowClick: function (e) {
-            if (e.rowType === "data") {
-                // window.location = `/property/${e.data.id}`; 
-            }
+        toolbar: {
+            items: [
+                "groupPanel",
+                {
+                    location: "after",
+                    widget: "dxNumberBox",
+                    options: {
+                        placeholder: "Importo",
+                        width: 150,
+                        showSpinButtons: false,
+                        min:0,
+                        elementAttr: { id: "txtAmount" },
+                        inputAttr: { style: "text-align: right;" }
+                    }
+                },
+                {
+                    location: "after",
+                    widget: "dxButton",
+                    options: {
+                        icon: "plus",
+                        text: "Registra pagamento",
+                        elementAttr: { id: "btnAddPayment" },
+                        onClick: addPayment
+                    }
+                }
+            ]
         },
+        onContentReady: function () {updateSummary();}
     });
+}
+
+async function addPayment() {
+    const aid = document.getElementById("hAgentId").value;
+    const amount = $("#txtAmount").dxNumberBox("instance").option("value");
+    if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+        DevExpress.ui.notify("Inserisci un importo valido", "warning", 2000);
+        return;
+    }
+    try {
+        const response = await fetch(`/api/agent/${aid}/payment`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ amount: parseFloat(amount) })
+        });
+
+        const result = await response.json();
+
+        if (result.result) {
+            DevExpress.ui.notify("Pagamento registrato con successo", "success", 2000);
+            $("#txtAmount").dxNumberBox("instance").option("value", ""); // reset
+        } else {
+            DevExpress.ui.notify("Errore: " + result.message, "error", 3000);
+        }
+    } catch (error) {
+        DevExpress.ui.notify("Errore di rete o server", "error", 3000);
+        console.error(error);
+    }
+}
+
+function updateSummary() {
+    const grid = $("#listOfReport").dxDataGrid("instance");
+    const rows = grid.getVisibleRows();
+    let total = 0;
+    rows.forEach(row => {
+        const data = row.data;
+        const value = parseFloat(data.value);
+        if (isNaN(value)) return;
+        if (data.expense_type === 'P') total += value;
+        else total -= value;
+    });
+    const formatted = total.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+    const colorClass = total >= 0 ? "text-success" : "text-danger";
+    $("#spSummary").removeClass("text-success text-danger").addClass(colorClass).text(formatted);
 }

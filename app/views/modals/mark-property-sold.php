@@ -30,7 +30,7 @@
                         <div class="row mb-3">
                             <label for="txtPropertySoldPrice" class="col-sm-5 col-form-label">Prezzo di vendita<span class="text-danger ms-2">*</span></label>
                             <div class="col-sm-7">
-                                <input id="txtPropertySoldPrice" type="number" class="form-control" required>
+                                <input id="txtPropertySoldPrice" type="number" class="form-control" required value="">
                             </div>
                         </div>
                         <div class="row mb-3">

@@ -52,18 +52,6 @@ final class Property
             $params = [$address, $city, $branch_id, $property_type, $acquisition_date, $acquisition_price, $acquisition_agent_percentage, $acquisition_agency_percentage, $acquisition_agent_id, $mandate_expiration, $user_id];
             $row_affected = DB::Execute($q, $params);
             if($row_affected == 0) throw new Exception("Error while insert new property. Query: $q :: " . json_encode($params), 500);
-            //recupero l'id dell'agente creato
-            $q = "select max(id) as id from property where address = ? and city = ? and branch_id = ?";
-            $row = DB::Query($q, [$address, $city, $branch_id]);
-            $propertyId = $row[0]["id"];
-            //se il salvataggio è andato a buon fine creo il record in expense_report
-            $agencyAmount = $acquisition_price * $acquisition_agency_percentage / 100;
-            $commissionValue = $agencyAmount * $acquisition_agent_percentage / 100;
-            $msg = "Commissione agente del $acquisition_agent_percentage% sull'importo di $agencyAmount (importo acquisizione $acquisition_price - commissione agenzia $acquisition_agency_percentage%)";
-            $q = "insert into expense_report (agent, property, expense_type, dt, reason, value, ucr) values (?,?,?,?,?,?,?)";
-            $params = [$acquisition_agent_id, $propertyId, "A", $acquisition_date, $msg, $commissionValue, $user_id];
-            $row_affected = DB::Execute($q, $params);
-            if($row_affected == 0) throw new Exception("Error while insert record in expense_report. Query: $q :: " . json_encode($params), 500);
             $response->getBody()->write(json_encode(["result" => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
@@ -126,10 +114,8 @@ final class Property
             $external_agency_name = $data['external_agency_name'] ?? "";
             $external_agency_value = $data['external_agency_value'] ?? 0;
             $external_agency_percentage = $external_agency == "N" ? null : ($external_agency == "P" ? 1 : 0);
-            $q = "select percentage from package where id = (select package_id from agent where id = ?)";
-            $res = DB::Query($q, [$sale_agent_id]);
-            if (count($res) < 1) throw new Exception("package not found from user $sale_agent_id", 500);
-            $sale_agent_percentage = $res[0]["percentage"];
+            $res = DB::Query("select package_commission from agent where id = ?", [$sale_agent_id]);
+            $sale_agent_percentage =  $res[0]["package_commission"];
             $q = <<<query
                 UPDATE property SET 
                     sale_date = ?, 
@@ -158,8 +144,31 @@ final class Property
                 $property_id
             ];
             $row_affected = DB::Execute($q, $params);
-            error_log("$q :: " . json_encode($params));
-            if ($row_affected == 0) throw new Exception("Error while marking the property sold", 500);
+            if ($row_affected == 0) throw new Exception("Error while marking the property sold. Query: $q :: " . json_encode($params), 500);
+            //recupero i dati di acquisizione
+            $res = DB::Query("select acquisition_date, acquisition_price, acquisition_agent_id, acquisition_agent_percentage, acquisition_agency_percentage from property where id = ?", [$property_id]);
+            if(count($res) == 0) throw new Exception("Property $property_id not found. Query: $q :: " . json_encode($params), 500);
+            $acquisition_date = $res[0]["acquisition_date"];
+            $acquisition_price = $res[0]["acquisition_price"];
+            $acquisition_agent_id = $res[0]["acquisition_agent_id"];
+            $acquisition_agent_percentage = $res[0]["acquisition_agent_percentage"];
+            $acquisition_agency_percentage = $res[0]["acquisition_agency_percentage"];
+            //creo il record in expense_report per l'acquisizione
+            $agencyAmount = $sale_price * $acquisition_agency_percentage / 100;
+            $commissionValue = $agencyAmount * $acquisition_agent_percentage / 100;
+            $msg = "Commissione agente del $acquisition_agent_percentage% sull'importo di $agencyAmount (importo vendita $sale_price - commissione agenzia $acquisition_agency_percentage%)";
+            $q = "insert into expense_report (agent, property, expense_type, dt, reason, value, ucr) values (?,?,?,?,?,?,?)";
+            $params = [$acquisition_agent_id, $property_id, "A", $acquisition_date, $msg, $commissionValue, $user_id];
+            $row_affected = DB::Execute($q, $params);
+            if($row_affected == 0) throw new Exception("Error while insert record in expense_report for acquisition. Query: $q :: " . json_encode($params), 500);
+            //creo il record in expense_report per la vendita
+            $agencyAmount = $sale_price * $sale_agency_percentage / 100;
+            $commissionValue = $agencyAmount * $sale_agent_percentage / 100;
+            $msg = "Commissione agente del $sale_agent_percentage% sull'importo di $agencyAmount (importo vendita $sale_price - commissione agenzia $sale_agency_percentage%)";
+            $q = "insert into expense_report (agent, property, expense_type, dt, reason, value, ucr) values (?,?,?,?,?,?,?)";
+            $params = [$sale_agent_id, $property_id, "S", $sale_date, $msg, $commissionValue, $user_id];
+            $row_affected = DB::Execute($q, $params);
+            if($row_affected == 0) throw new Exception("Error while insert record in expense_report. Query: $q :: " . json_encode($params), 500);
             $response->getBody()->write(json_encode(["result" => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {

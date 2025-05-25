@@ -10,9 +10,10 @@ require_once __DIR__ . "/../modals/confirm-delete.php";
 <div id="agent_detail">
     <div class="pai-card d-flex justify-content-between align-items-center mb-3">
         <span class="pai-title">Dettaglio agente</span>
-        <button type="button" class="btn btn-link text-danger border" onclick="deleteAgentModal()">
-            <i class="bi bi-trash3 me-2"></i> Elimina agente
-        </button>
+        <div class="fw-bold border rounded px-3 py-2 bg-light">
+            BILANCIO:
+            <span id="spSummary">...</span>
+        </div>
     </div>
     <?php require_once __DIR__ . "/../partials/agent-overview.php"; ?>
 </div>

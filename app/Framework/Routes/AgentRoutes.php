@@ -24,6 +24,10 @@ class AgentRoutes {
             return Agent::GetItem($request, $response);
         })->add($this->authMiddleware);
 
+        $group->get('/{id}/report', function (Request $request, Response $response) {
+            return Agent::GetReport($request, $response);
+        })->add($this->authMiddleware);
+
         $group->delete('/{id}', function (Request $request, Response $response) {
             return Agent::Delete($request, $response);
         })->add($this->authMiddleware);
@@ -34,6 +38,10 @@ class AgentRoutes {
         
         $group->patch('/{id}/alter-package', function (Request $request, Response $response) {
             return Agent::UpdateAlternatePackage($request, $response);
+        })->add($this->authMiddleware);
+
+        $group->post('/{id}/payment', function (Request $request, Response $response) {
+            return Agent::AddPayment($request, $response);
         })->add($this->authMiddleware);
     }
 }

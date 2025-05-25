@@ -53,7 +53,7 @@
         <div class="pai-card mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <p class="lato-black text-blue mb-0">
-                    <i class="bi-piggy-bank me-2"></i>Elenco degli agenti collegati
+                    <i class="bi bi-piggy-bank me-2"></i>Elenco degli agenti collegati
                 </p>
             </div>
             <div id="listOfLinkedAgents" class="mt-3"></div>

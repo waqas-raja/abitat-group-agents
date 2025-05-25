@@ -37,6 +37,28 @@ final class Agent {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
+
+    /**
+     * @throws Exception
+     */
+    public static function GetReport($request, $response) {
+        $agent_id = (int)$request->getAttribute('id');
+        $q = <<<query
+            select e.*, 
+                case 
+                    when p.id is not null then concat(p.address, ' - ', p.city)
+                    else ''
+                end as property
+            from expense_report as e
+            left outer join property as p on p.id = e.property
+            where e.agent = ?
+            order by e.dtcr desc
+        query;
+        $rows = DB::Query($q, [$agent_id]);
+        $response->getBody()->write(json_encode(["payload" => $rows]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
     /**
      * @throws Exception
      */
@@ -79,6 +101,29 @@ final class Agent {
             //aggiungo il record in tr_agent_package_history
             $row_affected = DB::Execute("INSERT INTO tr_agent_package_history(agent, package) VALUES (?,?)", [$lastId, $package_id]);
             if ($row_affected == 0) throw new Exception("Error while insert record in tr_agent_package_history with agent $lastId and package $package_id", 500);
+            $response->getBody()->write(json_encode(["result" => true]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $e) {
+            throw new Exception('Failed to add agent: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function AddPayment($request, $response) {
+        try {
+            $token_info = User::GetTokenInfo($request);
+            $user_id = $token_info['id'];
+            $aid = (int)$request->getAttribute('id');
+            $data = json_decode($request->getBody()->getContents(), true);
+            $amount = $data['amount'] ?? 0;
+            if($amount <= 0) throw new Exception("Amount must be greater than 0", 400);
+            $now = (new \DateTime("now", new \DateTimeZone("Europe/Rome")))->format('Y-m-d');
+            $q = "insert into expense_report (agent, expense_type, dt, reason, value, ucr) values (?,?,?,?,?,?)";
+            $params = [$aid, "P", $now, "Pagamento provvigioni", $amount, $user_id];
+            $row_affected = DB::Execute($q, $params);
+            if ($row_affected == 0) throw new Exception("Error while insert record in expense_report for agent $aid and amount $amount", 500);
             $response->getBody()->write(json_encode(["result" => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
