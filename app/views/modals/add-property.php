@@ -11,7 +11,7 @@
                     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2">
                         <div class="col">
                             <div class="row mb-3">
-                                <label for="ddlPropertyLocation" class="col-sm-5 col-form-label">Sede<span class="text-danger ms-2">*</span></label>
+                                <label for="ddlPropertyLocation" class="col-sm-5 col-form-label">Agenzia<span class="text-danger ms-2">*</span></label>
                                 <div class="col-sm-7">
                                     <select class="form-select" id="ddlPropertyLocation">
                                     </select>
@@ -28,6 +28,12 @@
                                 <label for="txtPropertyAddress" class="col-sm-5 col-form-label">Indirizzo<span class="text-danger ms-2">*</span></label>
                                 <div class="col-sm-7">
                                     <input type="text" class="form-control" id="txtPropertyAddress" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="txtPropertyCity" class="col-sm-5 col-form-label">Città<span class="text-danger ms-2">*</span></label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="txtPropertyCity" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -60,7 +66,7 @@
                                 <label for="txtAgencyPropertyCommission" class="col-sm-5 col-form-label">Commissione AbitatGroup<span class="text-danger ms-2">*</span></label>
                                 <div class="col-sm-7">
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="txtAgencyPropertyCommission">
+                                        <input type="number" class="form-control" id="txtAgencyPropertyCommission" value="3">
                                         <span class="input-group-text">%</span>
                                     </div>
                                 </div>

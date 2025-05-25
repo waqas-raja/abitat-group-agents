@@ -11,10 +11,10 @@ async function loadPackageDetail() {
     const r = await response.json();
     document.getElementById("spPackageName").innerText = r.payload.name ?? "n.d.";
     document.getElementById("txtUpdateName").value = r.payload.name ?? "n.d.";
-    document.getElementById("spPackageFixedCost").innerText = r.payload.fixed_cost ?? 0;
-    document.getElementById("txtUpdateFixedFee").value = r.payload.fixed_cost ?? 0;
-    document.getElementById("spPackagePercentage").innerText = r.payload.percentage ?? 0;
-    document.getElementById("txtUpdatePercentage").value = r.payload.percentage ?? 0;
+    document.getElementById("spPackageFixedCost").innerText = r.payload.fee ?? 0;
+    document.getElementById("txtUpdateFixedFee").value = r.payload.fee ?? 0;
+    document.getElementById("spPackagePercentage").innerText = r.payload.commission ?? 0;
+    document.getElementById("txtUpdatePercentage").value = r.payload.commission ?? 0;
     document.getElementById("spPackageNote").innerText = r.payload.note ?? "n.d.";
     document.getElementById("txtUpdateDescription").value =r.payload.note ?? "n.d.";
 }
@@ -75,11 +75,11 @@ async function loadListOfLinkedAgent() {
 
 async function updatePackageInfo() {
     const name = document.getElementById("txtUpdateName").value.trim();
-    const fixedCost = document.getElementById("txtUpdateFixedFee").value.trim();
-    const percentage = document.getElementById("txtUpdatePercentage").value.trim();
+    const fee = document.getElementById("txtUpdateFixedFee").value.trim();
+    const commission = document.getElementById("txtUpdatePercentage").value.trim();
     const description = document.getElementById("txtUpdateDescription").value.trim();
     const result = document.getElementById("errUpdatePackage");
-    if (name === '' || fixedCost === "" || percentage === "") {
+    if (name === '' || fee === "" || commission === "") {
         result.innerText = "Si prega di compilare tutti i campi richiesti";
         result.classList.remove("d-none");
         return;
@@ -92,11 +92,11 @@ async function updatePackageInfo() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ "name": name, "fixed_cost": parseFloat(fixedCost), "percentage": parseInt(percentage), "note": description })
+            body: JSON.stringify({ "name": name, "fee": parseFloat(fee), "commission": parseFloat(commission), "note": description })
         });
         const res = await response.json();
         if (res.result) {
-            loadPackageDetail();
+            await loadPackageDetail();
             cancelEditGeneralInfo();
         } else throw new Error("Something went wrong while updating package!");
     } catch (error) {
@@ -112,7 +112,7 @@ async function deletePackageModal() {
                 $('#modalConfirmDelete').modal('hide');
                 if (linkedAgents.length > 0) {
                     const ddlPackage = document.getElementById('ddlSelectAlternatePackage');
-                    ddlPackage.innerHTML = '<option value="-1" selected disabled>Seleziona un pacchetto</option>';
+                    ddlPackage.innerHTML = '<option value="-1" selected disabled>--Seleziona un pacchetto--</option>';
                     const response = await fetch('/api/packages');
                     const packages = await response.json();
                     packages.payload.forEach(el => { if (el.id !== packageID) ddlPackage.innerHTML += `<option value="${el.id}">${el.name}</option>`; });

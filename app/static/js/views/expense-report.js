@@ -5,18 +5,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function loadLocations() {
     const ddlLocation = document.getElementById('ddlLocation');
-    ddlLocation.innerHTML = '<option value="-1" selected disabled>Seleziona la sede</option>';
+    ddlLocation.innerHTML = '<option value="-1" selected disabled>--Seleziona l\'agenzia--</option>';
     const response = await fetch('/api/branches');
     const r = await response.json();
     r.payload.forEach(el => { ddlLocation.innerHTML += `<option value="${el.id}">${el.name}</option>`; });
     const ddlAgent = document.getElementById('ddlAgent');
-    ddlAgent.innerHTML = '<option value="-1" selected disabled>Seleziona la agente</option>';
+    ddlAgent.innerHTML = '<option value="-1" selected disabled>--Seleziona la agente--</option>';
 }
 
 async function getRelevantAgents() {
     const branchID = parseInt(document.getElementById('ddlLocation').value);
     const ddlAgent = document.getElementById('ddlAgent');
-    ddlAgent.innerHTML = '<option value="-1" selected disabled>Seleziona la agente</option>';
+    ddlAgent.innerHTML = '<option value="-1" selected disabled>--Seleziona la agente--</option>';
     const response = await fetch('/api/expense-report/agents/' + branchID);
     const r = await response.json();
     if (r.payload.length > 0) r.payload.forEach(el => { ddlAgent.innerHTML += `<option value="${el.id}">${el.name + ` ` + el.surname}</option>`; });
@@ -91,14 +91,12 @@ async function loadList() {
                         .appendTo(container);
                 }
             },
-            { dataField: "branch_name", caption: "Sede", allowFiltering: true },
+            { dataField: "branch_name", caption: "Agenzia di", allowFiltering: true },
             {
                 dataField: "value",
                 caption: "Costo",
                 allowFiltering: true,
-                calculateCellValue: function (data) {
-                    return formatNumber(data.value);
-                }
+                calculateCellValue: function (data) { return formatNumber(data.value); }
             },
             { dataField: "reason", caption: "Descrizione", allowFiltering: true },
         ],
@@ -116,9 +114,7 @@ async function loadList() {
                     options: {
                         icon: "add",
                         text: "Aggiungi Note spese",
-                        onClick: function () {
-                            showModalAddExpenseReport();
-                        },
+                        onClick: function () { showModalAddExpenseReport(); },
                         elementAttr: { class: "btn-orange" }
                     }
                 }

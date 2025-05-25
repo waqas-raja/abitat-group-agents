@@ -37,6 +37,17 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="row mb-0 align-items-center valueControl">
+                    <label for="spFee" class="col-sm-5 col-form-label">Fisso:<span class="text-danger ms-2 d-none">*</span></label>
+                    <div class="col-sm-7"><span id="spFee"></span></div>
+                </div>
+                <div class="row mb-0 align-items-center valueControl">
+                    <label for="spCommission" class="col-sm-5 col-form-label">Commissioni:<span class="text-danger ms-2 d-none">*</span></label>
+                    <div class="col-sm-7"><span id="spCommission"></span></div>
+                </div>
+
+
                 <div class="row mb-0 align-items-center">
                     <label for="txtEmail" class="col-sm-5 col-form-label">Email:</label>
                     <div class="col-sm-7">

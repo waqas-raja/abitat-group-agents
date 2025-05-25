@@ -11,12 +11,12 @@ async function loadList() {
         rowAlternationEnabled: false,
         columns: [
             { dataField: "name", caption: "Nome" },
-            { dataField: "fixed_cost", caption: "Canone fisso", alignment:"center" },
+            { dataField: "fee", caption: "Canone fisso", alignment:"center" },
             {
-                dataField: "percentage",
+                dataField: "commission",
                 caption: "Commissione",
                 alignment:"center",
-                calculateCellValue: function (data) { return data.percentage + '%'; }
+                calculateCellValue: function (data) { return data.commission + '%'; }
             },
             { dataField: "note", caption: "Descrizione" },
             { dataField: "tot_agents", caption: "Agenti", width: 100, alignment:"center", },
@@ -24,12 +24,6 @@ async function loadList() {
         remoteOperations: { paging: true, filtering: true, sorting: true },
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
-        toolbar: {
-            items: [
-                "groupPanel",
-                "searchPanel", 
-            ]
-        },
         onRowClick: function (e) {
             if (e.rowType === "data") {
                 window.location = `/package/${e.data.id}`;
@@ -39,7 +33,6 @@ async function loadList() {
 }
 
 function showModalAddPackage() {
-
     document.getElementById("txtName").innerText = '';
     document.getElementById("txtFixedFee").innerText = '';
     document.getElementById("txtPercentage").innerText = '';
@@ -54,11 +47,11 @@ async function savePackage() {
     const btn = document.getElementById("btnSavePackage");
     const spinner = document.getElementById("spinnerNewPackage");
     const name = document.getElementById("txtName").value.trim();
-    const fixedCost = document.getElementById("txtFixedFee").value.trim();
-    const percentage = document.getElementById("txtPercentage").value.trim();
+    const fee = document.getElementById("txtFixedFee").value.trim();
+    const commission = document.getElementById("txtPercentage").value.trim();
     const description = document.getElementById("txtDescription").value.trim();
     const result = document.getElementById("spNewPackageResult");
-    if (name === '' || fixedCost === "" || percentage === "") {
+    if (name === '' || fee === "" || commission === "") {
         result.innerText = "Si prega di compilare tutti i campi richiesti";
         result.classList.remove("d-none");
         return;
@@ -73,7 +66,7 @@ async function savePackage() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ "name": name, "fixed_cost": fixedCost, "percentage": percentage, "note": description })
+            body: JSON.stringify({ "name": name, "fee": fee, "commission": commission, "note": description })
         });
         const res = await response.json();
         if (res.result) {

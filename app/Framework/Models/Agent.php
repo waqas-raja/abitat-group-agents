@@ -11,22 +11,22 @@ final class Agent {
      */
     public static function GetAll($request, $response) {
         $branch = isset($_GET['b']) ? intval($_GET['b']) : 1;
-        $q = <<<query
-            select 
-                c.*, 
-                p.name as package_name, 
-                p.percentage as package_percentage, 
-                p.fixed_cost as package_fixed_cost,
-                0 as managed_properties,
-                0 as properties_sold,
-                0 as total_sales,
-                0 as total_commissions
-            from agent as c
-            LEFT JOIN package as p on p.id = c.package_id 
-            WHERE c.enabled = 1 and c.branch_id = ?
-        query;
-        $params = [$branch];
-        $agents = DB::Query($q, $params);
+        $full = isset($_GET['f']) ? intval($_GET['f']) == 1 : false;
+        if(!$full) $q = "select * from agent where enabled = 1 and branch_id = ?";
+        else {
+            $q = <<<query
+                select
+                    a.*,
+                    (select count(*) from property where acquisition_agent_id = a.id and sale_agent_id is null) as managed_properties,
+                    (select count(*) from property where acquisition_agent_id = a.id and sale_agent_id is null) as properties_sold,
+                    0 as total_sales,
+                    0 as total_commissions,
+                    0 as balance
+                from agent as a
+                WHERE a.enabled = 1 and a.branch_id = ?;
+            query;
+        }
+        $agents = DB::Query($q, [$branch]);
         $response->getBody()->write(json_encode(["payload" => $agents]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
@@ -37,16 +37,9 @@ final class Agent {
     public static function GetItem($request, $response) {
         $agent_id = (int)$request->getAttribute('id');
         $q = <<<query
-            select 
-                a.*,
-                b.name as branch_name,
-                p.name as package_name,
-                p.fixed_cost as package_fixed_cost,
-                p.percentage as package_percentage,
-                p.dtcr as package_start
+            select a.*, b.name as branch_name
             from agent as a
             inner join branch as b on b.id = a.branch_id
-            inner join package as p on p.id = a.package_id
             where a.id = ?
         query;
         $rows = DB::Query($q, [$agent_id]);
@@ -138,17 +131,4 @@ final class Agent {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
-    private static function GetColumns(bool $restricted = true): array {
-        $rows = DB::Query("show columns from contact");
-        $restricted_values = ['id', 'ucr', 'ule', 'dtcr', 'dtle', 'agent', 'list_id'];
-        $columns = [];
-        foreach ($rows as $row) {
-            $column_name = $row['Field'];
-            if ($restricted) {
-                if (!in_array($column_name, $restricted_values))
-                    $columns[] = $column_name;
-            } else $columns[] = $column_name;
-        }
-        return $columns;
-    }
 }

@@ -25,7 +25,7 @@ function showDataAsPerLoggedUser() {
 
 async function loadPackages() {
     const ddlPackage = document.getElementById('ddlPackage');
-    ddlPackage.innerHTML = '<option value="-1" selected disabled>Seleziona un pacchetto</option>';
+    ddlPackage.innerHTML = '<option value="-1" selected disabled>--Seleziona un pacchetto--</option>';
     const response = await fetch('/api/packages');
     const r = await response.json();
     r.payload.forEach(el => { ddlPackage.innerHTML += `<option value="${el.id}">${el.name}</option>`; });
@@ -33,7 +33,7 @@ async function loadPackages() {
 
 async function loadList(branch_id) {
     const list_id = BRANCHES_ID[branch_id];
-    const response = await fetch("/api/agents?b=" + branch_id);
+    const response = await fetch(`/api/agents?b=${branch_id}&f=${1}`);
     const r = await response.json();
     const hasData = r.payload.length > 0;
     new DevExpress.ui.dxDataGrid(document.getElementById(list_id), {
@@ -53,12 +53,50 @@ async function loadList(branch_id) {
                 calculateCellValue: function (data) { return data.name + ' ' + data.surname; }
             },
             { dataField: "package_name", caption: "Pacchetto" },
-            { dataField: "package_percentage", caption: "Commissioni" },
-            { dataField: "package_fixed_cost", caption: "Costi fissi" },
-            { dataField: "managed_properties", caption: "Proprietà in gestione" },
-            { dataField: "properties_sold", caption: "Proprietà vendute" },
-            { dataField: "total_sales", caption: "Totale vendite" },
-            { dataField: "total_commissions", caption: "Totale commissioni" },
+            {
+                dataField: "package_commission",
+                caption: "Commissioni",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    const val = parseFloat(data.package_commission);
+                    if (isNaN(val)) return '';
+                    return val.toFixed(2) + ' %';
+                }
+            },
+            {
+                dataField: "package_commission",
+                caption: "Commissioni",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    const value = parseFloat(data.package_fee);
+                    if (isNaN(value)) return '';
+                    return '€ ' + value.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
+            },
+            {
+                dataField: "package_fee",
+                caption: "Costi fissi",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    const value = parseFloat(data.package_fee);
+                    if (isNaN(value)) return '';
+                    return '€ ' + value.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
+            },
+            { dataField: "managed_properties", caption: "Proprietà in gestione", alignment: "center" },
+            { dataField: "properties_sold", caption: "Proprietà vendute", alignment: "center" },
+            { dataField: "total_sales", caption: "Totale vendite", alignment: "center" },
+            { dataField: "total_commissions", caption: "Totale commissioni", alignment: "center" },
+            {
+                dataField: "balance",
+                caption: "Saldo",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    const value = parseFloat(data.balance);
+                    if (isNaN(value)) return '';
+                    return '€ ' + value.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
+            },
         ],
         remoteOperations: { paging: true, sorting: true },
         paging: { pageSize: 10 },

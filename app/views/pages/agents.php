@@ -8,7 +8,7 @@
 
     <div class="pai-card mb-3 d-flex justify-content-between align-items-center">
         <div class="d-flex justify-content-start align-items-center gap-5">
-            <span class="pai-title">Elenco agenti:</span>
+            <span class="pai-title">Agenzia:</span>
             <div class="pai-tabs">
                 <div id="tabTorino" class="pai-tab active" data-tab="tabContentTorino">Torino</div>
                 <div id="tabMoncalieri" class="pai-tab" data-tab="tabContentMoncalieri">Moncalieri</div>

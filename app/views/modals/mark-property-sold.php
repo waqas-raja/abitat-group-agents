@@ -22,13 +22,19 @@
                             </div>
                         </div>
                         <div class="row mb-3">
+                            <label for="ddlPropertySoldAgent" class="col-sm-5 col-form-label">Agente che ha venduto<span class="text-danger ms-2">*</span></label>
+                            <div class="col-sm-7">
+                                <select id="ddlPropertySoldAgent" class="form-select"></select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
                             <label for="txtPropertySoldPrice" class="col-sm-5 col-form-label">Prezzo di vendita<span class="text-danger ms-2">*</span></label>
                             <div class="col-sm-7">
                                 <input id="txtPropertySoldPrice" type="number" class="form-control" required>
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label for="txtSaleDownPayment" class="col-sm-5 col-form-label">Acconto<span class="text-danger ms-2">*</span></label>
+                            <label for="txtSaleDownPayment" class="col-sm-5 col-form-label">Acconto depositato<span class="text-danger ms-2">*</span></label>
                             <div class="col-sm-7">
                                 <input id="txtSaleDownPayment" type="number" class="form-control">
                             </div>
@@ -36,16 +42,10 @@
                     </div>
                     <div class="col">
                         <div class="row mb-3">
-                            <label for="ddlPropertySoldAgent" class="col-sm-5 col-form-label">Agente che ha venduto<span class="text-danger ms-2">*</span></label>
-                            <div class="col-sm-7">
-                                <select id="ddlPropertySoldAgent" class="form-select"></select>
-                            </div>
-                        </div>
-                        <div class="row mb-3">
                             <label for="txtAgencyPropertySoldCommission" class="col-sm-5 col-form-label">Commissione AbitatGroup<span class="text-danger ms-2">*</span></label>
                             <div class="col-sm-7">
                                 <div class="input-group">
-                                    <input id="txtAgencyPropertySoldCommission" type="number" class="form-control">
+                                    <input id="txtAgencyPropertySoldCommission" type="number" class="form-control" value="3">
                                     <span class="input-group-text">%</span>
                                 </div>
                             </div>

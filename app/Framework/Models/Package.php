@@ -26,16 +26,15 @@ final class Package {
         try {
             $token_info = User::GetTokenInfo($request);
             $user_id = $token_info['id'];
-            $user_role = $token_info['role'];
             $data = json_decode($request->getBody()->getContents(), true);
             $name = $data['name'] ?? "";
-            $fixed_cost = $data['fixed_cost'] ?? 0;
-            $percentage = $data['percentage'] ?? 0;
+            $fee = $data['fee'] ?? 0;
+            $commission = $data['commission'] ?? 0;
             $note = $data['note'] ?? "";
             if(empty($name))
                 throw new Exception('Name field required', 400);
-            $q = "INSERT INTO package(name, fixed_cost, percentage, note, ucr) VALUES(?,?,?,?,?)";
-            $params = [$name, $fixed_cost, $percentage, $note, $user_id];
+            $q = "INSERT INTO package(name, fee, commission, note, ucr) VALUES(?,?,?,?,?)";
+            $params = [$name, $fee, $commission, $note, $user_id];
             $row_affected = DB::Execute($q, $params);
             if($row_affected == 0) throw new Exception("Error inserting package", 500);
             $response->getBody()->write(json_encode(["result" => true]));
@@ -62,12 +61,12 @@ final class Package {
             if (!$id) throw new Exception('Package ID is required', 400);
             $data = json_decode($request->getBody()->getContents(), true);
             $name = $data['name'] ?? "";
-            $fixed_cost = $data['fixed_cost'] ?? 0;
-            $percentage = $data['percentage'] ?? 0;
+            $fee = $data['fee'] ?? 0;
+            $commission = $data['commission'] ?? 0;
             $note = $data['note'] ?? "";
             if(empty($name)) throw new Exception('Name field required', 400);
-            $q = 'UPDATE package SET name = ?, fixed_cost = ?, percentage = ?, note = ? WHERE id = ?';
-            $params = [$name, $fixed_cost, $percentage, $note, $id];
+            $q = 'UPDATE package SET name = ?, fee = ?, commission = ?, note = ? WHERE id = ?';
+            $params = [$name, $fee, $commission, $note, $id];
             $row_affected = DB::Execute($q, $params);
             if($row_affected == 0) throw new Exception("Error while updating package", 500);
             $response->getBody()->write(json_encode(["result" => true]));

@@ -15,7 +15,7 @@ async function init() {
 
 async function loadLocations() {
     const ddlLocation = document.getElementById('ddlNewUserLocation');
-    ddlLocation.innerHTML = '<option value="-1" selected disabled>Seleziona la sede</option>';
+    ddlLocation.innerHTML = '<option value="-1" selected disabled>--Seleziona l\'agenzia--</option>';
     const response = await fetch('/api/branches');
     const r = await response.json();
     r.payload.forEach(el => { ddlLocation.innerHTML += `<option value="${el.id}">${el.name}</option>`; });
@@ -23,7 +23,7 @@ async function loadLocations() {
 
 async function loadRoles() {
     const ddlLocation = document.getElementById('ddlNewUserRole');
-    ddlLocation.innerHTML = '<option value="-1" selected disabled>Seleziona la ruolo</option>';
+    ddlLocation.innerHTML = '<option value="-1" selected disabled>--Seleziona la ruolo--</option>';
     const response = await fetch('/api/roles');
     const r = await response.json();
     r.payload.forEach(el => { ddlLocation.innerHTML += `<option value="${el.id}">${el.name}</option>`; });

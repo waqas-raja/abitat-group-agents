@@ -5,8 +5,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     initInternalTabs();
     showDataAsPerLoggedUser();
     await Promise.all([
-        populateDropdown('ddlPropertyLocation', 'branches', 'Seleziona la sede'),
-        populateDropdown('ddlPropertyType', 'property-types', 'Seleziona il tipo di proprietà'),
+        populateDropdown('ddlPropertyLocation', 'branches', '--Seleziona la sede--'),
+        populateDropdown('ddlPropertyType', 'property-types', '--Seleziona il tipo di proprietà--'),
         loadAgentFromBranch(),
         loadList(_selectedBranch)
     ]);
@@ -46,9 +46,9 @@ async function changeBranch(branch_id) {
 
 async function loadAgentFromBranch() {
     const ddl = document.getElementById("ddlAcquisitionAgent");
-    ddl.innerHTML = '<option value="-1" selected disabled>Seleziona agente</option>';
+    ddl.innerHTML = '<option value="-1" selected disabled>--Seleziona agente--</option>';
     const ddlSold = document.getElementById("ddlPropertySoldAgent");
-    ddlSold.innerHTML = '<option value="-1" selected disabled>Seleziona agente</option>';
+    ddlSold.innerHTML = '<option value="-1" selected disabled>--Seleziona agente--</option>';
     const response = await fetch(`/api/agents?b=${_selectedBranch}}`);
     const r = await response.json();
     r.payload.forEach(el => ddl.innerHTML += `<option value="${el.id}">${el.name} ${el.surname}</option>`);
@@ -75,24 +75,13 @@ async function loadList() {
                 alignment: "center",
                 cssClass: "bg-light",
                 columns: [
-                    {
-                        dataField: "property_name",
-                        caption: "Tipologia",
-                        allowFiltering: true,
-                        calculateCellValue: function (data) {
-                            return data.property_name;
-                            // switch (data.property_type) {
-                            //     case 1: return "Apartment";
-                            //     case 2: return "Villa";
-                            //     case 3: return "Farmhouse";
-                            // }
-                        }
-                    },
+                    { dataField: "property_name", caption: "Indirizzo", allowFiltering: true },
+                    { dataField: "city", caption: "Città", allowFiltering: true },
                     { dataField: "address", caption: "Indirizzo", allowFiltering: true },
                 ]
             },
             {
-                caption: "Acquisto",
+                caption: "Acquisizione",
                 alignment: "center",
                 cssClass: "alert alert-warning rounded-0",
                 columns: [
@@ -214,13 +203,19 @@ async function loadList() {
                 "searchPanel",
             ]
         },
+        onRowPrepared: function (e) {
+            if (e.rowType === 'data' && e.data.sale_date) {
+                $(e.rowElement).addClass('row-sold');
+            }
+        },
         onRowClick: function (e) {
             if ($(e.event.target).closest(".dx-datagrid-expand").length) {
                 e.event.stopPropagation();
                 return;
             }
             if (e.rowType === "data") {
-                const res = r.payload.length === 1 ? r.payload : r.payload.filter(function (el) { return el.id === parseInt(e.data.id); });
+                if (e.data.sale_date) return; // Disabilita click se venduto
+                const res = r.payload.length === 1 ? r.payload : r.payload.filter(el => el.id === parseInt(e.data.id));
                 showModalAddEditProperty(res, 'Modifica proprietà');
             }
         },
@@ -233,6 +228,7 @@ async function saveProperty() {
     const location = parseInt(document.getElementById("ddlPropertyLocation").value);
     const type = parseInt(document.getElementById("ddlPropertyType").value);
     const address = document.getElementById("txtPropertyAddress").value.trim();
+    const city = document.getElementById("txtPropertyCity").value.trim();
     const propertyAcquisitionDate = $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("text");
     const propertyAcquisitionPrice = document.getElementById("txtPropertyAcquisitionPrice").value.trim();
     const agencyCommission = document.getElementById("txtAgencyPropertyCommission").value.trim();
@@ -240,7 +236,7 @@ async function saveProperty() {
     const propertyExpireDate = $("#txtPropertyExpireDate").dxDateBox("instance").option("text");
     const result = document.getElementById("spNewPorpertyResult");
     if (
-        location === -1 || type === -1 || address === "" || propertyAcquisitionDate === "" ||
+        location === -1 || type === -1 || address === "" || city === "" || propertyAcquisitionDate === "" ||
         propertyAcquisitionPrice === "" || agencyCommission === "" || acquisitionAgent === -1 ||
         propertyExpireDate === ""
     ) {
@@ -262,6 +258,7 @@ async function saveProperty() {
                 "branch_id": location,
                 "property_type": type,
                 "address": address,
+                "city": city,
                 "acquisition_date": propertyAcquisitionDate,
                 "acquisition_price": parseFloat(propertyAcquisitionPrice),
                 "acquisition_agency_percentage": parseInt(agencyCommission),
@@ -272,7 +269,7 @@ async function saveProperty() {
         const res = await response.json();
         if (res.result) {
             const ele = document.getElementsByClassName('pai-tabs');
-            loadList();
+            await loadList();
             if (parseInt(location) === 1) ele[0].children[0].click();
             else if (parseInt(location) === 2) ele[0].children[1].click();
             else if (parseInt(location) === 3) ele[0].children[2].click();
@@ -297,6 +294,7 @@ function showModalAddEditProperty(res, modalTitle) {
     document.getElementById('ddlPropertyLocation').value = res !== null ? res[0].branch_id : _selectedBranch;
     document.getElementById('ddlPropertyType').value = res !== null ? res[0].property_type : -1;
     document.getElementById('txtPropertyAddress').value = res !== null ? res[0].address : '';
+    document.getElementById('txtPropertyCity').value = res !== null ? res[0].city : '';
     if (res !== null) $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("value", new Date(res[0].acquisition_date));
     document.getElementById('txtPropertyAcquisitionPrice').value = res !== null ? res[0].acquisition_price : '';
     document.getElementById('txtAgencyPropertyCommission').value = res !== null ? res[0].acquisition_agency_percentage : '';
@@ -324,7 +322,7 @@ function showModalAddEditProperty(res, modalTitle) {
 function showMarkPropertySoldModal(data) {
     document.getElementById("hSoldProperty").value = data.id;
     const label = document.getElementById("txtAddressDisable");
-    if (label !== undefined) label.value = data.address;
+    if (label !== undefined) label.value = data.address + " - " + data.city;
     document.getElementById("spMarkPropertySoldResult").innerText = '';
     const modalElement = document.getElementById("modalMarkPropertySold");
     const modal = new bootstrap.Modal(modalElement);

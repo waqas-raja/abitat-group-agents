@@ -38,6 +38,7 @@ final class Property
             $user_id = $token_info['id'];
             $data = json_decode($request->getBody()->getContents(), true);
             $address = $data['address'] ?? '';
+            $city = $data['city'] ?? '';
             $branch_id = $data['branch_id'] ?? 0;
             $property_type = $data['property_type'] ?? 0;
             $acquisition_date = $data['acquisition_date'] ? date("Y-m-d", strtotime($data['acquisition_date'])) : date("Y-m-d");
@@ -45,14 +46,12 @@ final class Property
             $acquisition_agency_percentage = $data['acquisition_agency_percentage'] ?? 0;
             $acquisition_agent_id = $data['acquisition_agent_id'] ?? 0;
             $mandate_expiration = $data['mandate_expiration'] ? date("Y-m-d", strtotime($data['mandate_expiration'])) : date("Y-m-d");
-            $q = "select percentage from package where id = (select package_id from agent where id = ?)";
-            $res = DB::Query($q, [$acquisition_agent_id]);
-            if (count($res) < 1) throw new Exception("package not found from user $acquisition_agent_id", 500);
-            $acquisition_agent_percentage = $res[0]["percentage"]/100;
-            $q = "INSERT INTO property (address, branch_id, property_type, acquisition_date, acquisition_price, acquisition_agent_percentage, acquisition_agency_percentage, acquisition_agent_id, mandate_expiration, ucr) VALUES (?,?,?,?,?,?,?,?,?,?)";
-            $params = [$address, $branch_id, $property_type, $acquisition_date, $acquisition_price, $acquisition_agent_percentage, $acquisition_agency_percentage, $acquisition_agent_id, $mandate_expiration, $user_id];
+            $res = DB::Query("select package_commission from agent where id = ?", [$acquisition_agent_id]);
+            $acquisition_agent_percentage = $res[0]["package_commission"]/100;
+            $q = "INSERT INTO property (address, city, branch_id, property_type, acquisition_date, acquisition_price, acquisition_agent_percentage, acquisition_agency_percentage, acquisition_agent_id, mandate_expiration, ucr) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+            $params = [$address, $city, $branch_id, $property_type, $acquisition_date, $acquisition_price, $acquisition_agent_percentage, $acquisition_agency_percentage, $acquisition_agent_id, $mandate_expiration, $user_id];
             $row_affected = DB::Execute($q, $params);
-            if ($row_affected == 0) throw new Exception("Error while insert new property", 500);
+            if ($row_affected == 0) throw new Exception("Error while insert new property. Query: $q :: " . json_encode($params), 500);
             $response->getBody()->write(json_encode(["result" => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
@@ -66,30 +65,34 @@ final class Property
      * @throws Exception
      */
     public static function Edit($request, $response) {
-        $property_id = $request->getAttribute('id');
-        if (!$property_id) throw new Exception('Property ID is required', 400);
-        $token_info = User::GetTokenInfo($request);
-        $user_id = $token_info['id'];
-        $data = json_decode($request->getBody()->getContents(), true);
-        $address = $data['address'] ?? '';
-        $branch_id = $data['branch_id'] ?? 0;
-        $property_type = $data['property_type'] ?? 0;
-        $acquisition_date = $data['acquisition_date'] ? date("Y-m-d", strtotime($data['acquisition_date'])) : date("Y-m-d");
-        $acquisition_price = $data['acquisition_price'] ?? 0;
-        $acquisition_agency_percentage = $data['acquisition_agency_percentage'] ?? 0;
-        $acquisition_agent_id = $data['acquisition_agent_id'] ?? 0;
-        $mandate_expiration = $data['mandate_expiration'] ? date("Y-m-d", strtotime($data['mandate_expiration'])) : date("Y-m-d");
-        $q = "select percentage from package where id = (select package_id from agent where id = ?)";
-        $res = DB::Query($q, [$acquisition_agent_id]);
-        if(count($res) < 1) throw new Exception("package not found from user $acquisition_agent_id", 500);
-        $acquisition_agent_percentage = $res[0]["percentage"];
-        $q = 'UPDATE property SET address = ?, branch_id = ?, property_type = ?, acquisition_date = ?, acquisition_price = ?, acquisition_agent_percentage = ?, acquisition_agency_percentage = ?, acquisition_agent_id = ?, mandate_expiration = ?, ucr = ? WHERE id = ?';
-        $params = [$address, $branch_id, $property_type, $acquisition_date, $acquisition_price, $acquisition_agent_percentage, $acquisition_agency_percentage, $acquisition_agent_id, $mandate_expiration, $user_id, $property_id];
-
-        $row_affected = DB::Execute($q, $params);
-        if ($row_affected == 0) throw new Exception("Error while updating property", 500);
-        $response->getBody()->write(json_encode(["result" => true]));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        try {
+            $property_id = $request->getAttribute('id');
+            if (!$property_id) throw new Exception('Property ID is required', 400);
+            $token_info = User::GetTokenInfo($request);
+            $user_id = $token_info['id'];
+            $data = json_decode($request->getBody()->getContents(), true);
+            $address = $data['address'] ?? '';
+            $city = $data['city'] ?? '';
+            $branch_id = $data['branch_id'] ?? 0;
+            $property_type = $data['property_type'] ?? 0;
+            $acquisition_date = $data['acquisition_date'] ? date("Y-m-d", strtotime($data['acquisition_date'])) : date("Y-m-d");
+            $acquisition_price = $data['acquisition_price'] ?? 0;
+            $acquisition_agency_percentage = $data['acquisition_agency_percentage'] ?? 0;
+            $acquisition_agent_id = $data['acquisition_agent_id'] ?? 0;
+            $mandate_expiration = $data['mandate_expiration'] ? date("Y-m-d", strtotime($data['mandate_expiration'])) : date("Y-m-d");
+            $res = DB::Query("select package_commission from agent where id = ?", [$acquisition_agent_id]);
+            $acquisition_agent_percentage = $res[0]["package_commission"]/100;
+            $q = 'UPDATE property SET address = ?, city = ?, branch_id = ?, property_type = ?, acquisition_date = ?, acquisition_price = ?, acquisition_agent_percentage = ?, acquisition_agency_percentage = ?, acquisition_agent_id = ?, mandate_expiration = ?, ucr = ? WHERE id = ?';
+            $params = [$address, $city, $branch_id, $property_type, $acquisition_date, $acquisition_price, $acquisition_agent_percentage, $acquisition_agency_percentage, $acquisition_agent_id, $mandate_expiration, $user_id, $property_id];
+            $row_affected = DB::Execute($q, $params);
+            if ($row_affected == 0) throw new Exception("Error while updating property", 500);
+            $response->getBody()->write(json_encode(["result" => true]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $e) {
+            file_put_contents('error.log', $e->getMessage() . PHP_EOL, FILE_APPEND);
+            $response->getBody()->write(json_encode(["result" => false]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        }
     }
     
     /**
