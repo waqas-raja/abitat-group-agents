@@ -50,29 +50,9 @@ async function loadList(branch_id) {
             {
                 caption: "Nome Cognome",
                 allowSearch:true,
-                calculateCellValue: function (data) { return data.name + ' ' + data.surname; }
+                calculateCellValue: function (data) { return data.agent_name; }
             },
             { dataField: "package_name", caption: "Pacchetto" },
-            {
-                dataField: "package_commission",
-                caption: "Commissioni",
-                allowFiltering: true,
-                calculateCellValue: function (data) {
-                    const val = parseFloat(data.package_commission);
-                    if (isNaN(val)) return '';
-                    return val.toFixed(2) + ' %';
-                }
-            },
-            {
-                dataField: "package_commission",
-                caption: "Commissioni",
-                allowFiltering: true,
-                calculateCellValue: function (data) {
-                    const value = parseFloat(data.package_fee);
-                    if (isNaN(value)) return '';
-                    return '€ ' + value.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                }
-            },
             {
                 dataField: "package_fee",
                 caption: "Costi fissi",
@@ -83,10 +63,38 @@ async function loadList(branch_id) {
                     return '€ ' + value.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 }
             },
-            { dataField: "managed_properties", caption: "Proprietà in gestione", alignment: "center" },
-            { dataField: "properties_sold", caption: "Proprietà vendute", alignment: "center" },
-            { dataField: "total_sales", caption: "Totale vendite", alignment: "center" },
-            { dataField: "total_commissions", caption: "Totale commissioni", alignment: "center" },
+            {
+                dataField: "package_commission",
+                caption: "Commissioni",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    const val = parseFloat(data.package_commission);
+                    if (isNaN(val)) return '';
+                    return val.toFixed(2) + ' %';
+                }
+            },
+            { dataField: "acquired", caption: "Proprietà in gestione", alignment: "center" },
+            { dataField: "sold", caption: "Proprietà vendute", alignment: "center" },
+            {
+                dataField: "total_acquisition_commission",
+                caption: "Commissioni di acquisizione",
+                alignment: "center",
+                calculateCellValue: function (data) {
+                    const value = parseFloat(data.total_acquisition_commission);
+                    if (isNaN(value)) return '';
+                    return '€ ' + value.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
+            },
+            {
+                dataField: "total_sold_commission",
+                caption: "Commissioni di vendita",
+                alignment: "center",
+                calculateCellValue: function (data) {
+                    const value = parseFloat(data.total_sold_commission);
+                    if (isNaN(value)) return '';
+                    return '€ ' + value.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
+            },
             {
                 dataField: "balance",
                 caption: "Saldo",
@@ -102,10 +110,7 @@ async function loadList(branch_id) {
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
         toolbar: {
-            items: [
-                "groupPanel",
-                "searchPanel"
-            ]
+            items: ["groupPanel", "searchPanel"]
         },
         onRowClick: function (e) { if (e.rowType === "data") { window.location = `/agent/${e.data.id}`; } },
     });

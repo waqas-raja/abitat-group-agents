@@ -58,11 +58,6 @@ async function loadList() {
         filterRow: { visible: true, applyFilter: "auto" },
         headerFilter: { visible: true },
         export: { enabled: false, allowExportSelectedData: true, formats: ['xlsx'] },
-        stateStoring: {
-            enabled: true,
-            type: "localStorage",
-            storageKey: "gridState"
-        },
         columns: [
             {
                 dataField: "dt",
@@ -73,6 +68,7 @@ async function loadList() {
                     return dt[2] + "/" + dt[1] + "/" + dt[0];
                 }
             },
+            { dataField: "reason", caption: "Descrizione", allowFiltering: true },
             {
                 dataField: "agent_name",
                 caption: "Agente",
@@ -98,7 +94,6 @@ async function loadList() {
                 allowFiltering: true,
                 calculateCellValue: function (data) { return formatNumber(data.value); }
             },
-            { dataField: "reason", caption: "Descrizione", allowFiltering: true },
         ],
         remoteOperations: { paging: true, filtering: true, sorting: true },
         paging: { pageSize: 10 },

@@ -12,20 +12,8 @@ final class Agent {
     public static function GetAll($request, $response) {
         $branch = isset($_GET['b']) ? intval($_GET['b']) : 1;
         $full = isset($_GET['f']) ? intval($_GET['f']) == 1 : false;
-        if(!$full) $q = "select * from agent where enabled = 1 and branch_id = ?";
-        else {
-            $q = <<<query
-                select
-                    a.*,
-                    (select count(*) from property where acquisition_agent_id = a.id and sale_agent_id is null) as managed_properties,
-                    (select count(*) from property where acquisition_agent_id = a.id and sale_agent_id is null) as properties_sold,
-                    0 as total_sales,
-                    0 as total_commissions,
-                    0 as balance
-                from agent as a
-                WHERE a.enabled = 1 and a.branch_id = ?;
-            query;
-        }
+        if($full) $q = "call get_agents(?)";
+        else $q = "select * from agent where enabled = 1 and branch_id = ?";
         $agents = DB::Query($q, [$branch]);
         $response->getBody()->write(json_encode(["payload" => $agents]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);

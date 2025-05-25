@@ -24,11 +24,8 @@ async function loadAgentDetail() {
     document.getElementById("txtLastName").value = r.payload.surname ?? "n.d.";
     document.getElementById("spPackage").innerText = r.payload.package_name ?? "n.d.";
     document.getElementById("ddlPackage").value = r.payload.package_id.toString() ?? "n.d.";
-
     document.getElementById("spFee").innerText = r.payload.package_fee + " €" ?? "n.d.";
     document.getElementById("spCommission").innerText = r.payload.package_commission + " %" ?? "n.d.";
-
-
     document.getElementById("spEmail").innerText = r.payload.email ?? "n.d.";
     document.getElementById("txtEmail").value =r.payload.email ?? "n.d.";
     document.getElementById("spPhone").innerText = r.payload.phone ?? "n.d.";
