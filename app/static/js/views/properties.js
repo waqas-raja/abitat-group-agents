@@ -297,7 +297,7 @@ function showModalAddEditProperty(res, modalTitle) {
     document.getElementById('txtPropertyCity').value = res !== null ? res[0].city : '';
     if (res !== null) $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("value", new Date(res[0].acquisition_date));
     document.getElementById('txtPropertyAcquisitionPrice').value = res !== null ? res[0].acquisition_price : '';
-    document.getElementById('txtAgencyPropertyCommission').value = res !== null ? res[0].acquisition_agency_percentage : '';
+    document.getElementById('txtAgencyPropertyCommission').value = res !== null ? res[0].acquisition_agency_percentage : '3';
     document.getElementById('ddlAcquisitionAgent').value = res !== null ? res[0].acquisition_agent_id : '-1';
     $("#txtPropertyExpireDate").dxDateBox("instance").option("value", res !== null ? new Date(res[0].mandate_expiration) : '');
     document.getElementById("spNewPorpertyResult").innerHTML = '';

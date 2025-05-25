@@ -1,1 +1,1 @@
-package not found from user 7
+Error while insert record in expense_report. Query: insert into expense_report (agent, property, expense_type, dt, reason, value, ucr, dtcr) values (?,?,?,?,?,?,?,?) :: [35,21,"A","2025-05-25","Commissione agente del 0.5% sull'importo di 500 (importo acquisizione 100000 - commissione agenzia 3%)",2.5,2]

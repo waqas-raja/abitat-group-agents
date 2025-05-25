@@ -51,7 +51,21 @@ final class Property
             $q = "INSERT INTO property (address, city, branch_id, property_type, acquisition_date, acquisition_price, acquisition_agent_percentage, acquisition_agency_percentage, acquisition_agent_id, mandate_expiration, ucr) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
             $params = [$address, $city, $branch_id, $property_type, $acquisition_date, $acquisition_price, $acquisition_agent_percentage, $acquisition_agency_percentage, $acquisition_agent_id, $mandate_expiration, $user_id];
             $row_affected = DB::Execute($q, $params);
-            if ($row_affected == 0) throw new Exception("Error while insert new property. Query: $q :: " . json_encode($params), 500);
+            if($row_affected == 0) throw new Exception("Error while insert new property. Query: $q :: " . json_encode($params), 500);
+            //recupero l'id dell'agente creato
+            $q = "select max(id) as id from property where address = ? and city = ? and branch_id = ?";
+            $row = DB::Query($q, [$address, $city, $branch_id]);
+            $propertyId = $row[0]["id"];
+            error_log("ELI :: immobile creato con id $propertyId");
+            //se il salvataggio è andato a buon fine creo il record in expense_report
+            $agencyAmount = $acquisition_price * $acquisition_agent_percentage / 100;
+            $commissionValue = $agencyAmount * $acquisition_agent_percentage / 100;
+            $msg = "Commissione agente del $acquisition_agent_percentage% sull'importo di $agencyAmount (importo acquisizione $acquisition_price - commissione agenzia $acquisition_agency_percentage%)";
+            error_log("ELI :: $msg");
+            $q = "insert into expense_report (agent, property, expense_type, dt, reason, value, ucr) values (?,?,?,?,?,?,?)";
+            $params = [$acquisition_agent_id, $propertyId, "A", $acquisition_date, $msg, $commissionValue, $user_id];
+            $row_affected = DB::Execute($q, $params);
+            if($row_affected == 0) throw new Exception("Error while insert record in expense_report. Query: $q :: " . json_encode($params), 500);
             $response->getBody()->write(json_encode(["result" => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
