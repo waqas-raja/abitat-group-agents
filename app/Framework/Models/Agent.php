@@ -3,6 +3,7 @@
 namespace App\Framework\Models;
 
 use App\Framework\Tools\DB;
+use DateTimeZone;
 use Exception;
 
 final class Agent {
@@ -54,16 +55,30 @@ final class Agent {
         try {
             $token_info = User::GetTokenInfo($request);
             $user_id = $token_info['id'];
-            $user_role = $token_info['role'];
             $data = json_decode($request->getBody()->getContents(), true);
             $name = $data['name'] ?? "";
             $surname = $data['surname'] ?? "";
             $package_id = $data['package_id'] ?? 0;
             $branch_id = $data['branch_id'] ?? 0;
-            $q = "INSERT INTO agent(name, surname, branch_id, package_id, ucr) VALUES (?,?,?,?,?)";
-            $params = [$name, $surname, $branch_id, $package_id, $user_id];
+            //recupero i dati del pacchetto
+            $row = DB::Query("select * from package where id = ?", [$package_id]);
+            if(count($row) == 0) throw new Exception("Package not found", 400);
+            $package_name = $row[0]["name"];
+            $package_fee = $row[0]["fee"];
+            $package_commission = $row[0]["commission"];
+            //inserisco il record in agent
+            $today = (new \DateTime("now", new \DateTimeZone("Europe/Rome")))->format('Y-m-d');
+            $q = "INSERT INTO agent(name, surname, branch_id, package_id, package_name, package_fee, package_commission, package_dt, ucr) VALUES (?,?,?,?,?,?,?,?,?)";
+            $params = [$name, $surname, $branch_id, $package_id,$package_name, $package_fee, $package_commission, $today, $user_id];
             $row_affected = DB::Execute($q, $params);
             if ($row_affected == 0) throw new Exception("Error while insert agent", 500);
+            //recupero l'id dell'agente creato
+            $q = "select max(id) as id from agent where name = ? and surname = ? and branch_id = ?";
+            $row = DB::Query($q, [$name, $surname, $branch_id]);
+            $lastId = $row[0]["id"];
+            //aggiungo il record in tr_agent_package_history
+            $row_affected = DB::Execute("INSERT INTO tr_agent_package_history(agent, package) VALUES (?,?)", [$lastId, $package_id]);
+            if ($row_affected == 0) throw new Exception("Error while insert record in tr_agent_package_history with agent $lastId and package $package_id", 500);
             $response->getBody()->write(json_encode(["result" => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
@@ -102,6 +117,23 @@ final class Agent {
         $params = [$name, $surname, $branch_id, $phone, $email, $package_id, $aid];
         $row_affected = DB::Execute($q, $params);
         if ($row_affected == 0) throw new Exception("Error while updating agent", 500);
+        //se è cambiato il pacchetto aggiorno i dati
+        if($curr['package_id'] == $package_id) {
+            $row = DB::Query("select * from package where id = ?", [$package_id]);
+            if(count($row) == 0) throw new Exception("Package $package_id not found", 400);
+            $package_name = $row[0]["name"];
+            $package_fee = $row[0]["fee"];
+            $package_commission = $row[0]["commission"];
+            $today = (new \DateTime("now", new \DateTimeZone("Europe/Rome")))->format('Y-m-d');
+            $q = "update agent set package_id = ?, package_name = ?, package_fee = ?, package_commission = ?, package_dt = ?";
+            $params = [$package_id,$package_name, $package_fee, $package_commission, $today];
+            $row_affected = DB::Execute($q, $params);
+            if ($row_affected == 0) throw new Exception("Error while update package info for agent $aid", 500);
+            //aggiungo il record in tr_agent_package_history
+            $row_affected = DB::Execute("INSERT INTO tr_agent_package_history(agent, package) VALUES (?,?)", [$aid, $package_id]);
+            if ($row_affected == 0) throw new Exception("Error while insert record in tr_agent_package_history with agent $aid and package $package_id", 500);
+            $response->getBody()->write(json_encode(["result" => true]));
+        }
         $response->getBody()->write(json_encode(["result" => true]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
@@ -118,5 +150,4 @@ final class Agent {
         $response->getBody()->write(json_encode(["result" => true, "package" => $pid, "agent" => $agent_id,]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
-
 }

@@ -145,7 +145,7 @@ async function continuePackageDeletion() {
     resultDiv.innerHTML = '';
     if (alternatePackageID !== undefined && alternatePackageID !== -1) {
         linkedAgents.forEach(async (agent) => {
-            const response = await fetch("/api/agent/" + alternatePackageID + "/alter-package", {
+            const response = await fetch(`/api/agent/${alternatePackageID}/alter-package`, {
                 method: "PATCH",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({ "agent_id": agent.id })

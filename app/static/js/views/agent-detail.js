@@ -18,19 +18,19 @@ async function loadAgentDetail() {
     const aid = document.getElementById("hAgentId").value;
     const response = await fetch('/api/agent/' + aid);
     const r = await response.json();
-    document.getElementById("spFirstName").innerText = r.payload.name ?? "n.d.";
-    document.getElementById("txtFirstName").value = r.payload.name ?? "n.d.";
-    document.getElementById("spLastName").innerText = r.payload.surname ?? "n.d.";
-    document.getElementById("txtLastName").value = r.payload.surname ?? "n.d.";
-    document.getElementById("spPackage").innerText = r.payload.package_name ?? "n.d.";
-    document.getElementById("ddlPackage").value = r.payload.package_id.toString() ?? "n.d.";
-    document.getElementById("spFee").innerText = r.payload.package_fee + " €" ?? "n.d.";
-    document.getElementById("spCommission").innerText = r.payload.package_commission + " %" ?? "n.d.";
-    document.getElementById("spEmail").innerText = r.payload.email ?? "n.d.";
-    document.getElementById("txtEmail").value =r.payload.email ?? "n.d.";
-    document.getElementById("spPhone").innerText = r.payload.phone ?? "n.d.";
-    document.getElementById("txtPhone").value = r.payload.phone ?? "n.d.";
-    document.getElementById("spLocation").innerText = r.payload.branch_name ?? "n.d.";
+    document.getElementById("spFirstName").innerText = r.payload.name ?? "";
+    document.getElementById("txtFirstName").value = r.payload.name ?? "";
+    document.getElementById("spLastName").innerText = r.payload.surname ?? "";
+    document.getElementById("txtLastName").value = r.payload.surname ?? "";
+    document.getElementById("spPackage").innerText = r.payload.package_name ?? "";
+    document.getElementById("ddlPackage").value = r.payload.package_id.toString() ?? "";
+    document.getElementById("spFee").innerText = r.payload.package_fee + " €" ?? "";
+    document.getElementById("spCommission").innerText = r.payload.package_commission + " %" ?? "";
+    document.getElementById("spEmail").innerText = r.payload.email ?? "";
+    document.getElementById("txtEmail").value =r.payload.email ?? "";
+    document.getElementById("spPhone").innerText = r.payload.phone ?? "";
+    document.getElementById("txtPhone").value = r.payload.phone ?? "";
+    document.getElementById("spLocation").innerText = r.payload.branch_name ?? "";
     document.getElementById("ddlLocation").value = r.payload.branch_id ?? 1;
 }
 
