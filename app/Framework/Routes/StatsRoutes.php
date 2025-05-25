@@ -16,7 +16,7 @@ class StatsRoutes {
     }
 
     public function register(RouteCollectorProxy $group): void {
-        $group->get('top-agents', function (Request $request, Response $response) {
+        $group->get('/top-agents', function (Request $request, Response $response) {
             return Stats::GetTop10Agents($request, $response);
         })->add($this->authMiddleware);
     }

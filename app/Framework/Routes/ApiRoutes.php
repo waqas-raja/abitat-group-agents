@@ -9,7 +9,6 @@ use App\Framework\Models\Property;
 use App\Framework\Models\Agent;
 use App\Framework\Models\Package;
 use App\Framework\Models\PropertyType;
-use App\Framework\Models\Stats;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 

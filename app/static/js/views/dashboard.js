@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadTop10Agents() {
     try {
         debugger;
-        const response = await fetch("/api/stats/top-agents/");
+        const response = await fetch("/api/stats/top-agents");
         const res = await response.json();
 
         $("#listTop10Agents").dxDataGrid({
