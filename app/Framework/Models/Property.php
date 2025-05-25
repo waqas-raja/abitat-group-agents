@@ -47,7 +47,7 @@ final class Property
             $acquisition_agent_id = $data['acquisition_agent_id'] ?? 0;
             $mandate_expiration = $data['mandate_expiration'] ? date("Y-m-d", strtotime($data['mandate_expiration'])) : date("Y-m-d");
             $res = DB::Query("select package_commission from agent where id = ?", [$acquisition_agent_id]);
-            $acquisition_agent_percentage = $res[0]["package_commission"]/100;
+            $acquisition_agent_percentage = $res[0]["package_commission"];
             $q = "INSERT INTO property (address, city, branch_id, property_type, acquisition_date, acquisition_price, acquisition_agent_percentage, acquisition_agency_percentage, acquisition_agent_id, mandate_expiration, ucr) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
             $params = [$address, $city, $branch_id, $property_type, $acquisition_date, $acquisition_price, $acquisition_agent_percentage, $acquisition_agency_percentage, $acquisition_agent_id, $mandate_expiration, $user_id];
             $row_affected = DB::Execute($q, $params);
@@ -56,12 +56,10 @@ final class Property
             $q = "select max(id) as id from property where address = ? and city = ? and branch_id = ?";
             $row = DB::Query($q, [$address, $city, $branch_id]);
             $propertyId = $row[0]["id"];
-            error_log("ELI :: immobile creato con id $propertyId");
             //se il salvataggio è andato a buon fine creo il record in expense_report
-            $agencyAmount = $acquisition_price * $acquisition_agent_percentage / 100;
+            $agencyAmount = $acquisition_price * $acquisition_agency_percentage / 100;
             $commissionValue = $agencyAmount * $acquisition_agent_percentage / 100;
             $msg = "Commissione agente del $acquisition_agent_percentage% sull'importo di $agencyAmount (importo acquisizione $acquisition_price - commissione agenzia $acquisition_agency_percentage%)";
-            error_log("ELI :: $msg");
             $q = "insert into expense_report (agent, property, expense_type, dt, reason, value, ucr) values (?,?,?,?,?,?,?)";
             $params = [$acquisition_agent_id, $propertyId, "A", $acquisition_date, $msg, $commissionValue, $user_id];
             $row_affected = DB::Execute($q, $params);
@@ -95,7 +93,7 @@ final class Property
             $acquisition_agent_id = $data['acquisition_agent_id'] ?? 0;
             $mandate_expiration = $data['mandate_expiration'] ? date("Y-m-d", strtotime($data['mandate_expiration'])) : date("Y-m-d");
             $res = DB::Query("select package_commission from agent where id = ?", [$acquisition_agent_id]);
-            $acquisition_agent_percentage = $res[0]["package_commission"]/100;
+            $acquisition_agent_percentage = $res[0]["package_commission"];
             $q = 'UPDATE property SET address = ?, city = ?, branch_id = ?, property_type = ?, acquisition_date = ?, acquisition_price = ?, acquisition_agent_percentage = ?, acquisition_agency_percentage = ?, acquisition_agent_id = ?, mandate_expiration = ?, ucr = ? WHERE id = ?';
             $params = [$address, $city, $branch_id, $property_type, $acquisition_date, $acquisition_price, $acquisition_agent_percentage, $acquisition_agency_percentage, $acquisition_agent_id, $mandate_expiration, $user_id, $property_id];
             $row_affected = DB::Execute($q, $params);

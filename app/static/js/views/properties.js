@@ -75,7 +75,7 @@ async function loadList() {
                 alignment: "center",
                 cssClass: "bg-light",
                 columns: [
-                    { dataField: "property_name", caption: "Indirizzo", allowFiltering: true },
+                    { dataField: "property_name", caption: "Tipologia", allowFiltering: true },
                     { dataField: "city", caption: "Città", allowFiltering: true },
                     { dataField: "address", caption: "Indirizzo", allowFiltering: true },
                 ]
@@ -97,20 +97,28 @@ async function loadList() {
                     {
                         dataField: "acquisition_price",
                         caption: "Prezzo",
-                        allowFiltering: true,
+                        allowFiltering: false,
                         calculateCellValue: function (data) {
                             return formatNumber(parseFloat(data.acquisition_price));
                         }
                     },
                     {
                         dataField: "acquisition_agency_percentage",
-                        caption: "Percentuale",
-                        allowFiltering: true,
+                        caption: "% Agenzia",
+                        allowFiltering: false,
                         calculateCellValue: function (data) {
                             return (data.acquisition_agency_percentage) + " %";
                         }
                     },
                     { dataField: "acquisition_agent", caption: "Agente", allowFiltering: true },
+                    {
+                        dataField: "acquisition_agent_percentage",
+                        caption: "% Agente",
+                        allowFiltering: false,
+                        calculateCellValue: function (data) {
+                            return (data.acquisition_agent_percentage) + " %";
+                        }
+                    },
                     {
                         dataField: "mandate_expiration",
                         caption: "Scadenza",
@@ -145,21 +153,30 @@ async function loadList() {
                     {
                         dataField: "sale_price",
                         caption: "Prezzo",
-                        allowFiltering: true,
+                        allowFiltering: false,
                         calculateCellValue: function (data) {
                             if (data.sale_price !== null) return formatNumber(parseFloat(data.sale_price));
                         }
                     },
                     {
                         dataField: "sale_percentage",
-                        caption: "Percentuale",
-                        allowFiltering: true,
+                        caption: "% Agenzia",
+                        allowFiltering: false,
                         calculateCellValue: function (data) {
                             if (data.sale_agency_percentage !== null && data.sale_agency_percentage > 0) return data.sale_agency_percentage + " %";
                             else return '';
                         }
                     },
                     { dataField: "sale_agent_name", caption: "Agente", allowFiltering: true },
+                    {
+                        dataField: "sale_agent_percentage",
+                        caption: "% Agente",
+                        allowFiltering: false,
+                        calculateCellValue: function (data) {
+                            const val = data.sale_agent_percentage;
+                            return (val !== null && val !== undefined) ? val + " %" : "";
+                        }
+                    },
                 ]
             },
         ],
