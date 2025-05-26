@@ -14,5 +14,17 @@ final class Stats {
         $response->getBody()->write(json_encode(['payload' => $rows]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
+
+    public static function GetHistogram($request, $response) {
+        $rows = DB::Query('select * from v_stats_histogram');
+        $response->getBody()->write(json_encode(['payload' => $rows]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
+    public static function GetPie($request, $response) {
+        $rows = DB::Query('select * from v_stats_pie');
+        $response->getBody()->write(json_encode(['payload' => $rows]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
     
 }
