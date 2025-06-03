@@ -62,6 +62,7 @@ async function loadList() {
 
     new DevExpress.ui.dxDataGrid(document.getElementById("listOfProperties"), {
         dataSource: r.payload,
+        keyExpr: "id",
         columnAutoWidth: true,
         showBorders: true,
         noDataText: "Non risultano immobili registrati per questa sede",
@@ -96,11 +97,11 @@ async function loadList() {
                         }
                     },
                     {
-                        dataField: "acquisition_price",
+                        dataField: "last_price",
                         caption: "Prezzo",
                         allowFiltering: false,
                         calculateCellValue: function (data) {
-                            return formatNumber(parseFloat(data.acquisition_price));
+                            return formatNumber(parseFloat(data.last_price));
                         }
                     },
                     {

@@ -17,7 +17,14 @@ final class Property
                 p.*,
                 concat(pa.surname, ' ', pa.name) AS acquisition_agent,
                 concat(sa.surname, ' ', sa.name) AS sale_agent_name,
-                pt.name as property_name
+                pt.name as property_name,
+                (
+                    select new_price
+                    from property_price_history
+                    where property = p.id
+                    order by dtcr desc
+                    limit 1
+                ) as last_price
             FROM property AS p
             LEFT JOIN agent AS pa ON pa.id = p.acquisition_agent_id
             LEFT JOIN agent AS sa ON sa.id = p.sale_agent_id
@@ -28,10 +35,11 @@ final class Property
         //Per ciascun immobile, recupero la cronologia dei ribassi
         foreach ($properties as &$prop) {
             $historyQuery = <<<query
-                select dtcr as date, new_price, ucr as user
-                from property_price_history
-                where property = ?
-                order by dtcr desc;
+                select pph.dtcr as date, pph.new_price, concat(u.surname, ' ', u.name) as ucr
+                from property_price_history as pph
+                inner join user as u on u.id = pph.ucr
+                where pph.property = ?
+                order by pph.dtcr desc;
             query;
             $historyRows = DB::Query($historyQuery, [intval($prop['id'])]);
             $details = [];
@@ -67,6 +75,15 @@ final class Property
             $params = [$address, $city, $branch_id, $property_type, $acquisition_date, $acquisition_price, $acquisition_agent_percentage, $acquisition_agency_percentage, $acquisition_agent_id, $mandate_expiration, $user_id];
             $row_affected = DB::Execute($q, $params);
             if($row_affected == 0) throw new Exception("Error while insert new property. Query: $q :: " . json_encode($params), 500);
+            //recupero l'id dell'agente creato
+            $q = "select max(id) as id from property where address = ? and city = ? and branch_id = ?";
+            $row = DB::Query($q, [$address, $city, $branch_id]);
+            $property_id = $row[0]["id"];
+            //creo il record storico prezzo
+            $q = "INSERT INTO property_price_history (property, new_price, ucr) VALUES (?,?,?)";
+            $params = [$property_id, $acquisition_price, $user_id];
+            $row_affected = DB::Execute($q, $params);
+            if($row_affected == 0) throw new Exception("Error while insert new price. Query: $q :: " . json_encode($params), 500);
             $response->getBody()->write(json_encode(["result" => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
