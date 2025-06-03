@@ -177,4 +177,29 @@ final class Property
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         }
     }
+
+    /**
+     * @throws Exception
+     */
+    public static function AddNewPrice($request, $response) {
+        try {
+            $property_id = $request->getAttribute('id');
+            if (!$property_id) throw new Exception('Property ID is required', 400);
+            $token_info = User::GetTokenInfo($request);
+            $user_id = $token_info['id'];
+            $data = json_decode($request->getBody()->getContents(), true);
+            $newPrice = (int)$data['new_price'] ?? 0;
+            if ($newPrice < 1) throw new Exception('Invalid new price', 400);
+            $q = "INSERT INTO property_price_history (property, new_price, ucr) VALUES (?,?,?)";
+            $params = [$property_id, $newPrice, $user_id];
+            $row_affected = DB::Execute($q, $params);
+            if($row_affected == 0) throw new Exception("Error while insert new price. Query: $q :: " . json_encode($params), 500);
+            $response->getBody()->write(json_encode(["result" => true]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $e) {
+            file_put_contents('error.log', $e->getMessage() . PHP_EOL, FILE_APPEND);
+            $response->getBody()->write(json_encode(["result" => false]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        }
+    }
 }

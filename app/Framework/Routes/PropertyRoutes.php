@@ -32,17 +32,14 @@ class PropertyRoutes {
         $group->patch('/sold/{id}', function (Request $request, Response $response) {
             return Property::MarkAsSold($request, $response);
         })->add($this->authMiddleware);
+
+        $group->post('/new-price/{id}', function (Request $request, Response $response) {
+            return Property::AddNewPrice($request, $response);
+        })->add($this->authMiddleware);
         
         $group->delete('/{id}', function (Request $request, Response $response) {
             throw new HttpNotImplementedException($request, "delete property entry point is not implemented");
         })->add($this->authMiddleware);
-        
-        $group->post('/type', function (Request $request, Response $response) {
-            return Property::AddPropertyType($request, $response);
-        })->add($this->authMiddleware);
-        
-        $group->patch('/type/{id}', function (Request $request, Response $response) {
-            return Property::EditPropertyType($request, $response);
-        })->add($this->authMiddleware);
+
     }
 }

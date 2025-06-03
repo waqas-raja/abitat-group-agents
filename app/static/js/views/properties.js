@@ -333,19 +333,37 @@ function showModalAddEditProperty(res, modalTitle) {
 
     document.getElementById('btnAddPriceReduction').style.display = isDetail ? "inline" : "none";
 
-    let btn = document.getElementById('btnMarkPropertySold');
-    btn.classList.add('d-none');
+    let btnMarkPropertySold = document.getElementById('btnMarkPropertySold');
+    btnMarkPropertySold.classList.add('d-none');
     if (isDetail) {
         if (prop.sale_date === null) {
-            btn.classList.remove('d-none');
-            btn.replaceWith(btn.cloneNode(true));
-            btn = document.getElementById('btnMarkPropertySold');
-            btn.addEventListener('click', function () {
+            btnMarkPropertySold.classList.remove('d-none');
+            btnMarkPropertySold.replaceWith(btnMarkPropertySold.cloneNode(true));
+            btnMarkPropertySold = document.getElementById('btnMarkPropertySold');
+            btnMarkPropertySold.addEventListener('click', function () {
                 $('#modalAddProperty').modal('hide');
                 showMarkPropertySoldModal(prop);
             });
         }
     }
+
+
+
+    let btnAddPriceReduction = document.getElementById('btnAddPriceReduction');
+    btnAddPriceReduction.classList.add('d-none');
+    if (isDetail) {
+        if (prop.sale_date === null) {
+            btnAddPriceReduction.classList.remove('d-none');
+            btnAddPriceReduction.replaceWith(btnAddPriceReduction.cloneNode(true));
+            btnAddPriceReduction = document.getElementById('btnAddPriceReduction');
+            btnAddPriceReduction.addEventListener('click', function () {
+                $('#modalAddProperty').modal('hide');
+                showPropertyNewPriceModal(prop);
+            });
+        }
+    }
+
+
     const modalElement = document.getElementById("modalAddProperty");
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
@@ -360,6 +378,17 @@ function showMarkPropertySoldModal(data) {
     const modal = new bootstrap.Modal(modalElement);
     if (data !== null) modal.show();
     else $('#modalMarkPropertySold').modal('hide');
+}
+
+function showPropertyNewPriceModal(data) {
+    document.getElementById("hPropertyNewPrice").value = data.id;
+    const label = document.getElementById("txtAddressNewPrice");
+    if (label !== undefined) label.value = data.address + " - " + data.city;
+    document.getElementById("spNewPriceResult").innerText = '';
+    const modalElement = document.getElementById("modalAddNewPrice");
+    const modal = new bootstrap.Modal(modalElement);
+    if (data !== null) modal.show();
+    else $('#modalAddNewPrice').modal('hide');
 }
 
 async function savePropertyMarkedAsSold() {
@@ -428,4 +457,44 @@ function ddlExternalAgencyType_change(ddl) {
     document.getElementById("txtExternalAgencyValue").disabled = ddl.value === "N";
     const asterisks = document.getElementsByClassName("asteriskExternalAgency");
     Array.from(asterisks).forEach(el => el.style.display = ddl.value !== "N");
+}
+
+async function saveNewPrice() {
+    const btn = document.getElementById("btnSaveNewPrice");
+    const spinner = document.getElementById("spinnerNewPrice");
+    const newPrice = document.getElementById("txtNewPrice").value;
+    const result = document.getElementById("spNewPriceResult");
+    if (newPrice === "" || newPrice < 1) {
+        result.innerText = "Il valore inserito non risulta corretto";
+        result.classList.remove("d-none");
+        return;
+    }
+    btn.disabled = true;
+    spinner.classList.remove("d-none");
+    result.classList.add("d-none");
+    result.innerText = "";
+    const proID = parseInt(document.getElementById('hPropertyNewPrice').value);
+    try {
+        const response = await fetch('/api/property/new-price/' + proID, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ new_price: parseInt(newPrice) })
+        });
+        const res = await response.json();
+        if (res.result) {
+            await loadList();
+            const ele = document.getElementsByClassName('pai-tabs');
+            if (parseInt(location) === 1) ele[0].children[0].click();
+            else if (parseInt(location) === 2) ele[0].children[1].click();
+            else if (parseInt(location) === 3) ele[0].children[2].click();
+            btn.disabled = false;
+            spinner.classList.add("d-none");
+            $('#modalAddNewPrice').modal('hide');
+        } else throw new Error("Si sono verificati degli errori");
+    } catch (error) {
+        btn.disabled = false;
+        spinner.classList.add("d-none");
+        result.classList.remove("d-none");
+        result.innerText = error.message !== undefined ? error.message : error;
+    }
 }

@@ -3,6 +3,7 @@ $title = 'Elenco Immobili';
 ob_start();
 require_once __DIR__ . '/../modals/add-property.php';
 require_once __DIR__ . '/../modals/mark-property-sold.php';
+require_once __DIR__ . '/../modals/property-add-new-price.php';
 ?>
 
 <div id="properties">
