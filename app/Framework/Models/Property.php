@@ -35,7 +35,7 @@ final class Property
         //Per ciascun immobile, recupero la cronologia dei ribassi
         foreach ($properties as &$prop) {
             $historyQuery = <<<query
-                select pph.dtcr as date, pph.new_price, concat(u.surname, ' ', u.name) as ucr
+                select pph.dtcr as date, pph.new_price, concat(u.surname, ' ', u.name) as user
                 from property_price_history as pph
                 inner join user as u on u.id = pph.ucr
                 where pph.property = ?
