@@ -201,19 +201,21 @@ async function loadList() {
                     .text("Elenco delle riduzioni di prezzo")
                     .css({"font-size": "1rem", "font-weight": "500"})
                     .appendTo(headerWrapper);
-                $("<div>")
-                    .appendTo(headerWrapper)
-                    .dxButton({
-                        text: "Aggiungi un ribasso",
-                        icon: "add",
-                        onClick: function () {
-                            $("#hPropertyNewPrice").val(propertyData.id);
-                            const fullAddress = propertyData.address + ", " + propertyData.city;
-                            $("#txtAddressNewPrice").val(fullAddress);
-                            $("#spNewPriceResult").val("");
-                            $("#modalAddNewPrice").modal("show");
-                        }
-                    });
+                if (!propertyData.sale_date) {
+                    $("<div>")
+                        .appendTo(headerWrapper)
+                        .dxButton({
+                            text: "Aggiungi un ribasso",
+                            icon: "add",
+                            onClick: function () {
+                                $("#hPropertyNewPrice").val(propertyData.id);
+                                const fullAddress = propertyData.address + ", " + propertyData.city;
+                                $("#txtAddressNewPrice").val(fullAddress);
+                                $("#spNewPriceResult").val("");
+                                $("#modalAddNewPrice").modal("show");
+                            }
+                        });
+                }
                 $("<div>")
                     .addClass("internal-grid")
                     .appendTo(container)
@@ -245,11 +247,7 @@ async function loadList() {
                                 allowFiltering: true
                             }
                         ],
-
-                        // 3) Ordinamento decrescente per data (anche se il server già manda i dettagli ordinati, ridondante ma sicuro)
                         sort: [{ selector: "date", desc: true }],
-
-                        // 4) Paging per la griglia interna
                         paging: { pageSize: 5 },
                         pager: { visible: true, showInfo: true }
                     });
