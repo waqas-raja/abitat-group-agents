@@ -24,8 +24,23 @@ final class Property
             LEFT JOIN td_property_type AS pt ON pt.id = p.property_type
             WHERE p.branch_id = ?;
         query;
-        $agents = DB::Query($q, [$branch_id]);
-        $response->getBody()->write(json_encode(["payload" => $agents]));
+        $properties  = DB::Query($q, [$branch_id]);
+        //Per ciascun immobile, recupero la cronologia dei ribassi
+        foreach ($properties as &$prop) {
+            $historyQuery = <<<query
+                select dtcr as date, new_price, ucr as user
+                from property_price_history
+                where property = ?
+                order by dtcr desc;
+            query;
+            $historyRows = DB::Query($historyQuery, [intval($prop['id'])]);
+            $details = [];
+            foreach ($historyRows as $h)
+                $details[] = ['date' => $h['date'], 'new_price' => floatval($h['new_price']), 'user' => $h['user']];
+            $prop['details'] = $details;
+        }
+        unset($prop);
+        $response->getBody()->write(json_encode(["payload" => $properties ]));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
     

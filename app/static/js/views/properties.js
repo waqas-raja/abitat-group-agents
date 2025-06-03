@@ -59,6 +59,7 @@ async function loadList() {
     const response = await fetch('/api/properties?branch_id=' + _selectedBranch);
     const r = await response.json();
     const hasData = r.payload.length > 0;
+
     new DevExpress.ui.dxDataGrid(document.getElementById("listOfProperties"), {
         dataSource: r.payload,
         columnAutoWidth: true,
@@ -181,15 +182,37 @@ async function loadList() {
             },
         ],
         sorting: {mode: "multiple"},
-        // TODO MASTER DETAIL AS PER DYNAMIC DATA FETCHED
         masterDetail: {
-            enabled: false,
+            enabled: true,
             template: function (container, options) {
-                const details = options.data.details;
+                const propertyData = options.data;
+                const details = propertyData.details || [];
+                // 1) Creiamo un contenitore flex per titolo + bottone
+                const headerWrapper = $("<div>")
+                    .css({
+                        display: "flex",
+                        "justify-content": "space-between",
+                        "align-items": "center",
+                        "padding-bottom": "8px"
+                    })
+                    .appendTo(container);
                 $("<div>")
-                    .addClass("dx-datagrid-group-panel")
-                    .html('<div class="dx-group-panel-message">Elenco delle riduzioni di prezzo</div>')
-                    .appendTo(container)
+                    .text("Elenco delle riduzioni di prezzo")
+                    .css({"font-size": "1rem", "font-weight": "500"})
+                    .appendTo(headerWrapper);
+                $("<div>")
+                    .appendTo(headerWrapper)
+                    .dxButton({
+                        text: "Aggiungi un ribasso",
+                        icon: "add",
+                        onClick: function () {
+                            $("#hPropertyNewPrice").val(propertyData.id);
+                            const fullAddress = propertyData.address + ", " + propertyData.city;
+                            $("#txtAddressNewPrice").val(fullAddress);
+                            $("#spNewPriceResult").val("");
+                            $("#modalAddNewPrice").modal("show");
+                        }
+                    });
                 $("<div>")
                     .addClass("internal-grid")
                     .appendTo(container)
@@ -199,27 +222,42 @@ async function loadList() {
                         showBorders: true,
                         width: "100%",
                         columns: [
-                            { dataField: "date", caption: "Data" },
                             {
-                                caption: "Nuovo prezzo",
+                                dataField: "date",
+                                caption: "Data",
                                 calculateCellValue: function (data) {
-                                    if (data.new_price !== null) return formatNumber(data.new_price);
+                                    const iso = data.date.split(" ")[0]; // "YYYY-MM-DD"
+                                    const parts = iso.split("-");
+                                    return parts[2] + "/" + parts[1] + "/" + parts[0];
                                 }
                             },
-                            { dataField: "note", caption: "Notes" },
-                        ]
+                            {
+                                dataField: "new_price",
+                                caption: "Prezzo",
+                                calculateCellValue: function (data) {
+                                    return formatNumber(parseFloat(data.new_price));
+                                }
+                            },
+                            {
+                                dataField: "user",
+                                caption: "Utente",
+                                allowFiltering: true
+                            }
+                        ],
+
+                        // 3) Ordinamento decrescente per data (anche se il server già manda i dettagli ordinati, ridondante ma sicuro)
+                        sort: [{ selector: "date", desc: true }],
+
+                        // 4) Paging per la griglia interna
+                        paging: { pageSize: 5 },
+                        pager: { visible: true, showInfo: true }
                     });
             }
         },
         remoteOperations: { paging: true, filtering: true, sorting: true },
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
-        toolbar: {
-            items: [
-                "groupPanel",
-                "searchPanel",
-            ]
-        },
+        toolbar: { items: ["groupPanel", "searchPanel" ] },
         onRowPrepared: function (e) {
             if (e.rowType === 'data' && e.data.sale_date) {
                 $(e.rowElement).addClass('row-sold');
