@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadPackages();
     await Promise.all([
         loadAgentDetail(),
-        loadAgentTransactions()
+        loadListOfReturns(),
+        loadListOfReturnsAgent()
     ]);
 });
 
@@ -19,39 +20,27 @@ async function loadAgentDetail() {
     const response = await fetch('/api/agent/' + aid);
     const r = await response.json();
     document.getElementById("spFirstName").innerText = r.payload.name ?? "";
-    document.getElementById("txtFirstName").value = r.payload.name ?? "";
     document.getElementById("spLastName").innerText = r.payload.surname ?? "";
-    document.getElementById("txtLastName").value = r.payload.surname ?? "";
     document.getElementById("spPackage").innerText = r.payload.package_name ?? "";
-    document.getElementById("ddlPackage").value = r.payload.package_id.toString() ?? "";
     document.getElementById("spFee").innerText = r.payload.package_fee + " €" ?? "";
     document.getElementById("spCommission").innerText = r.payload.package_commission + " %" ?? "";
-    document.getElementById("spEmail").innerText = r.payload.email ?? "";
-    document.getElementById("txtEmail").value =r.payload.email ?? "";
-    document.getElementById("spPhone").innerText = r.payload.phone ?? "";
+    const email = r.payload.email?.trim() || '';
+    const phone = r.payload.phone?.trim() || '';
+    const branch = r.payload.branch_name?.trim() || '';
+    const contactSpan = document.getElementById("spContacts");
+    const contacts = [];
+    if (branch) contacts.push(`<i class="bi bi-house ms-3"></i> ${branch}`);
+    if (email) contacts.push(`<i class="bi bi-envelope ms-3"></i> ${email}`);
+    if (phone) contacts.push(`<i class="bi bi-telephone ms-3"></i> ${phone}`);
+    contactSpan.innerHTML = contacts.length > 0 ? contacts.join('  ') : 'contatti non inseriti';
+
+    // Input fields for edit modal
+    document.getElementById("txtFirstName").value = r.payload.name ?? "";
+    document.getElementById("txtLastName").value = r.payload.surname ?? "";
+    document.getElementById("ddlPackage").value = r.payload.package_id.toString() ?? "";
+    document.getElementById("txtEmail").value = r.payload.email ?? "";
     document.getElementById("txtPhone").value = r.payload.phone ?? "";
-    document.getElementById("spLocation").innerText = r.payload.branch_name ?? "";
     document.getElementById("ddlLocation").value = r.payload.branch_id ?? 1;
-}
-
-function allowEditGeneralInfo() {
-    const valueControls = document.querySelectorAll('.valueControl');
-    const editControls = document.querySelectorAll('.editControl');
-    valueControls.forEach(valueControl => valueControl.classList.add('d-none'));
-    editControls.forEach(editControl => editControl.classList.remove('d-none'));
-    document.getElementById("iconSaveEditGenericInfo").classList.remove('d-none');
-    document.getElementById("iconCancelEditGenericInfo").classList.remove('d-none');
-    document.getElementById("iconAllowEditGenericInfo").classList.add('d-none');
-}
-
-function cancelEditGeneralInfo() {
-    const valueControls = document.querySelectorAll('.valueControl');
-    const editControls = document.querySelectorAll('.editControl');
-    valueControls.forEach(valueControl => valueControl.classList.remove('d-none'));
-    editControls.forEach(editControl => editControl.classList.add('d-none'));
-    document.getElementById("iconSaveEditGenericInfo").classList.add('d-none');
-    document.getElementById("iconCancelEditGenericInfo").classList.add('d-none');
-    document.getElementById("iconAllowEditGenericInfo").classList.remove('d-none');
 }
 
 async function updateGenericInfo() {
@@ -87,8 +76,10 @@ async function updateGenericInfo() {
         });
         const res = await response.json();
         if (res.result) {
+            const modalElement = document.getElementById('modalEditAgent');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            modal.hide();
             await loadAgentDetail();
-            cancelEditGeneralInfo();
         } else err.innerText = "Si sono verificati degli errori";
     } catch (error) {
         err.innerText = "Si sono verificati degli errori";
@@ -128,12 +119,12 @@ function showDeleteConfirmationModal(callback) {
     confirmButton.addEventListener("click", confirmButton.clickHandler);
 }
 
-async function loadAgentTransactions() {
+async function loadListOfReturnsAgent() {
     const aid = document.getElementById("hAgentId").value;
-    const response = await fetch(`/api/agent/${aid}/report`);
+    const response = await fetch(`/api/agent/${aid}/report-agent`);
     const res = await response.json();
     const hasData = res.payload.length > 0;
-    new DevExpress.ui.dxDataGrid(document.getElementById("listOfReport"), {
+    new DevExpress.ui.dxDataGrid(document.getElementById("listOfReturnsAgent"), {
         dataSource: res.payload,
         columnAutoWidth: true,
         showBorders: true,
@@ -152,15 +143,83 @@ async function loadAgentTransactions() {
                 }
             },
             {
-                caption: "Tipologia", allowFiltering: true,
+                caption: "Descrizione", allowFiltering: true,
                 calculateCellValue: function (data) {
                     switch (data.expense_type) {
-                        case 'A': return 'Acquisizione';
-                        case 'S': return 'Vendita';
-                        case 'E': return 'Extra';
-                        case 'P': return 'Pagamento provvigioni';
+                        case 'A': return data.property;
+                        case 'S': return data.property;
+                        case 'E': return data.reason;
+                        case 'P': return data.reason;
                         default: return '';
                     }
+                }
+            },
+            {
+                caption: "Valore",
+                allowFiltering: true,
+                alignment:"right",
+                cellTemplate: function (container, options) {
+                    const isPositive = options.data.expense_type === 'P';
+                    const colorClass = isPositive ? 'text-success' : 'text-danger';
+                    const value = formatNumber(options.data.value) + " €";
+                    $("<span>").addClass(colorClass).text(value).appendTo(container);
+                }
+            }
+        ],
+        paging: { pageSize: 10 },
+        pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
+        toolbar: {
+            items: [
+                "groupPanel",
+                {
+                    location: "after",
+                    widget: "dxNumberBox",
+                    options: {
+                        placeholder: "Importo",
+                        width: 150,
+                        showSpinButtons: false,
+                        min:0,
+                        elementAttr: { id: "txtAmountAgent" },
+                        inputAttr: { style: "text-align: right;" }
+                    }
+                },
+                {
+                    location: "after",
+                    widget: "dxButton",
+                    options: {
+                        icon: "plus",
+                        text: "Registra rientro",
+                        elementAttr: { id: "btnAddReturnAgent" },
+                        onClick: () => addReturn(true)
+                    }
+                }
+            ]
+        },
+        onContentReady: function () { updateSummary(true); }
+    });
+}
+
+async function loadListOfReturns() {
+    const aid = document.getElementById("hAgentId").value;
+    const response = await fetch(`/api/agent/${aid}/report`);
+    const res = await response.json();
+    const hasData = res.payload.length > 0;
+    new DevExpress.ui.dxDataGrid(document.getElementById("listOfReturns"), {
+        dataSource: res.payload,
+        columnAutoWidth: true,
+        showBorders: true,
+        rowAlternationEnabled: false,
+        groupPanel: { visible: hasData, emptyPanelText: "Trascina qui le colonne per raggruppare" },
+        filterRow: { visible: hasData, applyFilter: "auto" },
+        headerFilter: { visible: hasData },
+        columns: [
+            {
+                dataField: "dt",
+                caption: "Data",
+                allowFiltering: true,
+                calculateCellValue: function (data) {
+                    const d = (data.dt).split('-');
+                    return d[2] + '/' + d[1] + '/' + d[0];
                 }
             },
             {
@@ -169,8 +228,7 @@ async function loadAgentTransactions() {
                     switch (data.expense_type) {
                         case 'A': return data.property;
                         case 'S': return data.property;
-                        case 'E': return data.reason;
-                        case 'P': return '';
+                        case 'P': return data.reason;
                         default: return '';
                     }
                 }
@@ -181,7 +239,7 @@ async function loadAgentTransactions() {
                 alignment:"right",
                 cellTemplate: function (container, options) {
                     const isPositive = options.data.expense_type === 'P';
-                    const colorClass = isPositive ? 'text-success' : 'text-danger';
+                    const colorClass = isPositive ? 'text-danger' : 'text-success';
                     const value = formatNumber(options.data.value) + " €";
                     $("<span>").addClass(colorClass).text(value).appendTo(container);
                 }
@@ -210,19 +268,20 @@ async function loadAgentTransactions() {
                     options: {
                         icon: "plus",
                         text: "Registra pagamento",
-                        elementAttr: { id: "btnAddPayment" },
-                        onClick: addPayment
+                        elementAttr: { id: "btnAddReturn" },
+                        onClick: () => addReturn(false)
                     }
                 }
             ]
         },
-        onContentReady: function () {updateSummary();}
+        onContentReady: function () { updateSummary(false); }
     });
 }
 
-async function addPayment() {
+async function addReturn(isAgent) {
     const aid = document.getElementById("hAgentId").value;
-    const amount = $("#txtAmount").dxNumberBox("instance").option("value");
+    const txtAmounId = isAgent ? "txtAmountAgent" : "txtAmount";
+    const amount = $("#" + txtAmounId).dxNumberBox("instance").option("value");
     if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
         DevExpress.ui.notify("Inserisci un importo valido", "warning", 2000);
         return;
@@ -231,25 +290,22 @@ async function addPayment() {
         const response = await fetch(`/api/agent/${aid}/payment`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ amount: parseFloat(amount) })
+            body: JSON.stringify({ amount: parseFloat(amount), is_agent: isAgent })
         });
-
         const result = await response.json();
-
         if (result.result) {
             DevExpress.ui.notify("Pagamento registrato con successo", "success", 2000);
-            $("#txtAmount").dxNumberBox("instance").option("value", ""); // reset
-        } else {
-            DevExpress.ui.notify("Errore: " + result.message, "error", 3000);
-        }
+            $("#" + txtAmounId).dxNumberBox("instance").option("value", ""); // reset
+            isAgent ? await loadListOfReturnsAgent() : await loadListOfReturns();
+        } else DevExpress.ui.notify("Errore: " + result.message, "error", 3000);
     } catch (error) {
         DevExpress.ui.notify("Errore di rete o server", "error", 3000);
         console.error(error);
     }
 }
 
-function updateSummary() {
-    const grid = $("#listOfReport").dxDataGrid("instance");
+function updateSummary(isAgent) {
+    const grid = $("#listOfReturns" + (isAgent ? "Agent" : "")).dxDataGrid("instance");
     const rows = grid.getVisibleRows();
     let total = 0;
     rows.forEach(row => {
@@ -261,5 +317,5 @@ function updateSummary() {
     });
     const formatted = total.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
     const colorClass = total >= 0 ? "text-success" : "text-danger";
-    $("#spSummary").removeClass("text-success text-danger").addClass(colorClass).text(formatted);
+    $("#spBalanceReturn" + (isAgent ? "Agent" : "")).removeClass("text-success text-danger").addClass(colorClass).text(formatted);
 }

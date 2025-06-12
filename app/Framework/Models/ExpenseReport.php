@@ -13,7 +13,7 @@ final class ExpenseReport {
         $search = isset($_GET['search']) ? trim($_GET['search']) : "";
         $q = <<<query
             select er.*, a.id as agent_id, concat(a.name, ' ', a.surname) as agent_name, a.branch_id, b.name as branch_name 
-            from expense_report as er 
+            from expense_report_agent as er 
             left join agent as a on er.agent = a.id
             left join branch as b on a.branch_id = b.id
         query;
@@ -63,7 +63,7 @@ final class ExpenseReport {
         $agent_id = $data['agent_id'] ?? 0;
         $cost = $data['cost'] ?? 0;
         $reason = $data['reason'] ?? "";
-        $q = "INSERT INTO expense_report (agent, dt, reason, value, ucr) VALUES (?,?,?,?,?)";
+        $q = "INSERT INTO expense_report_agent (agent, dt, reason, value, ucr) VALUES (?,?,?,?,?)";
         $params = [$agent_id, $date, $reason, $cost, $user_id];
         $row_affected = DB::Execute($q, $params);
         if ($row_affected == 0) throw new Exception("Error while insert expense report", 500);
@@ -84,7 +84,7 @@ final class ExpenseReport {
         $agent_id = $data['agent_id'] ?? 0;
         $cost = $data['cost'] ?? 0;
         $reason = $data['reason'] ?? "";
-        $q = 'UPDATE expense_report SET agent = ?, dt = ?, reason = ?, value = ?, ucr = ? WHERE id = ?';
+        $q = 'UPDATE expense_report_agent SET agent = ?, dt = ?, reason = ?, value = ?, ucr = ? WHERE id = ?';
         $params = [$agent_id, $date, $reason, $cost, $user_id, $id];
         $row_affected = DB::Execute($q, $params);
         if($row_affected == 0) throw new Exception("Error while updating expene report", 500);
@@ -98,7 +98,7 @@ final class ExpenseReport {
     public static function Delete($request, $response) {
         $id = $request->getAttribute('id');
         if (!$id) throw new Exception('Expense report ID is required', 400);
-        $q = "DELETE from expense_report WHERE id = ?";
+        $q = "DELETE from expense_report_agent WHERE id = ?";
         $params = [$id];
         $row_affected = DB::Execute($q, $params);
         if($row_affected == 0) throw new Exception("Error while deleting the expense report", 500);

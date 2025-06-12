@@ -28,6 +28,10 @@ class AgentRoutes {
             return Agent::GetReport($request, $response);
         })->add($this->authMiddleware);
 
+        $group->get('/{id}/report-agent', function (Request $request, Response $response) {
+            return Agent::GetReportAgent($request, $response);
+        })->add($this->authMiddleware);
+
         $group->delete('/{id}', function (Request $request, Response $response) {
             return Agent::Delete($request, $response);
         })->add($this->authMiddleware);

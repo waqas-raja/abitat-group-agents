@@ -62,6 +62,22 @@ final class Agent {
     /**
      * @throws Exception
      */
+    public static function GetReportAgent($request, $response) {
+        $agent_id = (int)$request->getAttribute('id');
+        $q = <<<query
+            select e.* 
+            from expense_report_agent as e
+            where e.agent = ?
+            order by e.dtcr desc
+        query;
+        $rows = DB::Query($q, [$agent_id]);
+        $response->getBody()->write(json_encode(["payload" => $rows]));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
+    /**
+     * @throws Exception
+     */
     public static function Delete($request, $response) {
         $aid = (int)$request->getAttribute('id');
         $row_affected = DB::Execute("update agent set enabled = 0 where id = ?", [$aid]);
@@ -118,12 +134,15 @@ final class Agent {
             $aid = (int)$request->getAttribute('id');
             $data = json_decode($request->getBody()->getContents(), true);
             $amount = $data['amount'] ?? 0;
+            $isAgent = $data['is_agent'];
             if($amount <= 0) throw new Exception("Amount must be greater than 0", 400);
             $now = (new \DateTime("now", new \DateTimeZone("Europe/Rome")))->format('Y-m-d');
-            $q = "insert into expense_report (agent, expense_type, dt, reason, value, ucr) values (?,?,?,?,?,?)";
-            $params = [$aid, "P", $now, "Pagamento provvigioni", $amount, $user_id];
+            $reason = $isAgent ? "Pagamento rientro" : "Pagamento provvigione";
+            $tbl = $isAgent ? "expense_report_agent" : "expense_report";
+            $q = "insert into $tbl (agent, expense_type, dt, reason, value, ucr) values (?,?,?,?,?,?)";
+            $params = [$aid, "P", $now, $reason, $amount, $user_id];
             $row_affected = DB::Execute($q, $params);
-            if ($row_affected == 0) throw new Exception("Error while insert record in expense_report for agent $aid and amount $amount", 500);
+            if ($row_affected == 0) throw new Exception("Error while insert record in $tbl for agent $aid and amount $amount", 500);
             $response->getBody()->write(json_encode(["result" => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
@@ -163,7 +182,7 @@ final class Agent {
         $row_affected = DB::Execute($q, $params);
         if ($row_affected == 0) throw new Exception("Error while updating agent", 500);
         //se è cambiato il pacchetto aggiorno i dati
-        if($curr['package_id'] == $package_id) {
+        if($curr['package_id'] != $package_id) {
             $row = DB::Query("select * from package where id = ?", [$package_id]);
             if(count($row) == 0) throw new Exception("Package $package_id not found", 400);
             $package_name = $row[0]["name"];
