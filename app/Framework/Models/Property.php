@@ -202,21 +202,26 @@ final class Property
             $acquisition_agency_value = $res[0]["acquisition_agency_value"];
 
             //creo il record in expense_report per l'acquisizione
-            $agencyAmount = $sale_price * $acquisition_agency_percentage / 100;
+            if($acquisition_agency_percentage > 0) $agencyAmount = $sale_price * $acquisition_agency_percentage / 100;
+            else $agencyAmount = $acquisition_agency_value;
             $commissionValue = $agencyAmount * $acquisition_agent_percentage / 100;
             $msg = "Commissione agente del $acquisition_agent_percentage% sull'importo di $agencyAmount (importo vendita $sale_price - commissione agenzia $acquisition_agency_percentage%)";
             $q = "insert into expense_report (agent, property, expense_type, dt, reason, value, ucr) values (?,?,?,?,?,?,?)";
             $params = [$acquisition_agent_id, $property_id, "A", $acquisition_date, $msg, $commissionValue, $user_id];
             $row_affected = DB::Execute($q, $params);
             if($row_affected == 0) throw new Exception("Error while insert record in expense_report for acquisition. Query: $q :: " . json_encode($params), 500);
+
             //creo il record in expense_report per la vendita
-            $agencyAmount = $sale_price * $sale_agency_percentage / 100;
+            if($sale_agency_percentage > 0) $agencyAmount = $sale_price * $sale_agency_percentage / 100;
+            else $agencyAmount = $sale_agency_value;
             $commissionValue = $agencyAmount * $sale_agent_percentage / 100;
             $msg = "Commissione agente del $sale_agent_percentage% sull'importo di $agencyAmount (importo vendita $sale_price - commissione agenzia $sale_agency_percentage%)";
             $q = "insert into expense_report (agent, property, expense_type, dt, reason, value, ucr) values (?,?,?,?,?,?,?)";
             $params = [$sale_agent_id, $property_id, "S", $sale_date, $msg, $commissionValue, $user_id];
             $row_affected = DB::Execute($q, $params);
             if($row_affected == 0) throw new Exception("Error while insert record in expense_report for sale. Query: $q :: " . json_encode($params), 500);
+
+
             $response->getBody()->write(json_encode(["result" => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
