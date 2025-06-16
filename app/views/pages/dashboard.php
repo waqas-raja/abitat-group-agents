@@ -4,18 +4,22 @@ ob_start();
 ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div id="dashboard">
-    <div class="pai-card">
-        <div class="row">
-            <div class="col-3">
-                <h3>Migliori 5 Agenti</h3>
+    <div class="pai-card mb-3">
+        <span class="pai-title">Dashboard</span>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="pai-card">
                 <div id="listTop10Agents"></div>
             </div>
-            <div class="col-3">
-                <h3>Tipologie</h3>
+        </div>
+        <div class="col-4">
+            <div class="pai-card">
                 <div id="statsPie"></div>
             </div>
-            <div class="col-6">
-                <h3>Vendite ultimo anno</h3>
+        </div>
+        <div class="col-4">
+            <div class="pai-card">
                 <div id="statsHistogram"></div>
             </div>
         </div>

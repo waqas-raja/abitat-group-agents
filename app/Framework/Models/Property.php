@@ -67,12 +67,13 @@ final class Property
             $acquisition_date = $data['acquisition_date'] ? date("Y-m-d", strtotime($data['acquisition_date'])) : date("Y-m-d");
             $acquisition_price = $data['acquisition_price'] ?? 0;
             $acquisition_agency_percentage = $data['acquisition_agency_percentage'] ?? 0;
+            $acquisition_agency_value = $data['acquisition_agency_value'] ?? 0;
             $acquisition_agent_id = $data['acquisition_agent_id'] ?? 0;
             $mandate_expiration = $data['mandate_expiration'] ? date("Y-m-d", strtotime($data['mandate_expiration'])) : date("Y-m-d");
             $res = DB::Query("select package_commission from agent where id = ?", [$acquisition_agent_id]);
             $acquisition_agent_percentage = $res[0]["package_commission"];
-            $q = "INSERT INTO property (address, city, branch_id, property_type, acquisition_date, acquisition_price, acquisition_agent_percentage, acquisition_agency_percentage, acquisition_agent_id, mandate_expiration, ucr) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-            $params = [$address, $city, $branch_id, $property_type, $acquisition_date, $acquisition_price, $acquisition_agent_percentage, $acquisition_agency_percentage, $acquisition_agent_id, $mandate_expiration, $user_id];
+            $q = "INSERT INTO property (address, city, branch_id, property_type, acquisition_date, acquisition_price, acquisition_agent_percentage, acquisition_agency_percentage, acquisition_agency_value, acquisition_agent_id, mandate_expiration, ucr) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+            $params = [$address, $city, $branch_id, $property_type, $acquisition_date, $acquisition_price, $acquisition_agent_percentage, $acquisition_agency_percentage, $acquisition_agency_value, $acquisition_agent_id, $mandate_expiration, $user_id];
             $row_affected = DB::Execute($q, $params);
             if($row_affected == 0) throw new Exception("Error while insert new property. Query: $q :: " . json_encode($params), 500);
             //recupero l'id dell'agente creato
@@ -140,6 +141,7 @@ final class Property
             $sale_date = $data['sale_date'] ? date("Y-m-d", strtotime($data['sale_date'])) : date("Y-m-d");
             $sale_price = $data['sale_price'] ?? 0;
             $sale_agency_percentage = $data['sale_agency_percentage'] ?? 0;
+            $sale_agency_value = $data['sale_agency_value'] ?? 0;
             $sale_agent_id = $data['sale_agent_id'] ?? 0;
             $sale_down_payment = $data['sale_down_payment'] ?? 0;
             $external_agency = $data['external_agency'] ?? "N";
@@ -153,6 +155,7 @@ final class Property
                     sale_date = ?, 
                     sale_price = ?, 
                     sale_agency_percentage = ?, 
+                    sale_agency_value = ?, 
                     sale_agent_id = ?, 
                     sale_agent_percentage = ?,
                     sale_down_payment = ?, 
@@ -166,6 +169,7 @@ final class Property
                 $sale_date,
                 $sale_price,
                 $sale_agency_percentage,
+                $sale_agency_value,
                 $sale_agent_id,
                 $sale_agent_percentage,
                 $sale_down_payment,
@@ -178,13 +182,25 @@ final class Property
             $row_affected = DB::Execute($q, $params);
             if ($row_affected == 0) throw new Exception("Error while marking the property sold. Query: $q :: " . json_encode($params), 500);
             //recupero i dati di acquisizione
-            $res = DB::Query("select acquisition_date, acquisition_price, acquisition_agent_id, acquisition_agent_percentage, acquisition_agency_percentage from property where id = ?", [$property_id]);
+            $q = <<<query
+                select 
+                    acquisition_date,  
+                    acquisition_agent_id, 
+                    acquisition_agent_percentage, 
+                    acquisition_agency_percentage, 
+                    acquisition_agency_value 
+                from property 
+                where id = ?
+            query;
+
+            $res = DB::Query($q, [$property_id]);
             if(count($res) == 0) throw new Exception("Property $property_id not found. Query: $q :: " . json_encode($params), 500);
             $acquisition_date = $res[0]["acquisition_date"];
-            $acquisition_price = $res[0]["acquisition_price"];
             $acquisition_agent_id = $res[0]["acquisition_agent_id"];
             $acquisition_agent_percentage = $res[0]["acquisition_agent_percentage"];
             $acquisition_agency_percentage = $res[0]["acquisition_agency_percentage"];
+            $acquisition_agency_value = $res[0]["acquisition_agency_value"];
+
             //creo il record in expense_report per l'acquisizione
             $agencyAmount = $sale_price * $acquisition_agency_percentage / 100;
             $commissionValue = $agencyAmount * $acquisition_agent_percentage / 100;
@@ -200,7 +216,7 @@ final class Property
             $q = "insert into expense_report (agent, property, expense_type, dt, reason, value, ucr) values (?,?,?,?,?,?,?)";
             $params = [$sale_agent_id, $property_id, "S", $sale_date, $msg, $commissionValue, $user_id];
             $row_affected = DB::Execute($q, $params);
-            if($row_affected == 0) throw new Exception("Error while insert record in expense_report. Query: $q :: " . json_encode($params), 500);
+            if($row_affected == 0) throw new Exception("Error while insert record in expense_report for sale. Query: $q :: " . json_encode($params), 500);
             $response->getBody()->write(json_encode(["result" => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {

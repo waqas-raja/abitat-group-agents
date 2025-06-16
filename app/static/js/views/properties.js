@@ -106,10 +106,12 @@ async function loadList() {
                     },
                     {
                         dataField: "acquisition_agency_percentage",
-                        caption: "% Abitat",
+                        caption: "AbitatGroup",
                         allowFiltering: false,
                         calculateCellValue: function (data) {
-                            return (data.acquisition_agency_percentage) + " %";
+                            if (data.acquisition_agency_percentage !== null && data.acquisition_agency_percentage > 0) return data.acquisition_agency_percentage + " %";
+                            else if (data.acquisition_agency_value !== null && data.acquisition_agency_value > 0) return data.acquisition_agency_value + " €";
+                            else return '';
                         }
                     },
                     { dataField: "acquisition_agent", caption: "Agente", allowFiltering: true },
@@ -162,10 +164,11 @@ async function loadList() {
                     },
                     {
                         dataField: "sale_percentage",
-                        caption: "% Abitat",
+                        caption: "AbitatGroup",
                         allowFiltering: false,
                         calculateCellValue: function (data) {
                             if (data.sale_agency_percentage !== null && data.sale_agency_percentage > 0) return data.sale_agency_percentage + " %";
+                            else if (data.sale_agency_value !== null && data.sale_agency_value > 0) return data.sale_agency_value + " €";
                             else return '';
                         }
                     },
@@ -286,6 +289,7 @@ async function saveProperty() {
     const propertyAcquisitionDate = $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("text");
     const propertyAcquisitionPrice = document.getElementById("txtPropertyAcquisitionPrice").value.trim();
     const agencyCommission = document.getElementById("txtAgencyPropertyCommission").value.trim();
+    const agencyCommissionType = parseInt(document.getElementById("ddlAgencyPropertyCommissionType").value.trim());
     const acquisitionAgent = parseInt(document.getElementById("ddlAcquisitionAgent").value);
     const propertyExpireDate = $("#txtPropertyExpireDate").dxDateBox("instance").option("text");
     const result = document.getElementById("spNewPorpertyResult");
@@ -315,7 +319,8 @@ async function saveProperty() {
                 "city": city,
                 "acquisition_date": propertyAcquisitionDate,
                 "acquisition_price": parseFloat(propertyAcquisitionPrice),
-                "acquisition_agency_percentage": parseInt(agencyCommission),
+                "acquisition_agency_percentage": agencyCommissionType === 1 ? parseInt(agencyCommission) : 0,
+                "acquisition_agency_value": agencyCommissionType === 2 ? parseInt(agencyCommission) : 0,
                 "acquisition_agent_id": acquisitionAgent,
                 "mandate_expiration": propertyExpireDate
             })
@@ -331,7 +336,6 @@ async function saveProperty() {
             spinner.classList.add("d-none");
             $('#modalAddProperty').modal('hide');
         } else {
-            debugger;
             throw new Error("Si sono verificati degli errori");
         }
     } catch (error) {
@@ -360,8 +364,10 @@ function showModalAddEditProperty(res, modalTitle) {
     $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("disabled", isDetail);
     document.getElementById('txtPropertyAcquisitionPrice').value = isDetail ? prop.acquisition_price : '';
     document.getElementById('txtPropertyAcquisitionPrice').disabled = isDetail;
-    document.getElementById('txtAgencyPropertyCommission').value = isDetail ? prop.acquisition_agency_percentage : '3';
+    document.getElementById('txtAgencyPropertyCommission').value = isDetail ? (prop.acquisition_agency_percentage !== 0 && prop.acquisition_agency_percentage !== null ? prop.acquisition_agency_percentage : prop.acquisition_agency_value ) : '3';
+    document.getElementById('ddlAgencyPropertyCommissionType').value = isDetail ? (prop.acquisition_agency_percentage !== 0 && prop.acquisition_agency_percentage !== null ? 1 : 2 ) : 1;
     document.getElementById('txtAgencyPropertyCommission').disabled = isDetail;
+    document.getElementById('ddlAgencyPropertyCommissionType').disabled = isDetail;
     document.getElementById('ddlAcquisitionAgent').value = isDetail ? prop.acquisition_agent_id : '-1';
     document.getElementById('ddlAcquisitionAgent').disabled = isDetail;
     $("#txtPropertyExpireDate").dxDateBox("instance").option("value", isDetail ? new Date(prop.mandate_expiration) : '');
@@ -384,8 +390,6 @@ function showModalAddEditProperty(res, modalTitle) {
         }
     }
 
-
-
     let btnAddPriceReduction = document.getElementById('btnAddPriceReduction');
     btnAddPriceReduction.classList.add('d-none');
     if (isDetail) {
@@ -399,7 +403,6 @@ function showModalAddEditProperty(res, modalTitle) {
             });
         }
     }
-
 
     const modalElement = document.getElementById("modalAddProperty");
     const modal = new bootstrap.Modal(modalElement);
@@ -434,6 +437,7 @@ async function savePropertyMarkedAsSold() {
     const date = $("#txtPropertySoldDate").dxDateBox("instance").option("text");
     const salePrice = document.getElementById("txtPropertySoldPrice").value;
     const commission = document.getElementById("txtAgencyPropertySoldCommission").value;
+    const commissionType = parseInt(document.getElementById("ddlAgencyPropertySoldCommissionType").value.trim());
     const agent = document.getElementById("ddlPropertySoldAgent").value;
     const saleDownPayment = document.getElementById("txtSaleDownPayment").value;
     const externalAgency = document.getElementById("ddlExternalAgencyType").value;
@@ -462,7 +466,8 @@ async function savePropertyMarkedAsSold() {
             body: JSON.stringify({
                 sale_date: date,
                 sale_price: parseInt(salePrice),
-                sale_agency_percentage: parseInt(commission),
+                sale_agency_percentage: commissionType === 1 ? parseInt(commission): 0,
+                sale_agency_value: commissionType === 2 ? parseInt(commission) : 0,
                 sale_agent_id: parseInt(agent),
                 sale_down_payment: parseFloat(saleDownPayment),
                 external_agency: externalAgency,
