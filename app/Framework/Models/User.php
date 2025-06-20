@@ -1,6 +1,7 @@
 <?php
 namespace App\Framework\Models;
 
+use App\Framework\Tools\BrevoManager;
 use App\Framework\Tools\DB;
 use DateInterval;
 use DateTime;
@@ -100,30 +101,88 @@ final class User {
      * @throws RandomException
      * @throws Exception
      */
+    public static function ResetPasswordRequest($request, $response) {
+        try {
+            $token_info = self::GetTokenInfo($request);
+            $user_id = $token_info['id'];
+            $data = json_decode($request->getBody()->getContents(), true);
+            $emailTo = $data['email'] ?? '';
+            if($emailTo === '') throw new Exception("Email address is needed to send new pasword", 500);
+            $query = "SELECT id, name, surname from user where email = ?";
+            $row = DB::Query($query, [$emailTo]);
+            if (empty($row)) throw new Exception("L'e-mail fornita non è disponibile nel sistema", 500);
+            
+            // Fetch the password recovery template
+            $templatePath = 'static/template/psw-recovery.html';
+            if (!is_readable($templatePath)) throw new Exception("Cannot read the email template at path: {$templatePath}");
+            $emailContent = file_get_contents($templatePath);
+            $link = getenv('URL_SITE') . "/psw-recovery?usr={$row[0]['id']}";
+            $emailContent = str_replace('[LINK]', $link, $emailContent);
+            $isEmailSent = BrevoManager::email($emailTo, $emailContent);
+            if (!$isEmailSent) throw new Exception("Failed to send the password recovery email.");
+            $response->getBody()->write(json_encode(['result' => true]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $ex) {
+            error_log($ex->getMessage());
+            $response->getBody()->write(json_encode(['result' => false]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    }
+
+    public static function PasswordRecoveryChange($request, $response) {
+        try {
+            $body = $request->getBody()->getContents();
+            $data = json_decode($body, true);
+            $ip = $data["ip"] ?? "";
+            $user = $data["user"] ?? "";
+            $psw = $data["psw"] ?? "";
+            $confirm = $data["confirm"] ?? "";
+            if($ip == "" ||  $user == "" || $psw == "" || $confirm == "")
+                throw new Exception("Missing arguments", 400);
+            if($psw != $confirm)
+                throw new Exception("Passwords do not match", 400);
+            $q = "update user set psw = sha1(?), force_change_psw = 1 where id = ?";
+            $row_affected = DB::Execute($q, [$psw, $user]);
+            if($row_affected == 0) {
+                // DB::Execute("insert into attempt_failed (ip) values (?)", [$ip]);
+                throw new Exception("Error while updating user password", 500);
+            }
+            $response->getBody()->write(json_encode(['result' => true]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $ex) {
+            error_log($ex->getMessage());
+            $response->getBody()->write(json_encode(['result' => false]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+    }
+
+    /**
+     * @throws RandomException
+     * @throws Exception
+     */
     public static function ResetPassword($request, $response) {
         $token_info = self::GetTokenInfo($request);
         $user_id = $token_info['id'];
         $data = json_decode($request->getBody()->getContents(), true);
         $emailTo = $data['email'] ?? '';
         if($emailTo === '') throw new Exception("Email address is needed to send new pasword", 500);
-
-        $query = "SELECT id from user where email = ?";
+        $query = "SELECT id, name, surname from user where email = ?";
         $row = DB::Query($query, [$emailTo]);
         if (empty($row)) throw new Exception("L'e-mail fornita non è disponibile nel sistema", 500);
-
         $rnd_psw = bin2hex(random_bytes(16));
         // $rnd_psw = 'Test123#';
         $q = "update user set psw = sha1(?), force_change_psw = 1 where id = ?";
         $params = [$rnd_psw, $row[0]['id']];
         $row_affected = DB::Execute($q, $params);
         if($row_affected == 0) throw new Exception("Error updating user password", 500);
+        $name = $row[0]['name'] . ' ' . $row[0]['surname'];
         //TODO send transactional email with new psw
         // Load environment variables
-        $API_KEY = getenv('BREVO_API_KEY');
-        $SENDER_EMAIL = getenv('SENDER_EMAIL');
-        $SENDER_NAME = getenv('SENDER_NAME');
-        $BASE_URI = getenv('BASE_URI');
-
+        $API_KEY = getenv('BREVO_PSW');
+        $SENDER_EMAIL = getenv('BREVO_USER');
+        $SENDER_NAME = getenv('BREVO_USER');
+        $BASE_URI = getenv('URL_SITE');
+        
         $client = new Client([
             'base_uri' => $BASE_URI,
             'verify' => false,
@@ -133,7 +192,7 @@ final class User {
                 'api-key' => $API_KEY
             ]
         ]);
-    
+        
         $body = [
             'sender' => [
                 'name' => $SENDER_NAME,
@@ -142,15 +201,15 @@ final class User {
             'to' => [
                 [
                     'email' => $emailTo,
-                    'name' => $emailTo
+                    'name' => $name
                 ]
             ],
             'subject' => 'Your New Password',
-            'htmlContent' => "<p>Hello $emailTo,</p>
+            'htmlContent' => "<p>Hello $name,</p>
                               <p>Your new password is: <b>$rnd_psw</b></p>
                               <p>Please change it after logging in.</p>"
         ];
-
+        
         try {
             $res = $client->post('smtp/email', [
                 'json' => $body
