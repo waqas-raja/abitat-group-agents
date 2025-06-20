@@ -185,7 +185,7 @@ async function loadList() {
                 ]
             },
         ],
-        sorting: {mode: "multiple"},
+        sorting: { mode: "multiple" },
         masterDetail: {
             enabled: true,
             template: function (container, options) {
@@ -202,7 +202,7 @@ async function loadList() {
                     .appendTo(container);
                 $("<div>")
                     .text("Elenco delle riduzioni di prezzo")
-                    .css({"font-size": "1rem", "font-weight": "500"})
+                    .css({ "font-size": "1rem", "font-weight": "500" })
                     .appendTo(headerWrapper);
                 if (!propertyData.sale_date) {
                     $("<div>")
@@ -259,7 +259,7 @@ async function loadList() {
         remoteOperations: { paging: true, filtering: true, sorting: true },
         paging: { pageSize: 10 },
         pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
-        toolbar: { items: ["groupPanel", "searchPanel" ] },
+        toolbar: { items: ["groupPanel", "searchPanel"] },
         onRowPrepared: function (e) {
             if (e.rowType === 'data' && e.data.sale_date) {
                 $(e.rowElement).addClass('row-sold');
@@ -311,7 +311,7 @@ async function saveProperty() {
         const entrPoint = proID !== '' ? `/api/property/${proID}` : '/api/property';
         const response = await fetch(entrPoint, {
             method: proID === '' ? "POST" : "PATCH",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 "branch_id": location,
                 "property_type": type,
@@ -360,12 +360,15 @@ function showModalAddEditProperty(res, modalTitle) {
     document.getElementById('txtPropertyAddress').disabled = isDetail;
     document.getElementById('txtPropertyCity').value = isDetail ? prop.city : '';
     document.getElementById('txtPropertyCity').disabled = isDetail;
-    if(isDetail) $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("value", new Date(prop.acquisition_date));
+    if (isDetail) {
+        $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("value", new Date(prop.acquisition_date));
+        document.getElementById('enableAgencyCommissionModificationSec').classList.remove('d-none');
+    } else document.getElementById('enableAgencyCommissionModificationSec').classList.add('d-none');
     $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("disabled", isDetail);
     document.getElementById('txtPropertyAcquisitionPrice').value = isDetail ? prop.acquisition_price : '';
     document.getElementById('txtPropertyAcquisitionPrice').disabled = isDetail;
-    document.getElementById('txtAgencyPropertyCommission').value = isDetail ? (prop.acquisition_agency_percentage !== 0 && prop.acquisition_agency_percentage !== null ? prop.acquisition_agency_percentage : prop.acquisition_agency_value ) : '3';
-    document.getElementById('ddlAgencyPropertyCommissionType').value = isDetail ? (prop.acquisition_agency_percentage !== 0 && prop.acquisition_agency_percentage !== null ? 1 : 2 ) : 1;
+    document.getElementById('txtAgencyPropertyCommission').value = isDetail ? (prop.acquisition_agency_percentage !== 0 && prop.acquisition_agency_percentage !== null ? prop.acquisition_agency_percentage : prop.acquisition_agency_value) : '3';
+    document.getElementById('ddlAgencyPropertyCommissionType').value = isDetail ? (prop.acquisition_agency_percentage !== 0 && prop.acquisition_agency_percentage !== null ? 1 : 2) : 1;
     document.getElementById('txtAgencyPropertyCommission').disabled = isDetail;
     document.getElementById('ddlAgencyPropertyCommissionType').disabled = isDetail;
     document.getElementById('ddlAcquisitionAgent').value = isDetail ? prop.acquisition_agent_id : '-1';
@@ -449,7 +452,7 @@ async function savePropertyMarkedAsSold() {
         result.classList.remove("d-none");
         return;
     }
-    if(externalAgency !== "N" && (externalAgencyName === "" || externalAgencyValue === "0")) {
+    if (externalAgency !== "N" && (externalAgencyName === "" || externalAgencyValue === "0")) {
         result.innerText = "Indicare i dati dell'agenzia esterna";
         result.classList.remove("d-none");
         return;
@@ -462,11 +465,11 @@ async function savePropertyMarkedAsSold() {
     try {
         const response = await fetch('/api/property/sold/' + proID, {
             method: "PATCH",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 sale_date: date,
                 sale_price: parseInt(salePrice),
-                sale_agency_percentage: commissionType === 1 ? parseInt(commission): 0,
+                sale_agency_percentage: commissionType === 1 ? parseInt(commission) : 0,
                 sale_agency_value: commissionType === 2 ? parseInt(commission) : 0,
                 sale_agent_id: parseInt(agent),
                 sale_down_payment: parseFloat(saleDownPayment),
@@ -519,7 +522,7 @@ async function saveNewPrice() {
     try {
         const response = await fetch('/api/property/new-price/' + proID, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ new_price: parseInt(newPrice) })
         });
         const res = await response.json();
@@ -536,6 +539,51 @@ async function saveNewPrice() {
     } catch (error) {
         btn.disabled = false;
         spinner.classList.add("d-none");
+        result.classList.remove("d-none");
+        result.innerText = error.message !== undefined ? error.message : error;
+    }
+}
+
+function enableCommissionControlToModify(ele) {
+    document.getElementById('txtAgencyPropertyCommission').disabled = false;
+    document.getElementById('ddlAgencyPropertyCommissionType').disabled = false;
+    ele.classList.add('d-none');
+    ele.nextElementSibling.classList.remove('d-none');
+}
+
+function disableCommissionControl() {
+    document.getElementById('txtAgencyPropertyCommission').disabled = true;
+    document.getElementById('ddlAgencyPropertyCommissionType').disabled = true;
+    const ele = document.getElementById('lnkCancelCommissionModificaiton');
+    ele.parentNode.classList.add('d-none');
+    ele.parentNode.previousElementSibling.classList.remove('d-none');
+}
+
+async function updateAgencyCommision() {
+    const agencyCommission = document.getElementById("txtAgencyPropertyCommission").value.trim();
+    const agencyCommissionType = parseInt(document.getElementById("ddlAgencyPropertyCommissionType").value.trim());
+    const result = document.getElementById("spNewPorpertyResult");
+    if (agencyCommission === "") {
+        result.innerText = 'Si prega di compilare tutti i campi richiesti';
+        result.classList.remove("d-none");
+        return false;
+    }
+    result.classList.add("d-none");
+    result.innerText = "";
+    try {
+        const proID = document.getElementById('hEditProperty').value;
+        const response = await fetch(`/api/property/${proID}/agency-commission`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                "acquisition_agency_percentage": agencyCommissionType === 1 ? parseInt(agencyCommission) : 0,
+                "acquisition_agency_value": agencyCommissionType === 2 ? parseInt(agencyCommission) : 0,
+            })
+        });
+        const res = await response.json();
+        if (res.result) disableCommissionControl();
+        else throw new Error("Si sono verificati degli errori durante l'aggiornamento della commissione dell'agenzia");
+    } catch (error) {
         result.classList.remove("d-none");
         result.innerText = error.message !== undefined ? error.message : error;
     }

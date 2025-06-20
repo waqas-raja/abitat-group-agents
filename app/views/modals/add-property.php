@@ -65,13 +65,20 @@
                             <div class="row mb-3">
                                 <label for="txtAgencyPropertyCommission" class="col-sm-5 col-form-label">Commissione AbitatGroup<span class="text-danger ms-2">*</span></label>
                                 <div class="col-sm-7">
-                                    <div class="input-group">
+                                    <div class="input-group mb-1">
                                         <input type="number" class="form-control w-75" id="txtAgencyPropertyCommission" value="3">
                                         <!-- <span class="input-group-text">%</span> -->
                                         <select id="ddlAgencyPropertyCommissionType" class="form-select w-25">
                                             <option value="1">%</option>
                                             <option value="2">€</option>
                                         </select>
+                                    </div>
+                                    <div id="enableAgencyCommissionModificationSec" class="d-none">
+                                        <span id="" class="text-decoration-underline text-orange" role="button" onclick="enableCommissionControlToModify(this)">Modifica</span>
+                                        <span id="actionLinks" class="d-none">
+                                            <span class="text-success me-3" role="button" onclick="updateAgencyCommision(this)">Salva</span>
+                                            <span id="lnkCancelCommissionModificaiton" class="text-secondary" role="button" onclick="disableCommissionControl(this)">Annulla</span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
