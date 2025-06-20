@@ -39,6 +39,7 @@ body { font-family:"Lato", serif; font-size: 16px; }
 .text-small { font-size: 0.8em; }
 .pai-card { background: white; box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1); padding: 16px; border-radius: 5px; }
 .pai-title { font-size: 1.1em; }
+.btn-disabled { pointer-events:none; opacity:0.4; }
 
 #pieChartsPresentation .col:only-child { flex: 0 0 50%; max-width: 50%; }
 
@@ -63,6 +64,7 @@ body { font-family:"Lato", serif; font-size: 16px; }
 #login-forms img { display: none; width:200px; margin:20px auto; margin-top: 5% }
 #login-forms > .card { margin: 15px auto; }
 #togglePassword { top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer; color: #6c757d; font-size: 1.2rem; }
+.togglePassword { top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer; color: #6c757d; font-size: 1.2rem; }
 @media (max-width: 1180px) {
     #login-emotional { display: none !important; }
     #login-forms { width: 100% !important; display: block }

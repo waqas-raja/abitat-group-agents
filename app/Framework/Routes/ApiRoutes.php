@@ -38,9 +38,13 @@ class ApiRoutes {
                 return User::Dashboard($request, $response);
             })->add($this->authMiddleware);
 
-            $group->post('/reset-psw', function ($request, $response) {
-                return User::ResetPassword($request, $response);
+            $group->post('/reset-psw-request', function ($request, $response) {
+                return User::ResetPasswordRequest($request, $response);
             })->add($this->authMiddleware);
+
+            $group->post('/psw-recovery-change', function ($request, $response) {
+                return User::PasswordRecoveryChange($request, $response);
+            });
 
             // Entity's list routes
 

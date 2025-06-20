@@ -20,6 +20,12 @@ class AppRoutes {
             return $response->withHeader('Content-Type', 'text/html');
         });
 
+        $app->get('/psw-recovery', function ($request, $response) {
+            require_once __DIR__ . '/../../views/pages/psw-recovery.php';
+            $response->getBody()->write(ob_get_clean());
+            return $response->withHeader('Content-Type', 'text/html');
+        });
+
         $app->get('/settings', function ($request, $response) {
             ob_start();
             require_once __DIR__ . '/../../views/pages/settings.php';
