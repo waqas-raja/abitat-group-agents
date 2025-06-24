@@ -89,7 +89,7 @@ async function loadStatsPie() {
         const res = await response.json();
         const data = res.payload.filter(item => item.qt > 0);
         $("#statsPie").dxPieChart({
-            title: "In gestione",
+            title: "Immobili in gestione",
             dataSource: data,
             palette: softPalette,
             type: "pie",

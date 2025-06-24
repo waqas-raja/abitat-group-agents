@@ -257,9 +257,9 @@ async function loadList() {
             }
         },
         remoteOperations: { paging: true, filtering: true, sorting: true },
-        paging: { pageSize: 10 },
-        pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
-        toolbar: { items: ["groupPanel", "searchPanel"] },
+        paging: { pageSize: 20 },
+        pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20, 50], showInfo: true },
+        toolbar: { items: ["groupPanel", "searchPanel" ] },
         onRowPrepared: function (e) {
             if (e.rowType === 'data' && e.data.sale_date) {
                 $(e.rowElement).addClass('row-sold');
