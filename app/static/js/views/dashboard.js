@@ -1,10 +1,25 @@
-const softPalette = ["#AEC6CF", "#FFE4B5", "#D8BFD8", "#E6E6FA", "#F5F5DC", "#F0E68C"];
-// const softPalette = [
-//     "#C1CAD0", "#B7C8D1", "#ADC6D2", "#A3C4D3", "#98C2D4",
-//     "#8EC0D5", "#84BED6", "#7ABCD7", "#70BAD8", "#66B8D9",
-//     "#5BB5DB", "#51B3DC", "#47B1DD", "#3DAFDE", "#33ADDF",
-//     "#29ABE0", "#1EA9E1", "#14A7E2", "#0AA5E3", "#00A3E4"
-// ];
+const softPalette = [
+    "#AEC6CF", // Blue-gray
+    "#FFE4B5", // Moccasin
+    "#D8BFD8", // Thistle
+    "#E6E6FA", // Lavender
+    "#F5F5DC", // Beige
+    "#F0E68C", // Khaki
+    "#FADADD", // Pink Mist
+    "#E0FFFF", // Light Cyan
+    "#FFFACD", // Lemon Chiffon
+    "#F5DEB3", // Wheat
+    "#E0E0F8", // Light Lavender Blue
+    "#FFEFD5", // Papaya Whip
+    "#D1EEEE", // Light Turquoise
+    "#EED5D2", // Light Rose
+    "#C1FFC1", // Pale Green
+    "#FFF0F5", // Lavender Blush
+    "#F0FFF0", // Honeydew
+    "#FDF5E6", // Old Lace
+    "#FFDEAD", // Navajo White
+    "#FFEBCD"  // Blanched Almond
+];
 
 document.addEventListener("DOMContentLoaded", async () => {
     await Promise.all([
