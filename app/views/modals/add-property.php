@@ -73,7 +73,7 @@
                                             <option value="2">€</option>
                                         </select>
                                     </div>
-                                    <div id="enableAgencyCommissionModificationSec" class="d-none">
+                                    <div id="enableAgencyCommissionModificationSec" class="d-none text-end">
                                         <span id="" class="text-decoration-underline text-orange" role="button" onclick="enableCommissionControlToModify(this)">Modifica</span>
                                         <span id="actionLinks" class="d-none">
                                             <span class="text-success me-3" role="button" onclick="updateAgencyCommision(this)">Salva</span>
