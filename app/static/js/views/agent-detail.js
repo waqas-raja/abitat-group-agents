@@ -137,6 +137,7 @@ async function loadListOfReturnsAgent() {
                 dataField: "dt",
                 caption: "Data",
                 allowFiltering: true,
+                width:100,
                 calculateCellValue: function (data) {
                     const d = (data.dt).split('-');
                     return d[2] + '/' + d[1] + '/' + d[0];
@@ -212,11 +213,13 @@ async function loadListOfReturns() {
         groupPanel: { visible: hasData, emptyPanelText: "Trascina qui le colonne per raggruppare" },
         filterRow: { visible: hasData, applyFilter: "auto" },
         headerFilter: { visible: hasData },
+
         columns: [
             {
                 dataField: "dt",
                 caption: "Data",
                 allowFiltering: true,
+                width:100,
                 calculateCellValue: function (data) {
                     const d = (data.dt).split('-');
                     return d[2] + '/' + d[1] + '/' + d[0];
@@ -226,8 +229,8 @@ async function loadListOfReturns() {
                 caption: "Descrizione", allowFiltering: true,
                 calculateCellValue: function (data) {
                     switch (data.expense_type) {
-                        case 'A': return data.property;
-                        case 'S': return data.property;
+                        case 'A': return "ACQ - " + data.property;
+                        case 'S': return "VEN - " + data.property;
                         case 'P': return data.reason;
                         default: return '';
                     }

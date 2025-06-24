@@ -107,8 +107,8 @@ async function loadList(branch_id) {
             },
         ],
         remoteOperations: { paging: true, sorting: true },
-        paging: { pageSize: 10 },
-        pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20], showInfo: true },
+        paging: { pageSize: 20 },
+        pager: { showPageSizeSelector: true, allowedPageSizes: [5, 10, 20, 50], showInfo: true },
         toolbar: {
             items: ["groupPanel", "searchPanel"]
         },
