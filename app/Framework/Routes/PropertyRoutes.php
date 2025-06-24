@@ -29,6 +29,10 @@ class PropertyRoutes {
             return Property::Edit($request, $response);
         })->add($this->authMiddleware);
         
+        $group->patch('/{id}/agency-commission', function (Request $request, Response $response) {
+            return Property::UpdateAgencyCommission($request, $response);
+        })->add($this->authMiddleware);
+        
         $group->patch('/sold/{id}', function (Request $request, Response $response) {
             return Property::MarkAsSold($request, $response);
         })->add($this->authMiddleware);

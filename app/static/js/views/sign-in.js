@@ -66,7 +66,6 @@ async function signIn() {
             return;
         }
         const data = await response.json();
-        debugger;
         localStorage.setItem("uname", data.name);
         localStorage.setItem("urole", data.role);
         localStorage.setItem("ulocation", data.location);
@@ -94,7 +93,7 @@ async function recoverPassword() {
         return;
     }
     try {
-        const response = await fetch('/api/reset-psw', {
+        const response = await fetch('/api/reset-psw-request', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ email: email }),
