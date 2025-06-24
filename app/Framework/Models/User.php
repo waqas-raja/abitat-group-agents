@@ -101,24 +101,22 @@ final class User {
      * @throws RandomException
      * @throws Exception
      */
-    public static function ResetPasswordRequest($request, $response) {
+    public static function PasswordRecoveryRequest($request, $response) {
         try {
-            $token_info = self::GetTokenInfo($request);
-            $user_id = $token_info['id'];
-            $data = json_decode($request->getBody()->getContents(), true);
-            $emailTo = $data['email'] ?? '';
-            if($emailTo === '') throw new Exception("Email address is needed to send new pasword", 500);
-            $query = "SELECT id, name, surname from user where email = ?";
-            $row = DB::Query($query, [$emailTo]);
-            if (empty($row)) throw new Exception("L'e-mail fornita non è disponibile nel sistema", 500);
-            
+            $body = $request->getBody()->getContents();
+            $data = json_decode($body, true);
+            $email = $data['email'] ?? '';
+            if (empty($email)) throw new Exception('Email empty', 400);
+            $request_code = BrevoManager::generateCode(32);
+            $row_affected = DB::Execute("update user set request_code = ? where email = ?", [$request_code, $email]);
+            if ($row_affected == 0) throw new Exception("Email $email not found in database", 400);
             // Fetch the password recovery template
             $templatePath = 'static/template/psw-recovery.html';
             if (!is_readable($templatePath)) throw new Exception("Cannot read the email template at path: {$templatePath}");
             $emailContent = file_get_contents($templatePath);
-            $link = getenv('URL_SITE') . "/psw-recovery?usr={$row[0]['id']}";
+            $link = getenv('URL_SITE') . "/psw-recovery?code={$request_code}";
             $emailContent = str_replace('[LINK]', $link, $emailContent);
-            $isEmailSent = BrevoManager::email($emailTo, $emailContent);
+            $isEmailSent = BrevoManager::email($email, $emailContent);
             if (!$isEmailSent) throw new Exception("Failed to send the password recovery email.");
             $response->getBody()->write(json_encode(['result' => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
@@ -134,18 +132,18 @@ final class User {
             $body = $request->getBody()->getContents();
             $data = json_decode($body, true);
             $ip = $data["ip"] ?? "";
-            $user = $data["user"] ?? "";
+            $code = $data["code"] ?? "";
             $psw = $data["psw"] ?? "";
             $confirm = $data["confirm"] ?? "";
-            if($ip == "" ||  $user == "" || $psw == "" || $confirm == "")
+            if($ip == "" ||  $code == "" || $psw == "" || $confirm == "")
                 throw new Exception("Missing arguments", 400);
             if($psw != $confirm)
                 throw new Exception("Passwords do not match", 400);
-            $q = "update user set psw = sha1(?), force_change_psw = 1 where id = ?";
-            $row_affected = DB::Execute($q, [$psw, $user]);
+            $q = "update user set psw = sha1(?), request_code = '' where request_code = ?";
+            $row_affected = DB::Execute($q, [$psw, $code]);
             if($row_affected == 0) {
-                // DB::Execute("insert into attempt_failed (ip) values (?)", [$ip]);
-                throw new Exception("Error while updating user password", 500);
+                DB::Execute("insert into attempt_failed (ip) values (?)", [$ip]);
+                throw new Exception("Error updating user password", 500);
             }
             $response->getBody()->write(json_encode(['result' => true]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);

@@ -1,5 +1,5 @@
 window.addEventListener('load', async () => {
-    if (window.location.pathname === '/') return;
+    if (window.location.pathname === '/' || window.location.pathname === '/psw-recovery') return;
     handleSidebarExpension();
     setUserLoggedSettings();
     setCopyright();
