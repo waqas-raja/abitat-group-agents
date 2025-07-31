@@ -20,13 +20,12 @@ final class BrevoManager {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = (int)$smtpPort;
             $mail->setFrom($smtpUser, 'Team Icon');
-            // $mail->addAddress($to);
-            $mail->addAddress('waqasraja9@gmail.com');
+            $mail->addAddress($to);
             $mail->isHTML(true);
             $mail->Subject = 'Reset Password';
             $mail->Body    = $body;
             return $mail->send();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Mailer Error: " . $mail->ErrorInfo);
             return false;
         }

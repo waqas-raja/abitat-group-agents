@@ -26,19 +26,19 @@ function togglePassword(isConfirm) {
 
 async function pswRecovery() {
     const urlParams = new URLSearchParams(window.location.search);
-    const usr_id = urlParams.get('usr');
+    const code = urlParams.get('code');
     const ip = await get_user_ip();
     const pswNew = document.getElementById('txtNewPsw').value.trim();
     const pswConfirm = document.getElementById('txtConfirmPsw').value.trim();
     const msg = document.getElementById('spPswRecoveryResult');
     msg.textContent = '';
     if (!pswNew || !pswConfirm) {
-        msg.textContent = it ? 'Entrambi i campi sono obbligatori.' : "Both fields are required";
+        msg.textContent = 'Entrambi i campi sono obbligatori.';
         msg.classList.add('text-danger');
         return;
     }
     if (pswNew !== pswConfirm) {
-        msg.textContent = it ? 'Le password non risultano uguali.' : 'Passwords do not match.';
+        msg.textContent = 'Le password non risultano uguali.';
         msg.classList.add('text-danger');
         return;
     }
@@ -48,26 +48,26 @@ async function pswRecovery() {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 ip:ip,
-                user:usr_id,
+                code:code,
                 psw:pswNew,
                 confirm:pswConfirm,
             })
         });
         if (!response.ok) {
             const error = await response.json();
-            msg.textContent = error.message || (it ? 'Credenziali non valide.' : "Invalid credentials");
+            msg.textContent = error.message || ('Credenziali non valide.');
             msg.classList.add('text-danger');
             return;
         }
         const data = await response.json();
         if(!data.result) {
-            msg.textContent = it ? 'Si sono verificati degli errori durante il salvataggio.' : "An error occurred while saving";
+            msg.textContent = 'Si sono verificati degli errori durante il salvataggio.';
             msg.classList.add('text-danger');
             return;
         }
         window.location.href = '/';
     } catch (error) {
-        msg.textContent = it ? 'Si è verificato un errore. Riprova più tardi.' : "An error occurred. Please try again later";
+        msg.textContent = 'Si è verificato un errore. Riprova più tardi.';
         msg.classList.add('text-danger');
         console.error('Errore durante il login:', error);
     }

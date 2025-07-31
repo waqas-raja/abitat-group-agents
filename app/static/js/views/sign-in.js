@@ -81,7 +81,6 @@ async function recoverPassword() {
     const email = document.getElementById('txtRecoveryEmail').value.trim();
     const msg = document.getElementById('spRecoveryResult');
     msg.textContent = '';
-    msg.classList.remove("text-danger", "text-success");
     if (!email) {
         msg.textContent = 'Il campo email è obbligatorio.';
         msg.classList.add('text-danger');
@@ -93,25 +92,27 @@ async function recoverPassword() {
         return;
     }
     try {
-        const response = await fetch('/api/reset-psw-request', {
+        const response = await fetch('/api/psw-recovery-request', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ email: email }),
         });
         if (!response.ok) {
             const error = await response.json();
-            msg.textContent = error.error || 'Recupero password fallito.';
+            msg.textContent = error.message || 'Recupero password fallito.';
             msg.classList.add('text-danger');
             return;
         }
         const data = await response.json();
-        if(data.result) {
-            msg.textContent = 'Email di recupero inviata con successo! Controlla la tua casella di posta.';
-            msg.classList.add('text-success');
-        } else {
-            msg.textContent = 'Si sono verificati degli errori.';
+        if(!data.result) {
+            const error = await response.json();
+            msg.textContent = error.message || 'Recupero password fallito.';
             msg.classList.add('text-danger');
+            return;
         }
+        msg.innerHTML = 'Email di recupero inviata con successo!<br>Controlla la tua casella di posta.';
+        msg.classList.remove('text-danger');
+        msg.classList.add('text-success');
     } catch (error) {
         msg.textContent = 'Si è verificato un errore. Riprova più tardi.';
         msg.classList.add('text-danger');

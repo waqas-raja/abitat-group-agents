@@ -38,9 +38,9 @@ class ApiRoutes {
                 return User::Dashboard($request, $response);
             })->add($this->authMiddleware);
 
-            $group->post('/reset-psw-request', function ($request, $response) {
-                return User::ResetPasswordRequest($request, $response);
-            })->add($this->authMiddleware);
+            $group->post('/psw-recovery-request', function ($request, $response) {
+                return User::PasswordRecoveryRequest($request, $response);
+            });
 
             $group->post('/psw-recovery-change', function ($request, $response) {
                 return User::PasswordRecoveryChange($request, $response);
