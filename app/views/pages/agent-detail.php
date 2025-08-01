@@ -33,7 +33,7 @@
                     <p class="lato-black text-blue mb-0">
                         <i class="bi bi-cash-coin me-2"></i>Provvigioni
                     </p>
-                    <span id="spBalanceReturnAgent" class="fw-bold"></span>
+                    <span id="spBalanceReturn" class="fw-bold"></span>
                 </div>
                 <div id="listOfReturns" class="mt-3"></div>
             </div>
@@ -44,7 +44,7 @@
                     <p class="lato-black text-blue mb-0">
                         <i class="bi bi-arrow-return-left me-2"></i>Rientri
                     </p>
-                    <span id="spBalanceReturn" class="fw-bold"></span>
+                    <span id="spBalanceReturnAgent" class="fw-bold"></span>
                 </div>
                 <div id="listOfReturnsAgent" class="mt-3"></div>
             </div>
