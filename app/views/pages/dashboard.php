@@ -4,9 +4,6 @@ ob_start();
 ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div id="dashboard">
-    <div class="pai-card mb-3">
-        <span class="pai-title">Dashboard</span>
-    </div>
     <div class="row">
         <div class="col-4">
             <div class="pai-card">
