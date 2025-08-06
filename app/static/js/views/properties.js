@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         populateDropdown('ddlPropertyLocation', 'branches', '--Seleziona la sede--'),
         populateDropdown('ddlPropertyType', 'property-types', '--Seleziona il tipo di proprietà--'),
         loadAgentFromBranch(),
-        loadList(_selectedBranch)
+        (parseInt(localStorage.urole) !== 500) ? loadList(_selectedBranch) : null,
     ]);
     initDateControl("txtPropertySoldDate", true);
     initDateControl("txtPropertyAcquisitionDate", true);
@@ -67,6 +67,8 @@ async function loadAgentFromBranch() {
 async function loadList() {
     const response = await fetch('/api/properties?branch_id=' + _selectedBranch);
     const r = await response.json();
+    document.getElementById('listPropertyLoader').classList.add('d-none');
+    document.getElementById('listOfProperties').classList.remove('d-none');
     const hasData = r.payload.length > 0;
 
     new DevExpress.ui.dxDataGrid(document.getElementById("listOfProperties"), {
