@@ -12,13 +12,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function showDataAsPerLoggedUser() {
-    if (localStorage.ulocation !== "null") {
+    if (localStorage.ulocation !== "null" && parseInt(localStorage.urole) === 500) {
         const tabs = document.querySelectorAll('.pai-tab');
         tabs.forEach((ele) => { ele.classList.add('visually-hidden'); });
         switch (parseInt(localStorage.ulocation)) {
-            case BRANCHES.Torino: document.getElementById('tabTorino').classList.remove("visually-hidden"); break;
-            case BRANCHES.Moncalieri: document.getElementById('tabMoncalieri').classList.remove("visually-hidden"); break;
-            case BRANCHES.Roma: document.getElementById('tabRoma').classList.remove("visually-hidden"); break;
+            case BRANCHES.Torino:
+                document.getElementById('tabTorino').classList.remove("visually-hidden");
+                document.getElementById('tabTorino').click();
+                break;
+            case BRANCHES.Moncalieri:
+                document.getElementById('tabMoncalieri').classList.remove("visually-hidden");
+                document.getElementById('tabMoncalieri').click();
+                break;
+            case BRANCHES.Roma:
+                document.getElementById('tabRoma').classList.remove("visually-hidden");
+                document.getElementById('tabRoma').click();
+                break;
         }
     }
 }
@@ -44,12 +53,12 @@ async function loadList(branch_id) {
         rowAlternationEnabled: false,
         grouping: { autoExpandAll: false },
         groupPanel: { visible: hasData, emptyPanelText: "Trascina qui le colonne per raggruppare" },
-        searchPanel: { visible: hasData, highlightCaseSensitive: false, width:300 },
+        searchPanel: { visible: hasData, highlightCaseSensitive: false, width: 300 },
         headerFilter: { visible: false },
         columns: [
             {
                 caption: "Nome Cognome",
-                allowSearch:true,
+                allowSearch: true,
                 calculateCellValue: function (data) { return data.agent_name; }
             },
             { dataField: "package_name", caption: "Pacchetto" },
