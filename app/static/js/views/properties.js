@@ -18,14 +18,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function showDataAsPerLoggedUser() {
-    if (localStorage.ulocation !== "null") {
+    if (localStorage.ulocation !== "null" && parseInt(localStorage.urole) === 500) {
         _selectedBranch = localStorage.ulocation;
         const tabs = document.querySelectorAll('.pai-tab');
         tabs.forEach((ele) => { ele.classList.add('visually-hidden'); });
         switch (parseInt(localStorage.ulocation)) {
-            case BRANCHES.Torino: document.getElementById('tabTorino').classList.remove("visually-hidden"); break;
-            case BRANCHES.Moncalieri: document.getElementById('tabMoncalieri').classList.remove("visually-hidden"); break;
-            case BRANCHES.Roma: document.getElementById('tabRoma').classList.remove("visually-hidden"); break;
+            case BRANCHES.Torino:
+                document.getElementById('tabTorino').classList.remove("visually-hidden");
+                document.getElementById('tabTorino').click();
+                break;
+            case BRANCHES.Moncalieri:
+                document.getElementById('tabMoncalieri').classList.remove("visually-hidden");
+                document.getElementById('tabMoncalieri').click();
+                break;
+            case BRANCHES.Roma:
+                document.getElementById('tabRoma').classList.remove("visually-hidden");
+                document.getElementById('tabRoma').click();
+                break;
         }
     }
 }
@@ -353,7 +362,7 @@ function showModalAddEditProperty(res, modalTitle) {
     document.getElementById('modalAddPropertyLabel').innerHTML = '<i class="bi bi-buildings me-3"></i>' + modalTitle;
     document.getElementById('btnSaveProperty').style.display = isDetail ? "none" : "inline";
     document.getElementById('ddlPropertyLocation').value = isDetail ? prop.branch_id : _selectedBranch;
-    document.getElementById('ddlPropertyLocation').disabled = isDetail;
+    document.getElementById('ddlPropertyLocation').disabled = isDetail || parseInt(localStorage.urole) === 500;
     document.getElementById('ddlPropertyType').value = isDetail ? prop.property_type : -1;
     document.getElementById('ddlPropertyType').disabled = isDetail;
     document.getElementById('txtPropertyAddress').value = isDetail ? prop.address : '';
