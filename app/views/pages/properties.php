@@ -20,7 +20,12 @@ require_once __DIR__ . '/../modals/property-add-new-price.php';
     </div>
     <div id="tabContent" class="pai-tab-content active">
         <div class="pai-card">
-            <div id="listOfProperties"></div>
+            <div id="listPropertyLoader" class="d-flex justify-content-center">
+                <div class="spinner-border text-secondary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div id="listOfProperties" class="d-none"></div>
         </div>
     </div>
 
