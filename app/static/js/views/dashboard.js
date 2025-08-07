@@ -33,10 +33,10 @@ async function loadTop10Agents() {
     try {
         const response = await fetch("/api/stats/top-agents");
         const res = await response.json();
-
+        const sortedData = res.payload.sort((a, b) => a.total - b.total);
         $("#listTop10Agents").dxChart({
             title: "Migliori 5 agenti",
-            dataSource: res.payload,
+            dataSource: sortedData,
             palette: softPalette,
             rotated: true,
             series: {
