@@ -391,6 +391,7 @@ function showModalAddEditProperty(res, modalTitle) {
 
     document.getElementById('enableCommissionControl').style.display = isDetail ? "inline" : "none";
     document.getElementById('btnAddPriceReduction').style.display = isDetail ? "inline" : "none";
+    document.getElementById('modifyCommessionActionLinks').classList.add('d-none');
 
     let btnMarkPropertySold = document.getElementById('btnMarkPropertySold');
     btnMarkPropertySold.classList.add('d-none');
@@ -558,12 +559,20 @@ async function saveNewPrice() {
 }
 
 function enableCommissionControlToModify(ele) {
+    document.getElementById('txtPropertyAddress').disabled = false;
+    document.getElementById('txtPropertyCity').disabled = false;
+    document.getElementById('ddlPropertyType').disabled = false;
+    $("#txtPropertyExpireDate").dxDateBox("instance").option("disabled", false);
     document.getElementById('txtAgencyPropertyCommission').disabled = false;
     document.getElementById('ddlAgencyPropertyCommissionType').disabled = false;
     document.getElementById('modifyCommessionActionLinks').classList.remove('d-none');
 }
 
 function disableCommissionControl() {
+    document.getElementById('txtPropertyAddress').disabled = true;
+    document.getElementById('txtPropertyCity').disabled = true;
+    document.getElementById('ddlPropertyType').disabled = true;
+    $("#txtPropertyExpireDate").dxDateBox("instance").option("disabled", true);
     document.getElementById('txtAgencyPropertyCommission').disabled = true;
     document.getElementById('ddlAgencyPropertyCommissionType').disabled = true;
     const ele = document.getElementById('lnkCancelCommissionModificaiton');
@@ -571,6 +580,10 @@ function disableCommissionControl() {
 }
 
 async function updateAgencyCommision() {
+    const address = document.getElementById('txtPropertyAddress').value.trim();
+    const city = document.getElementById('txtPropertyCity').value.trim();
+    const type = parseInt(document.getElementById('ddlPropertyType').value.trim());
+    const propertyExpireDate = $("#txtPropertyExpireDate").dxDateBox("instance").option("text");
     const agencyCommission = document.getElementById("txtAgencyPropertyCommission").value.trim();
     const agencyCommissionType = parseInt(document.getElementById("ddlAgencyPropertyCommissionType").value.trim());
     const result = document.getElementById("spNewPorpertyResult");
@@ -587,13 +600,20 @@ async function updateAgencyCommision() {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
+                "address": address,
+                "city": city,
+                "property_type": type,
+                "mandate_expiration": propertyExpireDate,
                 "acquisition_agency_percentage": agencyCommissionType === 1 ? parseInt(agencyCommission) : 0,
                 "acquisition_agency_value": agencyCommissionType === 2 ? parseInt(agencyCommission) : 0,
             })
         });
         const res = await response.json();
-        if (res.result) disableCommissionControl();
-        else throw new Error("Si sono verificati degli errori durante l'aggiornamento della commissione dell'agenzia");
+        if (res.result) {
+            disableCommissionControl();
+            loadList(_selectedBranch);
+            $('#modalAddProperty').modal('hide');
+        } else throw new Error("Si sono verificati degli errori durante l'aggiornamento della commissione dell'agenzia");
     } catch (error) {
         result.classList.remove("d-none");
         result.innerText = error.message !== undefined ? error.message : error;
