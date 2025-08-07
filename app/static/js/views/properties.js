@@ -376,7 +376,8 @@ function showModalAddEditProperty(res, modalTitle) {
         document.getElementById('enableAgencyCommissionModificationSec').classList.remove('d-none');
     } else document.getElementById('enableAgencyCommissionModificationSec').classList.add('d-none');
     $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("disabled", isDetail);
-    document.getElementById('txtPropertyAcquisitionPrice').value = isDetail ? prop.acquisition_price : '';
+    const p = formatNumber(parseFloat(prop.acquisition_price));
+    document.getElementById('txtPropertyAcquisitionPrice').value = isDetail ? p.slice(0, -2) : '';
     document.getElementById('txtPropertyAcquisitionPrice').disabled = isDetail;
     document.getElementById('txtAgencyPropertyCommission').value = isDetail ? (prop.acquisition_agency_percentage !== 0 && prop.acquisition_agency_percentage !== null ? prop.acquisition_agency_percentage : prop.acquisition_agency_value) : '3';
     document.getElementById('ddlAgencyPropertyCommissionType').value = isDetail ? (prop.acquisition_agency_percentage !== 0 && prop.acquisition_agency_percentage !== null ? 1 : 2) : 1;
