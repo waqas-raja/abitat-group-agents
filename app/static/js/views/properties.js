@@ -376,7 +376,7 @@ function showModalAddEditProperty(res, modalTitle) {
         document.getElementById('enableAgencyCommissionModificationSec').classList.remove('d-none');
     } else document.getElementById('enableAgencyCommissionModificationSec').classList.add('d-none');
     $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("disabled", isDetail);
-    const p = formatNumber(parseFloat(prop.acquisition_price));
+    const p = isDetail ? formatNumber(parseFloat(prop.acquisition_price)) : 0;
     document.getElementById('txtPropertyAcquisitionPrice').value = isDetail ? p.slice(0, -2) : '';
     document.getElementById('txtPropertyAcquisitionPrice').disabled = isDetail;
     document.getElementById('txtAgencyPropertyCommission').value = isDetail ? (prop.acquisition_agency_percentage !== 0 && prop.acquisition_agency_percentage !== null ? prop.acquisition_agency_percentage : prop.acquisition_agency_value) : '3';
@@ -389,6 +389,7 @@ function showModalAddEditProperty(res, modalTitle) {
     $("#txtPropertyExpireDate").dxDateBox("instance").option("disabled", isDetail);
     document.getElementById("spNewPorpertyResult").innerHTML = '';
 
+    document.getElementById('enableCommissionControl').style.display = isDetail ? "inline" : "none";
     document.getElementById('btnAddPriceReduction').style.display = isDetail ? "inline" : "none";
 
     let btnMarkPropertySold = document.getElementById('btnMarkPropertySold');
@@ -559,8 +560,7 @@ async function saveNewPrice() {
 function enableCommissionControlToModify(ele) {
     document.getElementById('txtAgencyPropertyCommission').disabled = false;
     document.getElementById('ddlAgencyPropertyCommissionType').disabled = false;
-    ele.classList.add('d-none');
-    ele.nextElementSibling.classList.remove('d-none');
+    document.getElementById('modifyCommessionActionLinks').classList.remove('d-none');
 }
 
 function disableCommissionControl() {
@@ -568,7 +568,6 @@ function disableCommissionControl() {
     document.getElementById('ddlAgencyPropertyCommissionType').disabled = true;
     const ele = document.getElementById('lnkCancelCommissionModificaiton');
     ele.parentNode.classList.add('d-none');
-    ele.parentNode.previousElementSibling.classList.remove('d-none');
 }
 
 async function updateAgencyCommision() {
