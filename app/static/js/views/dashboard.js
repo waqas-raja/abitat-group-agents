@@ -45,7 +45,7 @@ async function loadTop10Agents() {
                 type: "bar",
                 name: "Provvigioni"
             },
-            argumentAxis: { label: { font: { size: 12 }}},
+            argumentAxis: { label: { font: { size: 12 }, overLappingBehavior: {mode: "rotate", rotationAngle: 45}}},
             valueAxis: { label: { format: { type: "fixedPoint", precision: 0 }}},
             tooltip: {
                 enabled: true,
@@ -117,8 +117,10 @@ async function loadStatsPie() {
                 customizeTooltip: p => ({ text: `${p.argumentText}: ${p.value}` })
             },
             legend: {
-                horizontalAlignment: "center",
-                verticalAlignment: "bottom"
+                horizontalAlignment: "right",
+                verticalAlignment: "top",
+                font: { size: 10 },
+                markerSize: 10
             }
         });
     } catch (error) {
