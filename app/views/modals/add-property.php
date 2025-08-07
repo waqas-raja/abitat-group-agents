@@ -74,8 +74,7 @@
                                         </select>
                                     </div>
                                     <div id="enableAgencyCommissionModificationSec" class="d-none text-end">
-                                        <span id="" class="text-decoration-underline text-orange" role="button" onclick="enableCommissionControlToModify(this)">Modifica</span>
-                                        <span id="actionLinks" class="d-none">
+                                        <span id="modifyCommessionActionLinks" class="d-none">
                                             <span class="text-success me-3" role="button" onclick="updateAgencyCommision(this)">Salva</span>
                                             <span id="lnkCancelCommissionModificaiton" class="text-secondary" role="button" onclick="disableCommissionControl(this)">Annulla</span>
                                         </span>
@@ -87,14 +86,19 @@
                     <span id="spNewPorpertyResult" class="text-danger d-none"></span>
                 </form>
             </div>
-            <div class="modal-footer text-end">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x"></i> Chiudi</button>
-                <button id="btnSaveProperty" type="button" class="btn btn-orange" onclick="saveProperty()">
-                    <i class="bi bi-check-lg"></i> Salva
-                    <div id="spinnerNewProperty" class="spinner-border spinner-border-sm d-none" role="status"><span class="visually-hidden">Loading...</span></div>
-                </button>
-                <button type="button" id="btnAddPriceReduction" class="btn btn-orange-inverted"><i class="bi bi-arrow-bar-down me-2"></i> Ribassa il prezzo</button>
-                <button type="button" id="btnMarkPropertySold" class="btn btn-orange"><i class="bi bi-piggy-bank me-2"></i> Registra la vendita</button>
+            <div class="modal-footer justify-content-between">
+                <div>
+                    <small id="enableCommissionControl" class="text-decoration-underline text-orange me-3" role="button" onclick="enableCommissionControlToModify(this)">Modifica i dati</small>
+                    <small role="button" id="btnAddPriceReduction" class="text-decoration-underline text-orange">Ribassa il prezzo</small>
+                </div>
+                <div>
+                    <button id="btnSaveProperty" type="button" class="btn btn-orange" onclick="saveProperty()">
+                        <i class="bi bi-check-lg"></i> Salva
+                        <div id="spinnerNewProperty" class="spinner-border spinner-border-sm d-none" role="status"><span class="visually-hidden">Loading...</span></div>
+                    </button>
+                    <button type="button" id="btnMarkPropertySold" class="btn btn-orange"><i class="bi bi-piggy-bank me-2"></i> Registra la vendita</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="bi bi-x"></i> Chiudi</button>
+                </div>
             </div>
         </div>
     </div>
