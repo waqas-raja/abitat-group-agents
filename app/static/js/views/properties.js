@@ -81,6 +81,7 @@ async function loadList() {
         grouping: { autoExpandAll: false },
         groupPanel: { visible: hasData, emptyPanelText: "Trascina qui le colonne per raggruppare" },
         filterRow: { visible: hasData, applyFilter: "auto" },
+        searchPanel: { visible: hasData, highlightCaseSensitive: false, width: 300, placeholder: "Cerca per indirizzo..." },
         headerFilter: { visible: hasData },
         columns: [
             {
@@ -88,8 +89,8 @@ async function loadList() {
                 alignment: "center",
                 cssClass: "bg-light",
                 columns: [
-                    { dataField: "property_name", caption: "Tipologia", allowFiltering: true },
-                    { dataField: "city", caption: "Città", allowFiltering: true },
+                    { dataField: "property_name", caption: "Tipologia", allowFiltering: false },
+                    { dataField: "city", caption: "Città", allowFiltering: false },
                     { dataField: "address", caption: "Indirizzo", allowFiltering: true },
                 ]
             },
@@ -101,7 +102,7 @@ async function loadList() {
                     {
                         dataField: "acquisition_date",
                         caption: "Data",
-                        allowFiltering: true,
+                        allowFiltering: false,
                         calculateCellValue: function (data) {
                             const d = (data.acquisition_date).split('-');
                             return d[2] + '/' + d[1] + '/' + d[0];
@@ -125,7 +126,7 @@ async function loadList() {
                             else return '';
                         }
                     },
-                    { dataField: "acquisition_agent", caption: "Agente", allowFiltering: true },
+                    { dataField: "acquisition_agent", caption: "Agente", allowFiltering: false },
                     {
                         dataField: "acquisition_agent_percentage",
                         caption: "% Agente",
@@ -137,7 +138,7 @@ async function loadList() {
                     {
                         dataField: "mandate_expiration",
                         caption: "Scadenza",
-                        allowFiltering: true,
+                        allowFiltering: false,
                         sortIndex: 1,
                         sortOrder: "asc",
                         calculateCellValue: function (data) {
@@ -155,7 +156,7 @@ async function loadList() {
                     {
                         dataField: "sale_date",
                         caption: "Data",
-                        allowFiltering: true,
+                        allowFiltering: false,
                         sortIndex: 0,
                         sortOrder: "asc",
                         calculateCellValue: function (data) {
@@ -376,7 +377,7 @@ function showModalAddEditProperty(res, modalTitle) {
         document.getElementById('divSaveButtonsContainer').classList.remove('d-none');
     } else document.getElementById('divSaveButtonsContainer').classList.add('d-none');
     $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("disabled", isDetail);
-    const p = isDetail ? formatNumber(parseFloat(prop.acquisition_price)) : 0;
+    const p = isDetail ? (prop.last_price !== '' && prop.last_price !== null ? formatNumber(parseFloat(prop.last_price)) : formatNumber(parseFloat(prop.acquisition_price))) : 0;
     document.getElementById('txtPropertyAcquisitionPrice').value = isDetail ? p.slice(0, -2) : '';
     document.getElementById('txtPropertyAcquisitionPrice').disabled = isDetail;
     document.getElementById('txtAgencyPropertyCommission').value = isDetail ? (prop.acquisition_agency_percentage !== 0 && prop.acquisition_agency_percentage !== null ? prop.acquisition_agency_percentage : prop.acquisition_agency_value) : '3';
