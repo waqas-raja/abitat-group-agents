@@ -559,6 +559,7 @@ async function saveNewPrice() {
 }
 
 function enableCommissionControlToModify(ele) {
+    document.getElementById('ddlAcquisitionAgent').disabled = false;
     document.getElementById('txtPropertyAddress').disabled = false;
     document.getElementById('txtPropertyCity').disabled = false;
     document.getElementById('ddlPropertyType').disabled = false;
@@ -570,6 +571,7 @@ function enableCommissionControlToModify(ele) {
 }
 
 function disableCommissionControl() {
+    document.getElementById('ddlAcquisitionAgent').disabled = true;
     document.getElementById('txtPropertyAddress').disabled = true;
     document.getElementById('txtPropertyCity').disabled = true;
     document.getElementById('ddlPropertyType').disabled = true;
