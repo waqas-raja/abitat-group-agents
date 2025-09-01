@@ -136,6 +136,8 @@ final class Property
             $property_id = $request->getAttribute('id');
             if (!$property_id) throw new Exception('Property ID is required', 400);
             $data = json_decode($request->getBody()->getContents(), true);
+            $acquisition_agent = (int)$data['acquisition_agent'] ?? 0;
+            if ($acquisition_agent === -1 || $acquisition_agent === 0) throw new Exception("Acquisition Agent id:  $acquisition_agent not found", 404);
             $address = $data['address'] ?? '';
             $city = $data['city'] ?? '';
             $property_type = $data['property_type'] ?? 0;
@@ -151,8 +153,8 @@ final class Property
             $curr_property_type = $resC[0]['property_type'];
             $curr_expiration = $resC[0]['mandate_expiration'];
             // if($acquisition_agency_percentage != $curr_percentage || $acquisition_agency_value != $curr_value) {
-                $q = 'update property set address = ?, city = ?, property_type = ?, mandate_expiration = ?, acquisition_agency_percentage = ?, acquisition_agency_value = ? where id = ?';
-                $params = [$address, $city, $property_type, $mandate_expiration, $acquisition_agency_percentage, $acquisition_agency_value, $property_id];
+                $q = 'update property set acquisition_agent_id = ?, address = ?, city = ?, property_type = ?, mandate_expiration = ?, acquisition_agency_percentage = ?, acquisition_agency_value = ? where id = ?';
+                $params = [$acquisition_agent, $address, $city, $property_type, $mandate_expiration, $acquisition_agency_percentage, $acquisition_agency_value, $property_id];
                 $row_affected = DB::Execute($q, $params);
                 if ($row_affected == 0) throw new Exception("Error while updating agency commission", 500);
             // }

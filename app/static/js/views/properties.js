@@ -584,6 +584,7 @@ function disableCommissionControl() {
 }
 
 async function updateAgencyCommision() {
+    const agent = parseInt(document.getElementById('ddlAcquisitionAgent').value);
     const address = document.getElementById('txtPropertyAddress').value.trim();
     const city = document.getElementById('txtPropertyCity').value.trim();
     const type = parseInt(document.getElementById('ddlPropertyType').value.trim());
@@ -591,7 +592,7 @@ async function updateAgencyCommision() {
     const agencyCommission = document.getElementById("txtAgencyPropertyCommission").value.trim();
     const agencyCommissionType = parseInt(document.getElementById("ddlAgencyPropertyCommissionType").value.trim());
     const result = document.getElementById("spNewPorpertyResult");
-    if (agencyCommission === "") {
+    if (agencyCommission === "" || agent === -1) {
         result.innerText = 'Si prega di compilare tutti i campi richiesti';
         result.classList.remove("d-none");
         return false;
@@ -604,6 +605,7 @@ async function updateAgencyCommision() {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
+                "acquisition_agent": agent,
                 "address": address,
                 "city": city,
                 "property_type": type,
