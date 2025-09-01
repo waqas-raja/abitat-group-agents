@@ -373,8 +373,8 @@ function showModalAddEditProperty(res, modalTitle) {
     document.getElementById('txtPropertyCity').disabled = isDetail;
     if (isDetail) {
         $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("value", new Date(prop.acquisition_date));
-        document.getElementById('enableAgencyCommissionModificationSec').classList.remove('d-none');
-    } else document.getElementById('enableAgencyCommissionModificationSec').classList.add('d-none');
+        document.getElementById('divSaveButtonsContainer').classList.remove('d-none');
+    } else document.getElementById('divSaveButtonsContainer').classList.add('d-none');
     $("#txtPropertyAcquisitionDate").dxDateBox("instance").option("disabled", isDetail);
     const p = isDetail ? formatNumber(parseFloat(prop.acquisition_price)) : 0;
     document.getElementById('txtPropertyAcquisitionPrice').value = isDetail ? p.slice(0, -2) : '';
@@ -566,6 +566,7 @@ function enableCommissionControlToModify(ele) {
     document.getElementById('txtAgencyPropertyCommission').disabled = false;
     document.getElementById('ddlAgencyPropertyCommissionType').disabled = false;
     document.getElementById('modifyCommessionActionLinks').classList.remove('d-none');
+    document.getElementById('divEditButtonsContainer').classList.add('d-none');
 }
 
 function disableCommissionControl() {
@@ -575,8 +576,9 @@ function disableCommissionControl() {
     $("#txtPropertyExpireDate").dxDateBox("instance").option("disabled", true);
     document.getElementById('txtAgencyPropertyCommission').disabled = true;
     document.getElementById('ddlAgencyPropertyCommissionType').disabled = true;
-    const ele = document.getElementById('lnkCancelCommissionModificaiton');
+    const ele = document.getElementById('lnkCancelCommissionModification');
     ele.parentNode.classList.add('d-none');
+    document.getElementById('divEditButtonsContainer').classList.remove('d-none');
 }
 
 async function updateAgencyCommision() {

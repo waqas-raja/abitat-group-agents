@@ -73,12 +73,6 @@
                                             <option value="2">€</option>
                                         </select>
                                     </div>
-                                    <div id="enableAgencyCommissionModificationSec" class="d-none text-end">
-                                        <span id="modifyCommessionActionLinks" class="d-none">
-                                            <span class="text-success me-3" role="button" onclick="updateAgencyCommision(this)">Salva</span>
-                                            <span id="lnkCancelCommissionModificaiton" class="text-secondary" role="button" onclick="disableCommissionControl(this)">Annulla</span>
-                                        </span>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -88,8 +82,16 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <div>
-                    <small id="enableCommissionControl" class="text-decoration-underline text-orange me-3" role="button" onclick="enableCommissionControlToModify(this)">Modifica i dati</small>
-                    <small role="button" id="btnAddPriceReduction" class="text-decoration-underline text-orange">Ribassa il prezzo</small>
+                    <div id="divEditButtonsContainer">
+                        <small id="enableCommissionControl" class="text-decoration-underline text-orange me-3" role="button" onclick="enableCommissionControlToModify(this)">Modifica i dati</small>
+                        <small role="button" id="btnAddPriceReduction" class="text-decoration-underline text-orange">Ribassa il prezzo</small>
+                    </div>
+                    <div id="divSaveButtonsContainer" class="d-none">
+                        <span id="modifyCommessionActionLinks" class="d-none">
+                            <span class="text-success me-3" role="button" onclick="updateAgencyCommision(this)">Salva</span>
+                            <span id="lnkCancelCommissionModification" class="text-secondary" role="button" onclick="disableCommissionControl(this)">Annulla</span>
+                        </span>
+                    </div>
                 </div>
                 <div>
                     <button id="btnSaveProperty" type="button" class="btn btn-orange" onclick="saveProperty()">
